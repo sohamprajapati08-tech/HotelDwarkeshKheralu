@@ -244,6 +244,9 @@
                 <div class="admin-nav-item" onclick="switchAdminTab('contacts')">
                     <span>✉️</span> Inquiries / સંપર્ક મેસેજ
                 </div>
+                <div class="admin-nav-item" onclick="switchAdminTab('users')">
+                    <span>👥</span> Users / ગ્રાહકો
+                </div>
             </nav>
 
             <div style="border-top: 1px solid var(--border-glass); padding-top: 20px;">
@@ -304,6 +307,13 @@
                         <div class="metric-val" id="statInquiries">0</div>
                     </div>
                     <div class="metric-icon">✉️</div>
+                </div>
+                <div class="glass-card metric-card">
+                    <div>
+                        <div class="metric-label">Users / ગ્રાહકો</div>
+                        <div class="metric-val" id="statUsers">0</div>
+                    </div>
+                    <div class="metric-icon">👥</div>
                 </div>
             </div>
 
@@ -495,6 +505,40 @@
                         </thead>
                         <tbody id="contactsTableBody">
                             <tr><td colspan="7" style="text-align: center;">Loading inquiries...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 7: REGISTERED USERS / CUSTOMERS & EXCEL EXPORT -->
+            <div id="tabUsers" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2 style="color: #fff; font-size: 1.8rem;">Registered Website Users / ગ્રાહકો</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Live database of all customer accounts registered via mobile number or OTP on Hotel Dwarkesh</p>
+                    </div>
+                    <button class="btn-glass-primary btn-glass-sm" onclick="exportUsersToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
+                        <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
+                    </button>
+                </div>
+
+                <div class="glass-card" style="padding: 10px; overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Customer Name</th>
+                                <th>Mobile Number</th>
+                                <th>Email</th>
+                                <th>Registered Date & Time</th>
+                                <th>Last Active / Login</th>
+                                <th>Total Bookings</th>
+                                <th>Total Spent</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="9" style="text-align: center;">Loading registered users...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -770,6 +814,7 @@
             document.getElementById('tabNotices').style.display = tab === 'notices' ? 'block' : 'none';
             document.getElementById('tabBookings').style.display = tab === 'bookings' ? 'block' : 'none';
             document.getElementById('tabContacts').style.display = tab === 'contacts' ? 'block' : 'none';
+            document.getElementById('tabUsers').style.display = tab === 'users' ? 'block' : 'none';
 
             if (tab === 'rooms') loadRooms();
             if (tab === 'menu') loadMenu();
@@ -777,6 +822,7 @@
             if (tab === 'notices') loadNotices();
             if (tab === 'bookings') loadBookings();
             if (tab === 'contacts') loadContacts();
+            if (tab === 'users') loadUsers();
         }
 
         async function loadStats() {
@@ -795,6 +841,9 @@
                     }
                     if (document.getElementById('statInquiries')) {
                         document.getElementById('statInquiries').textContent = data.stats.totalInquiries || 0;
+                    }
+                    if (document.getElementById('statUsers')) {
+                        document.getElementById('statUsers').textContent = data.stats.totalUsers || 0;
                     }
                 }
             } catch (e) {}
@@ -1275,12 +1324,41 @@
                 }
                 tbody.innerHTML = loadedBookingsData.map(b => {
                     const isCash = String(b.paymentId).includes('CASH') || (b.paymentMethod && b.paymentMethod.includes('Cash'));
+                    const cleanMob = String(b.customerMobile || '').replace(/\D/g, '');
+                    const waMob = cleanMob.length === 12 && cleanMob.startsWith('91') ? cleanMob.slice(2) : cleanMob;
+                    const itemDesc = b.itemDetails?.roomName || b.itemDetails?.dishName || b.itemDetails?.name || b.type || 'Room / Dining';
+                    const waStatusText = b.status === 'Completed' ? 'પૂર્ણ થયેલ છે' : (b.status === 'Cancelled' ? 'કેન્સલ થયેલ છે' : 'કન્ફર્મ છે');
+                    const defaultMsg = encodeURIComponent(`🏨 હોટેલ દ્વારકેશ ખેરાલુ: નમસ્તે ${b.customerName || 'ગ્રાહક'}જી, તમારો ઓર્ડર/બુકિંગ #${b.id} (${itemDesc}) ${waStatusText}. હેલ્પલાઇન: +91 6353848203`);
+                    const waLink = waMob.length === 10 ? `https://api.whatsapp.com/send?phone=91${waMob}&text=${defaultMsg}` : '';
+                    const bookingDateTime = b.createdAt ? new Date(b.createdAt).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }) : '-';
+
+                    let statusClass = 'confirmed';
+                    let statusLabel = '✅ Confirmed';
+                    if (b.status === 'Completed') {
+                        statusClass = 'completed';
+                        statusLabel = '🎉 Completed';
+                    } else if (b.status === 'Cancelled') {
+                        statusClass = 'cancelled';
+                        statusLabel = '❌ Cancelled';
+                    } else if (isCash) {
+                        statusClass = 'pending';
+                        statusLabel = '⏳ Cash on Arrival';
+                    }
+
                     return `
                     <tr>
-                        <td><code>${b.id}</code></td>
+                        <td>
+                            <code>${b.id}</code>
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">🕒 ${bookingDateTime}</div>
+                        </td>
                         <td><strong>${b.customerName || 'Guest'}</strong></td>
-                        <td>${b.customerMobile || b.customerEmail || '-'}</td>
-                        <td>${b.itemDetails?.roomName || b.itemDetails?.dishName || b.itemDetails?.name || b.type}</td>
+                        <td>
+                            <a href="tel:${b.customerMobile}" style="color:var(--primary); text-decoration:none; font-weight:700;">
+                                📞 ${b.customerMobile || '-'}
+                            </a>
+                            ${b.customerEmail ? `<div style="font-size:0.75rem; color:#94a3b8;">${b.customerEmail}</div>` : ''}
+                        </td>
+                        <td>${itemDesc}</td>
                         <td>${b.checkIn || '-'} (${b.shift || 'full'})</td>
                         <td><strong style="color:var(--primary);">₹${b.totalAmount}</strong></td>
                         <td>
@@ -1290,13 +1368,16 @@
                             <code style="font-size:0.75rem; color:#cbd5e1;">${b.paymentId || 'N/A'}</code>
                         </td>
                         <td>
-                            <span class="status-pill ${isCash ? 'pending' : 'confirmed'}">
-                                ${isCash ? '⏳ Cash on Arrival' : '✅ Verified Paid'}
+                            <span class="status-pill ${statusClass}">
+                                ${statusLabel}
                             </span>
                         </td>
                         <td>
-                            <button class="action-btn edit" onclick="updateBookingStatus('${b.id}', 'Completed')">Complete</button>
-                            <button class="action-btn delete" onclick="updateBookingStatus('${b.id}', 'Cancelled')">Cancel</button>
+                            <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                                <button class="action-btn edit" onclick="updateBookingStatus('${b.id}', 'Completed')" title="Complete & Notify">✓ Complete</button>
+                                <button class="action-btn delete" onclick="updateBookingStatus('${b.id}', 'Cancelled')" title="Cancel & Notify">✕ Cancel</button>
+                                ${waLink ? `<a href="${waLink}" target="_blank" class="action-btn" style="border-color:#10b981; color:#34d399; text-decoration:none; display:inline-flex; align-items:center; gap:2px;" title="Send WhatsApp Message">📱 WA</a>` : ''}
+                            </div>
                         </td>
                     </tr>
                 `}).join('');
@@ -1306,6 +1387,7 @@
         }
 
         async function updateBookingStatus(id, status) {
+            if (!confirm(`શું તમે આ ઓર્ડર / બુકિંગને '${status}' કરવા માંગો છો?\nગ્રાહકના મોબાઈલ પર આપોઆપ મેસેજ મોકલાશે.`)) return;
             try {
                 const res = await fetch(`/api/admin/bookings/${id}/status`, {
                     method: 'PUT',
@@ -1320,8 +1402,118 @@
                     showToast(data.message, 'success');
                     loadBookings();
                     loadStats();
+
+                    // If WhatsApp link available, offer 1-click WhatsApp messaging
+                    if (data.whatsappUrl) {
+                        setTimeout(() => {
+                            if (confirm(`મેસેજ પ્રોસેસ થઈ ગયો છે!\nશું તમે ગ્રાહકને વોટ્સએપ પર પણ ડાયરેક્ટ મેસેજ મોકલવા માંગો છો?`)) {
+                                window.open(data.whatsappUrl, '_blank');
+                            }
+                        }, 300);
+                    }
+                } else {
+                    showToast(data.message || 'Status update failed', 'error');
                 }
-            } catch (e) {}
+            } catch (e) {
+                showToast('Status update error', 'error');
+            }
+        }
+
+        // ================= REGISTERED USERS & EXCEL EXPORT =================
+        let loadedUsersData = [];
+
+        async function loadUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            try {
+                const res = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${getAdminToken()}` }
+                });
+                const data = await res.json();
+                loadedUsersData = data.users || [];
+
+                if (!loadedUsersData.length) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No registered users found.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = loadedUsersData.map(u => {
+                    const cleanMob = String(u.mobile || u.identifier || '').replace(/\D/g, '');
+                    const waMob = cleanMob.length === 12 && cleanMob.startsWith('91') ? cleanMob.slice(2) : cleanMob;
+                    const waLink = waMob.length === 10 ? `https://api.whatsapp.com/send?phone=91${waMob}&text=${encodeURIComponent(`નમસ્તે ${u.name || 'ગ્રાહક'}જી, હોટેલ દ્વારકેશ ખેરાલુ તરફથી હાર્દિક સ્વાગત છે.`)}` : '';
+
+                    const regDateTime = u.createdAt ? new Date(u.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
+                    const lastActiveDateTime = u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : regDateTime;
+
+                    return `
+                    <tr>
+                        <td><code>${u.id || '-'}</code></td>
+                        <td><strong>${u.name || 'Guest User'}</strong></td>
+                        <td>
+                            <a href="tel:${u.mobile || u.identifier}" style="color:var(--primary); text-decoration:none; font-weight:700;">
+                                📞 ${u.mobile || u.identifier || '-'}
+                            </a>
+                        </td>
+                        <td>${u.email ? `<a href="mailto:${u.email}" style="color:#cbd5e1; text-decoration:none;">${u.email}</a>` : '-'}</td>
+                        <td><span style="font-size:0.85rem; color:#cbd5e1;">📅 ${regDateTime}</span></td>
+                        <td><span style="font-size:0.85rem; color:var(--text-muted);">🕒 ${lastActiveDateTime}</span></td>
+                        <td>
+                            <span style="background:rgba(255,122,0,0.18); color:var(--primary); padding:3px 10px; border-radius:12px; font-weight:700;">
+                                ${u.totalBookings || 0}
+                            </span>
+                        </td>
+                        <td><strong style="color:#34d399;">₹${(u.totalSpent || 0).toLocaleString()}</strong></td>
+                        <td>
+                            <div style="display:flex; gap:5px;">
+                                ${waLink ? `<a href="${waLink}" target="_blank" class="action-btn" style="border-color:#10b981; color:#34d399; text-decoration:none;" title="WhatsApp">📱 WA</a>` : ''}
+                                <button class="action-btn delete" onclick="deleteUser('${u.id}')" title="Delete User">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `}).join('');
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">Failed to load registered users.</td></tr>';
+            }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('શું તમે આ ગ્રાહક એકાઉન્ટને ડિલીટ કરવા માંગો છો?')) return;
+            try {
+                const res = await fetch(`/api/admin/users/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${getAdminToken()}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('ગ્રાહક એકાઉન્ટ ડિલીટ થઈ ગયું છે', 'info');
+                    loadUsers();
+                    loadStats();
+                } else {
+                    showToast(data.message || 'Delete failed', 'error');
+                }
+            } catch (e) {
+                showToast('Server error deleting user', 'error');
+            }
+        }
+
+        function exportUsersToExcel() {
+            if (!loadedUsersData || !loadedUsersData.length) {
+                showToast('કોઈ યુઝર્સ ડેટા ઉપલબ્ધ નથી.', 'info');
+                return;
+            }
+
+            const formatted = loadedUsersData.map(u => ({
+                'User ID': u.id,
+                'Customer Name': u.name || 'Guest User',
+                'Mobile Number': u.mobile || u.identifier || '',
+                'Email Address': u.email || '',
+                'Registration Date & Time': u.createdAt ? new Date(u.createdAt).toLocaleString('en-IN') : 'N/A',
+                'Last Active Date & Time': u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('en-IN') : (u.createdAt ? new Date(u.createdAt).toLocaleString('en-IN') : 'N/A'),
+                'Total Bookings Count': u.totalBookings || 0,
+                'Total Spent Amount (₹)': u.totalSpent || 0
+            }));
+
+            const dateStr = new Date().toISOString().split('T')[0];
+            exportToExcelFile(formatted, `Hotel_Dwarkesh_Registered_Users_${dateStr}.csv`);
         }
 
         // ================= CONTACT INQUIRIES & EXCEL EXPORT =================
@@ -1340,19 +1532,28 @@
                     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No inquiries received yet.</td></tr>';
                     return;
                 }
-                tbody.innerHTML = loadedContactsData.map(c => `
+                tbody.innerHTML = loadedContactsData.map(c => {
+                    const cleanMob = String(c.mobile || '').replace(/\D/g, '');
+                    const waMob = cleanMob.length === 12 && cleanMob.startsWith('91') ? cleanMob.slice(2) : cleanMob;
+                    const waLink = waMob.length === 10 ? `https://api.whatsapp.com/send?phone=91${waMob}&text=${encodeURIComponent(`નમસ્તે ${c.name}જી, હોટેલ દ્વારકેશ ખેરાલુ તરફથી આપની પૂછપરછ (${c.subject || 'ઇન્કવાયરી'}) બાબતે સંપર્ક.`)}` : '';
+                    const contactDateTime = c.createdAt ? new Date(c.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '-';
+
+                    return `
                     <tr>
-                        <td><span style="font-size:0.8rem; color:var(--text-muted);">${new Date(c.createdAt).toLocaleDateString()}</span></td>
+                        <td><span style="font-size:0.8rem; color:var(--text-muted);">🕒 ${contactDateTime}</span></td>
                         <td><strong>${c.name}</strong></td>
                         <td><a href="tel:${c.mobile}" style="color:var(--primary); text-decoration:none; font-weight:700;">📞 ${c.mobile}</a></td>
                         <td>${c.email ? `<a href="mailto:${c.email}" style="color:#cbd5e1; text-decoration:none;">${c.email}</a>` : '-'}</td>
                         <td><span style="background:rgba(255,122,0,0.15); color:var(--primary); padding:3px 8px; border-radius:6px; font-size:0.8rem; font-weight:600;">${c.subject || 'General'}</span></td>
                         <td style="max-width:320px; font-size:0.88rem; line-height:1.5;">${c.message}</td>
                         <td>
-                            <button class="action-btn delete" onclick="deleteContact('${c.id}')">Delete</button>
+                            <div style="display:flex; gap:4px;">
+                                ${waLink ? `<a href="${waLink}" target="_blank" class="action-btn" style="border-color:#10b981; color:#34d399; text-decoration:none;" title="Reply on WhatsApp">📱 WA</a>` : ''}
+                                <button class="action-btn delete" onclick="deleteContact('${c.id}')">Delete</button>
+                            </div>
                         </td>
                     </tr>
-                `).join('');
+                `}).join('');
             } catch (e) {
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Failed to load inquiries.</td></tr>';
             }
@@ -1419,7 +1620,7 @@
                 const isCash = String(b.paymentId).includes('CASH') || (b.paymentMethod && b.paymentMethod.includes('Cash'));
                 return {
                     'Booking ID': b.id,
-                    'Date of Booking': b.createdAt ? new Date(b.createdAt).toLocaleDateString() : '',
+                    'Date & Time of Booking (તારીખ અને સમય)': b.createdAt ? new Date(b.createdAt).toLocaleString('en-IN') : '',
                     'Customer Name': b.customerName || 'Guest',
                     'Mobile Number': b.customerMobile || '',
                     'Email Address': b.customerEmail || '',
@@ -1446,7 +1647,7 @@
 
             const formatted = loadedContactsData.map(c => ({
                 'Inquiry ID': c.id,
-                'Date Received': c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '',
+                'Date & Time Received (તારીખ અને સમય)': c.createdAt ? new Date(c.createdAt).toLocaleString('en-IN') : '',
                 'Customer Name': c.name,
                 'Mobile Number': c.mobile,
                 'Email Address': c.email || '',

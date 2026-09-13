@@ -324,6 +324,7 @@ app.post('/api/auth/verify-otp', (req, res) => {
     let user = users.find(u => u.identifier === cleanId || u.mobile === cleanId || u.email === cleanId);
 
     const isEmail = cleanId.includes('@');
+    const nowIso = new Date().toISOString();
     if (!user) {
         user = {
             id: 'user-' + Date.now(),
@@ -331,12 +332,17 @@ app.post('/api/auth/verify-otp', (req, res) => {
             identifier: cleanId,
             mobile: isEmail ? '' : cleanId,
             email: isEmail ? cleanId : '',
-            createdAt: new Date().toISOString()
+            createdAt: nowIso,
+            lastLoginAt: nowIso
         };
         users.push(user);
         writeJson('users.json', users);
-    } else if (name && (!user.name || user.name === 'Guest User')) {
-        user.name = name;
+    } else {
+        if (name && (!user.name || user.name === 'Guest User')) {
+            user.name = name;
+        }
+        user.lastLoginAt = nowIso;
+        if (!user.createdAt) user.createdAt = nowIso;
         writeJson('users.json', users);
     }
 
@@ -371,6 +377,7 @@ app.post('/api/auth/quick-mobile-login', (req, res) => {
     const cleanName = (name && String(name).trim()) || 'Guest User';
     const users = readJson('users.json');
     let user = users.find(u => u.identifier === cleanId || u.mobile === cleanId);
+    const nowIso = new Date().toISOString();
 
     if (!user) {
         user = {
@@ -379,12 +386,17 @@ app.post('/api/auth/quick-mobile-login', (req, res) => {
             identifier: cleanId,
             mobile: cleanId,
             email: '',
-            createdAt: new Date().toISOString()
+            createdAt: nowIso,
+            lastLoginAt: nowIso
         };
         users.push(user);
         writeJson('users.json', users);
-    } else if (cleanName && cleanName !== 'Guest User') {
-        user.name = cleanName;
+    } else {
+        if (cleanName && cleanName !== 'Guest User') {
+            user.name = cleanName;
+        }
+        user.lastLoginAt = nowIso;
+        if (!user.createdAt) user.createdAt = nowIso;
         writeJson('users.json', users);
     }
 
@@ -453,6 +465,7 @@ app.get('/api/admin/stats', authenticateAdmin, (req, res) => {
     const notices = readJson('notices.json');
     const bookings = readJson('bookings.json');
     const gallery = readJson('gallery.json');
+    const users = readJson('users.json');
 
     const totalRevenue = bookings
         .filter(b => b.status === 'Confirmed' || b.status === 'Completed')
@@ -470,9 +483,48 @@ app.get('/api/admin/stats', authenticateAdmin, (req, res) => {
             totalBookings: bookings.length,
             confirmedBookings: bookings.filter(b => b.status === 'Confirmed').length,
             totalRevenue,
-            totalInquiries: contacts.length
+            totalInquiries: contacts.length,
+            totalUsers: users.length
         }
     });
+});
+
+// Admin GET all registered users with booking metrics
+app.get('/api/admin/users', authenticateAdmin, (req, res) => {
+    const users = readJson('users.json');
+    const bookings = readJson('bookings.json');
+
+    const enrichedUsers = users.map(user => {
+        const cleanUserMobile = user.mobile ? String(user.mobile).replace(/\D/g, '') : '';
+        const userBookings = bookings.filter(b => {
+            const cleanBookingMobile = b.customerMobile ? String(b.customerMobile).replace(/\D/g, '') : '';
+            return b.userId === user.id || (cleanUserMobile && cleanBookingMobile && cleanUserMobile === cleanBookingMobile);
+        });
+        const totalSpent = userBookings
+            .filter(b => b.status === 'Confirmed' || b.status === 'Completed')
+            .reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
+
+        return {
+            ...user,
+            totalBookings: userBookings.length,
+            totalSpent
+        };
+    });
+
+    enrichedUsers.sort((a, b) => new Date(b.lastLoginAt || b.createdAt || 0) - new Date(a.lastLoginAt || a.createdAt || 0));
+
+    res.json({ success: true, users: enrichedUsers });
+});
+
+// Admin DELETE user
+app.delete('/api/admin/users/:id', authenticateAdmin, (req, res) => {
+    const users = readJson('users.json');
+    const filtered = users.filter(u => u.id !== req.params.id);
+    if (filtered.length === users.length) {
+        return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+    writeJson('users.json', filtered);
+    res.json({ success: true, message: 'User removed successfully.' });
 });
 
 // ==========================================
@@ -858,7 +910,85 @@ app.get('/api/admin/bookings', authenticateAdmin, (req, res) => {
     res.json({ success: true, bookings });
 });
 
-app.put('/api/admin/bookings/:id/status', authenticateAdmin, (req, res) => {
+// Helper: Send Order Status Notification to Customer's Mobile (Fast2SMS & Email & WhatsApp link)
+async function sendOrderStatusNotification(booking, newStatus) {
+    const rawMobile = String(booking.customerMobile || '').replace(/\D/g, '');
+    const cleanMobile = rawMobile.length === 12 && rawMobile.startsWith('91') ? rawMobile.slice(2) : rawMobile;
+    const customerName = booking.customerName || 'Valued Guest';
+    const itemName = booking.itemDetails?.roomName || booking.itemDetails?.dishName || booking.itemDetails?.name || booking.type || 'Room / Dining';
+
+    let statusGuj = 'કન્ફર્મ (Confirmed)';
+    let statusEng = 'CONFIRMED';
+    if (newStatus === 'Completed') {
+        statusGuj = 'સફળતાપૂર્વક પૂર્ણ (COMPLETED)';
+        statusEng = 'COMPLETED';
+    } else if (newStatus === 'Cancelled') {
+        statusGuj = 'કેન્સલ (CANCELLED)';
+        statusEng = 'CANCELLED';
+    }
+
+    const smsMessage = `Hotel Dwarkesh: Dear ${customerName}, your booking #${booking.id} (${itemName}) is now ${statusEng}. Thank you! Helpline: +916353848203`;
+    const gujMessage = `🏨 હોટેલ દ્વારકેશ (ખેરાલુ)\n\nનમસ્તે ${customerName}જી,\nતમારો ઓર્ડર / બુકિંગ #${booking.id} (${itemName}) ${statusGuj} થયેલ છે.\n\nકુલ રકમ: ₹${booking.totalAmount}\nસ્થળ: ચંદ્રપુષ્પા શોપિંગ સેન્ટર, વૃંદાવન સર્કલ, અંબાજી હાઇવે, ખેરાલુ.\nહેલ્પલાઇન: +91 6353848203\n\nહોટેલ દ્વારકેશની મુલાકાત બદલ આભાર! 🙏`;
+
+    const whatsappUrl = cleanMobile.length === 10 ? `https://api.whatsapp.com/send?phone=91${cleanMobile}&text=${encodeURIComponent(gujMessage)}` : '';
+
+    // 1. Fast2SMS Mobile SMS Gateway
+    if (process.env.FAST2SMS_API_KEY && cleanMobile.length === 10) {
+        try {
+            const smsRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+                method: 'POST',
+                headers: {
+                    'authorization': process.env.FAST2SMS_API_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    route: 'q',
+                    message: smsMessage,
+                    numbers: cleanMobile
+                })
+            });
+            const smsJson = await smsRes.json();
+            console.log(`[Dwarkesh Status SMS] Sent to ${cleanMobile} for ${newStatus}:`, smsJson);
+        } catch (smsErr) {
+            console.error(`[Dwarkesh Status SMS Error]:`, smsErr.message);
+        }
+    }
+
+    // 2. Email Receipt / Status via Gmail SMTP
+    if (emailTransporter && booking.customerEmail && booking.customerEmail.includes('@')) {
+        try {
+            const sender = (process.env.EMAIL_USER || process.env.GMAIL_USER || 'hoteldwarkesh08@gmail.com').trim();
+            await emailTransporter.sendMail({
+                from: `"Hotel Dwarkesh" <${sender}>`,
+                to: booking.customerEmail,
+                subject: `Hotel Dwarkesh - Booking #${booking.id} Status: ${statusEng}`,
+                html: `
+                    <div style="font-family: Arial, sans-serif; background: #0a0e1a; color: #ffffff; padding: 30px 15px;">
+                        <div style="max-width: 550px; margin: 0 auto; background: #121a2f; border: 1px solid #ff7a00; border-radius: 12px; padding: 25px;">
+                            <h2 style="color: #ff7a00; margin-top: 0;">🏨 Hotel Dwarkesh Kheralu</h2>
+                            <p>Dear <strong>${customerName}</strong>,</p>
+                            <p>Your booking status is updated to: <strong style="color: ${newStatus === 'Completed' ? '#34d399' : (newStatus === 'Cancelled' ? '#f87171' : '#fbbf24')};">${statusEng}</strong></p>
+                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin: 15px 0;">
+                                <p style="margin: 4px 0;"><strong>Booking ID:</strong> ${booking.id}</p>
+                                <p style="margin: 4px 0;"><strong>Item:</strong> ${itemName}</p>
+                                <p style="margin: 4px 0;"><strong>Amount:</strong> ₹${booking.totalAmount}</p>
+                                <p style="margin: 4px 0;"><strong>Status:</strong> ${statusGuj}</p>
+                            </div>
+                            <p style="font-size: 13px; color: #94a3b8;">Helpline: +91 6353848203 | Ambaji Highway, Kheralu</p>
+                        </div>
+                    </div>
+                `
+            });
+            console.log(`[Dwarkesh Status Email] Sent to ${booking.customerEmail}`);
+        } catch (mailErr) {
+            console.error(`[Dwarkesh Status Email Error]:`, mailErr.message);
+        }
+    }
+
+    return { smsMessage, gujMessage, whatsappUrl, cleanMobile };
+}
+
+app.put('/api/admin/bookings/:id/status', authenticateAdmin, async (req, res) => {
     const { status } = req.body;
     const bookings = readJson('bookings.json');
     const booking = bookings.find(b => b.id === req.params.id);
@@ -871,7 +1001,21 @@ app.put('/api/admin/bookings/:id/status', authenticateAdmin, (req, res) => {
     booking.updatedAt = new Date().toISOString();
     writeJson('bookings.json', bookings);
 
-    res.json({ success: true, message: `Booking status updated to ${status}`, booking });
+    // Trigger customer SMS / WhatsApp notification
+    let notificationInfo = null;
+    try {
+        notificationInfo = await sendOrderStatusNotification(booking, booking.status);
+    } catch (err) {
+        console.error("Order notification error:", err);
+    }
+
+    res.json({
+        success: true,
+        message: `Booking #${booking.id} status updated to ${status}. ગ્રાહકને મેસેજ મોકલાઈ ગયો છે.`,
+        booking,
+        whatsappUrl: notificationInfo?.whatsappUrl || '',
+        customerMobile: notificationInfo?.cleanMobile || booking.customerMobile
+    });
 });
 
 // ==========================================

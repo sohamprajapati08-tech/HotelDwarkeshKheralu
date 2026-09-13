@@ -375,33 +375,62 @@
 
     // Update Navbar with User Profile or Login button
     function updateNavbarAuthUI() {
-        const navActions = document.getElementById('navAuthContainer') || document.querySelector('.nav-actions');
-        if (!navActions) return;
+        const navAuth = document.getElementById('navAuthContainer') || document.querySelector('.nav-actions');
+        if (navAuth) {
+            const user = window.HotelAuth.getUser();
+            if (user) {
+                const firstLetter = (user.name || 'U').charAt(0).toUpperCase();
+                const firstName = (user.name || 'Guest').split(' ')[0];
+                navAuth.innerHTML = `
+                    <div class="user-profile-badge" title="Logged in as ${user.name}">
+                        <div class="user-avatar-circle">${firstLetter}</div>
+                        <span class="user-profile-name">${firstName}</span>
+                    </div>
+                    <button class="btn-glass-secondary btn-glass-sm btn-nav-logout" onclick="HotelAuth.logout()" title="Logout" style="border-color: rgba(239, 68, 68, 0.45); color: #fca5a5;">
+                        <span class="logout-icon">🚪</span><span class="logout-text"> Logout</span>
+                    </button>
+                `;
+            } else {
+                navAuth.innerHTML = `
+                    <button class="btn-glass-primary btn-glass-sm" onclick="HotelAuth.showModal()">
+                        👤 Login
+                    </button>
+                `;
+            }
+        }
 
-        const user = window.HotelAuth.getUser();
-        if (user) {
-            const firstLetter = (user.name || 'U').charAt(0).toUpperCase();
-            const firstName = (user.name || 'Guest').split(' ')[0];
-            navActions.style.display = 'inline-flex';
-            navActions.style.alignItems = 'center';
-            navActions.style.gap = '8px';
-            navActions.innerHTML = `
-                <div class="user-profile-badge" title="Logged in as ${user.name}">
-                    <div class="user-avatar-circle">${firstLetter}</div>
-                    <span>${firstName}</span>
-                </div>
-                <button class="btn-glass-secondary btn-glass-sm" onclick="HotelAuth.logout()" title="Logout" style="border-color: rgba(239, 68, 68, 0.45); color: #fca5a5;">
-                    🚪 Logout
-                </button>
-            `;
-        } else {
-            navActions.style.display = 'inline-flex';
-            navActions.style.alignItems = 'center';
-            navActions.innerHTML = `
-                <button class="btn-glass-primary btn-glass-sm" onclick="HotelAuth.showModal()">
-                    👤 Login
-                </button>
-            `;
+        // Sync Mobile Drawer Nav
+        const navLinks = document.getElementById('navLinks');
+        if (navLinks) {
+            let mobileAuth = document.getElementById('mobileNavAuthDrawer');
+            if (!mobileAuth) {
+                mobileAuth = document.createElement('div');
+                mobileAuth.id = 'mobileNavAuthDrawer';
+                mobileAuth.className = 'mobile-nav-auth-drawer';
+                navLinks.appendChild(mobileAuth);
+            }
+            const user = window.HotelAuth.getUser();
+            if (user) {
+                const firstLetter = (user.name || 'U').charAt(0).toUpperCase();
+                mobileAuth.innerHTML = `
+                    <div class="mobile-drawer-user">
+                        <div class="user-avatar-circle">${firstLetter}</div>
+                        <div class="mobile-drawer-user-details">
+                            <span class="mobile-drawer-name">${user.name || 'Guest'}</span>
+                            <span class="mobile-drawer-phone">${user.mobile ? '📱 ' + user.mobile : ''}</span>
+                        </div>
+                    </div>
+                    <button class="mobile-drawer-logout-btn" onclick="HotelAuth.logout()">
+                        🚪 Logout (સાઇન આઉટ)
+                    </button>
+                `;
+            } else {
+                mobileAuth.innerHTML = `
+                    <button class="btn-glass-primary mobile-drawer-login-btn" onclick="HotelAuth.showModal()">
+                        👤 Login / સાઇન ઇન
+                    </button>
+                `;
+            }
         }
     }
 

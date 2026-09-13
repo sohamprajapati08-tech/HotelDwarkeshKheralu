@@ -15,8 +15,9 @@
     "paymentMethod": "Online UPI (Google Pay / PhonePe / Paytm)",
     "paymentId": "UTR-425890124589",
     "paymentStatus": "Paid (Online UPI)",
-    "status": "Confirmed",
-    "createdAt": "2026-09-13T13:12:08.736Z"
+    "status": "Completed",
+    "createdAt": "2026-09-13T13:12:08.736Z",
+    "updatedAt": "2026-09-13T15:30:33.513Z"
   },
   {
     "id": "BK-MTZU2PE5-765",
