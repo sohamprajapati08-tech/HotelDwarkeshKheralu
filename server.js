@@ -899,11 +899,12 @@ app.post('/api/contact', async (req, res) => {
     writeJson('contacts.json', contacts);
 
     // Send email alert to hotel owner
-    if (transporter && process.env.EMAIL_USER) {
+    if (emailTransporter && (process.env.EMAIL_USER || process.env.GMAIL_USER)) {
         try {
-            await transporter.sendMail({
-                from: `"Hotel Dwarkesh" <${process.env.EMAIL_USER}>`,
-                to: process.env.HOTEL_OWNER_EMAIL || process.env.EMAIL_USER,
+            const sender = (process.env.EMAIL_USER || process.env.GMAIL_USER).trim();
+            await emailTransporter.sendMail({
+                from: `"Hotel Dwarkesh" <${sender}>`,
+                to: process.env.HOTEL_OWNER_EMAIL || sender,
                 subject: `🔔 New Website Inquiry from ${newContact.name} (${newContact.subject})`,
                 html: `
                     <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; border: 1px solid #ff7a00; border-radius: 8px;">
