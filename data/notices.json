@@ -1,0 +1,18 @@
+[
+  {
+    "id": "notice-1",
+    "title": "Special 15% Pilgrim Discount!",
+    "content": "Special 15% discount on room bookings for Ambaji and Dwarka Dham pilgrims. Show your yatra pass or ID at check-in!",
+    "tag": "Offer",
+    "active": true,
+    "createdAt": "2026-09-13T10:00:00.000Z"
+  },
+  {
+    "id": "notice-2",
+    "title": "Sunday Grand Gujarati Thali Festival",
+    "content": "Enjoy Unlimited Authentic Kathiyawadi & Gujarati Delicacies this Sunday at special family rates. Table reservations open now!",
+    "tag": "Food Fest",
+    "active": true,
+    "createdAt": "2026-09-13T10:00:00.000Z"
+  }
+]

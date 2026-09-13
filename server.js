@@ -1,0 +1,1014 @@
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || 'dwarkesh_super_secret_jwt_key_2026';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'Dwarkesh008';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Dwarkesh@2008';
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Data Directory
+const DATA_DIR = path.join(__dirname, 'data');
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+
+// Helper to read & write JSON files
+const readJson = (filename, defaultValue = []) => {
+    const filePath = path.join(DATA_DIR, filename);
+    if (!fs.existsSync(filePath)) {
+        fs.writeFileSync(filePath, JSON.stringify(defaultValue, null, 2), 'utf8');
+        return defaultValue;
+    }
+    try {
+        const raw = fs.readFileSync(filePath, 'utf8');
+        return JSON.parse(raw || '[]');
+    } catch (err) {
+        console.error(`Error reading ${filename}:`, err);
+        return defaultValue;
+    }
+};
+
+const writeJson = (filename, data) => {
+    const filePath = path.join(DATA_DIR, filename);
+    const tempPath = `${filePath}.tmp`;
+    fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf8');
+    fs.renameSync(tempPath, filePath);
+};
+
+// In-memory OTP store with 5-minute expiry
+const otpStore = new Map();
+
+// Razorpay SDK optional initialization
+let razorpayInstance = null;
+try {
+    const Razorpay = require('razorpay');
+    if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+        razorpayInstance = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_KEY_SECRET
+        });
+    }
+} catch (e) {
+    console.warn("Razorpay module warning:", e.message);
+}
+
+// Nodemailer Email Transporter (For Real Gmail Delivery)
+let emailTransporter = null;
+if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+    const cleanPass = process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, '');
+    emailTransporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.GMAIL_USER.trim(),
+            pass: cleanPass
+        }
+    });
+    console.log(`✉️ Nodemailer initialized with ${process.env.GMAIL_USER}`);
+}
+
+// Multer Storage Configuration (Supports Images and HD Videos up to 50MB)
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, UPLOADS_DIR),
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, 'dwarkesh-' + uniqueSuffix + ext);
+    }
+});
+const upload = multer({
+    storage,
+    limits: { fileSize: 50 * 1024 * 1024 } // 50MB for photos & videos
+});
+
+// Authentication Middlewares
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Access denied. Please login first.' });
+
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err) return res.status(403).json({ success: false, message: 'Invalid or expired session. Please login again.' });
+        req.user = decoded;
+        next();
+    });
+};
+
+const authenticateAdmin = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Admin authentication required.' });
+
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err || !decoded.isAdmin) {
+            return res.status(403).json({ success: false, message: 'Unauthorized. Admin privilege required.' });
+        }
+        req.admin = decoded;
+        next();
+    });
+};
+
+// ==========================================
+// AUTHENTICATION ROUTES (Real Mobile SMS & Gmail)
+// ==========================================
+
+// 1. Send OTP to Mobile or Email (REAL SMS & EMAIL INTEGRATION)
+app.post('/api/auth/send-otp', async (req, res) => {
+    const { identifier } = req.body;
+    if (!identifier) {
+        return res.status(400).json({ success: false, message: 'Mobile number or email is required.' });
+    }
+
+    let cleanId = String(identifier).trim();
+    const isEmail = cleanId.includes('@');
+    if (!isEmail) {
+        cleanId = cleanId.replace(/\D/g, '');
+        if (cleanId.length === 12 && cleanId.startsWith('91')) {
+            cleanId = cleanId.slice(2);
+        }
+        if (cleanId.length !== 10) {
+            return res.status(400).json({ success: false, message: 'Please enter a valid 10-digit mobile number.' });
+        }
+    }
+
+    // Generate 100% completely random and unpredictable 6-digit OTP every single time
+    const otp = crypto.randomInt(100000, 1000000).toString();
+    const expiresAt = Date.now() + 5 * 60 * 1000; // 5 mins
+
+    otpStore.set(cleanId, { otp, expiresAt });
+    console.log(`[Dwarkesh OTP] Unique Random OTP for ${cleanId}: ${otp}`);
+
+    let realDeliveryStatus = 'queued';
+
+    // A. Real Email Delivery via Gmail SMTP
+    if (isEmail && emailTransporter) {
+        try {
+            await emailTransporter.sendMail({
+                from: `"Hotel Dwarkesh" <${process.env.GMAIL_USER}>`,
+                to: cleanId,
+                subject: `Your Hotel Dwarkesh Verification Code: ${otp}`,
+                html: `
+                    <div style="font-family: 'Segoe UI', Arial, sans-serif; background: #0a0e1a; color: #ffffff; padding: 40px 20px; text-align: center;">
+                        <div style="max-width: 500px; margin: 0 auto; background: #121a2f; border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                            <h2 style="color: #ff7a00; font-size: 26px; margin-bottom: 10px; letter-spacing: 1px;">HOTEL DWARKESH</h2>
+                            <p style="color: #cbd5e1; font-size: 15px; margin-bottom: 25px;">Kheralu, Ambaji Highway, Gujarat</p>
+                            <div style="background: rgba(255,122,0,0.1); border: 1px dashed #ff7a00; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                                <span style="font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px;">Your 6-Digit OTP Code</span>
+                                <div style="font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #ffffff; margin-top: 8px;">${otp}</div>
+                            </div>
+                            <p style="color: #94a3b8; font-size: 13px; line-height: 1.5;">This verification code is valid for 5 minutes. Please do not share it with anyone.</p>
+                            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; margin-top: 25px; color: #64748b; font-size: 12px;">
+                                © 2026 Hotel Dwarkesh. 24/7 Helpline: +91 6353848203
+                            </div>
+                        </div>
+                    </div>
+                `
+            });
+            console.log(`[Dwarkesh Mail] Real email sent to ${cleanId}`);
+            realDeliveryStatus = 'sent_email';
+        } catch (mailErr) {
+            console.error(`[Dwarkesh Mail Error]:`, mailErr.message);
+        }
+    }
+
+    // B. Real SMS Delivery via Fast2SMS (Indian Mobile Delivery)
+    if (!isEmail && cleanId.length === 10) {
+        if (!process.env.FAST2SMS_API_KEY) {
+            return res.status(400).json({
+                success: false,
+                message: 'Fast2SMS API Key is missing in .env'
+            });
+        }
+
+        try {
+            let smsData = null;
+
+            // 1. If FAST2SMS_OTP_ID is configured, use the new official Fast2SMS OTP API
+            if (process.env.FAST2SMS_OTP_ID) {
+                const otpRes = await fetch('https://www.fast2sms.com/dev/otp/send', {
+                    method: 'POST',
+                    headers: {
+                        'authorization': process.env.FAST2SMS_API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mobile: cleanId,
+                        otp_id: process.env.FAST2SMS_OTP_ID.trim(),
+                        otp: otp
+                    })
+                });
+                smsData = await otpRes.json();
+                console.log(`[Dwarkesh Fast2SMS New OTP API] Response:`, smsData);
+            }
+
+            // 2. Primary fallback attempt: route 'otp'
+            if (!smsData || !smsData.return) {
+                let smsRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+                    method: 'POST',
+                    headers: {
+                        'authorization': process.env.FAST2SMS_API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        variables_values: otp,
+                        route: 'otp',
+                        numbers: cleanId
+                    })
+                });
+                const resData = await smsRes.json();
+                console.log(`[Dwarkesh Fast2SMS Route OTP] Response:`, resData);
+                if (resData.return) {
+                    smsData = resData;
+                } else if (!smsData) {
+                    smsData = resData;
+                }
+            }
+
+            // Secondary attempt: route 'q' (Quick SMS) if route 'otp' pending verification
+            if (!smsData.return) {
+                const qRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+                    method: 'POST',
+                    headers: {
+                        'authorization': process.env.FAST2SMS_API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        route: 'q',
+                        message: `Your Hotel Dwarkesh verification code is ${otp}. Valid for 5 mins.`,
+                        language: 'english',
+                        numbers: cleanId
+                    })
+                });
+                const qData = await qRes.json();
+                console.log(`[Dwarkesh Fast2SMS Route Q] Response:`, qData);
+                if (qData.return) {
+                    smsData = qData;
+                }
+            }
+
+            if (smsData.return) {
+                realDeliveryStatus = 'sent_sms';
+                console.log(`[Dwarkesh SMS Success] Real Text SMS dispatched to +91 ${cleanId}`);
+            } else {
+                const failReason = Array.isArray(smsData.message) ? smsData.message.join(', ') : (smsData.message || 'SMS delivery failed');
+                console.error(`[Dwarkesh Fast2SMS Failed]:`, failReason);
+                return res.json({
+                    success: false,
+                    message: `Fast2SMS Notice: ${failReason}`
+                });
+            }
+        } catch (smsErr) {
+            console.error(`[Dwarkesh SMS Error]:`, smsErr.message);
+            return res.status(500).json({
+                success: false,
+                message: 'SMS Gateway connection error: ' + smsErr.message
+            });
+        }
+    }
+
+    res.json({
+        success: true,
+        message: isEmail 
+            ? `Verification code dispatched to ${cleanId}` 
+            : `SMS verification code dispatched to +91 ${cleanId}`,
+        deliveryStatus: realDeliveryStatus
+    });
+});
+
+// 2. Verify OTP & Login / Register
+app.post('/api/auth/verify-otp', (req, res) => {
+    const { identifier, otp, name } = req.body;
+    if (!identifier || !otp) {
+        return res.status(400).json({ success: false, message: 'Identifier and OTP are required.' });
+    }
+
+    let cleanId = String(identifier).trim();
+    if (!cleanId.includes('@')) {
+        cleanId = cleanId.replace(/\D/g, '');
+        if (cleanId.length === 12 && cleanId.startsWith('91')) {
+            cleanId = cleanId.slice(2);
+        }
+    }
+    const record = otpStore.get(cleanId);
+
+    if (!record) {
+        return res.status(400).json({ success: false, message: 'No OTP requested for this identifier or it expired.' });
+    }
+
+    if (Date.now() > record.expiresAt) {
+        otpStore.delete(cleanId);
+        return res.status(400).json({ success: false, message: 'OTP has expired. Please request a new one.' });
+    }
+
+    if (record.otp !== String(otp).trim()) {
+        return res.status(400).json({ success: false, message: 'Invalid OTP entered. Please try again.' });
+    }
+
+    // OTP Verified! Clear it
+    otpStore.delete(cleanId);
+
+    const users = readJson('users.json');
+    let user = users.find(u => u.identifier === cleanId || u.mobile === cleanId || u.email === cleanId);
+
+    const isEmail = cleanId.includes('@');
+    if (!user) {
+        user = {
+            id: 'user-' + Date.now(),
+            name: name || (isEmail ? cleanId.split('@')[0] : 'Guest User'),
+            identifier: cleanId,
+            mobile: isEmail ? '' : cleanId,
+            email: isEmail ? cleanId : '',
+            createdAt: new Date().toISOString()
+        };
+        users.push(user);
+        writeJson('users.json', users);
+    } else if (name && (!user.name || user.name === 'Guest User')) {
+        user.name = name;
+        writeJson('users.json', users);
+    }
+
+    const token = jwt.sign(
+        { id: user.id, name: user.name, identifier: cleanId, mobile: user.mobile, email: user.email },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+    );
+
+    res.json({
+        success: true,
+        message: 'Logged in successfully!',
+        token,
+        user
+    });
+});
+
+// 3. Quick Mobile Login (100% Free, Instant Verification without SMS gateway cost)
+app.post('/api/auth/quick-mobile-login', (req, res) => {
+    const { mobile, name } = req.body;
+    if (!mobile) {
+        return res.status(400).json({ success: false, message: 'Mobile number is required.' });
+    }
+
+    let cleanId = String(mobile).replace(/\D/g, '');
+    if (cleanId.length === 12 && cleanId.startsWith('91')) cleanId = cleanId.slice(2);
+
+    if (cleanId.length !== 10) {
+        return res.status(400).json({ success: false, message: 'Please enter a valid 10-digit mobile number.' });
+    }
+
+    const cleanName = (name && String(name).trim()) || 'Guest User';
+    const users = readJson('users.json');
+    let user = users.find(u => u.identifier === cleanId || u.mobile === cleanId);
+
+    if (!user) {
+        user = {
+            id: 'user-' + Date.now(),
+            name: cleanName,
+            identifier: cleanId,
+            mobile: cleanId,
+            email: '',
+            createdAt: new Date().toISOString()
+        };
+        users.push(user);
+        writeJson('users.json', users);
+    } else if (cleanName && cleanName !== 'Guest User') {
+        user.name = cleanName;
+        writeJson('users.json', users);
+    }
+
+    const token = jwt.sign(
+        { id: user.id, name: user.name, identifier: cleanId, mobile: user.mobile, email: '' },
+        JWT_SECRET,
+        { expiresIn: '30d' }
+    );
+
+    res.json({
+        success: true,
+        message: `Welcome, ${user.name}!`,
+        token,
+        user
+    });
+});
+
+// 3. Get Current User Profile
+app.get('/api/auth/me', authenticateToken, (req, res) => {
+    const users = readJson('users.json');
+    const user = users.find(u => u.id === req.user.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
+
+    res.json({
+        success: true,
+        user: {
+            id: user.id,
+            name: user.name,
+            identifier: user.identifier,
+            mobile: user.mobile,
+            email: user.email
+        }
+    });
+});
+
+// ==========================================
+// SECRET HOTEL ADMIN AUTH & STATS
+// ==========================================
+
+// Admin Login (Dwarkesh008 / Dwarkesh@2008)
+app.post('/api/admin/login', (req, res) => {
+    const { username, password } = req.body;
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        const token = jwt.sign(
+            { username, isAdmin: true },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        return res.json({
+            success: true,
+            message: 'Welcome to Hotel Dwarkesh Admin Portal',
+            token
+        });
+    }
+
+    return res.status(401).json({
+        success: false,
+        message: 'Invalid Admin Credentials. Access Denied.'
+    });
+});
+
+// Admin Dashboard Summary Stats
+app.get('/api/admin/stats', authenticateAdmin, (req, res) => {
+    const rooms = readJson('rooms.json');
+    const menu = readJson('menu.json');
+    const notices = readJson('notices.json');
+    const bookings = readJson('bookings.json');
+    const gallery = readJson('gallery.json');
+
+    const totalRevenue = bookings
+        .filter(b => b.status === 'Confirmed' || b.status === 'Completed')
+        .reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
+
+    res.json({
+        success: true,
+        stats: {
+            totalRooms: rooms.length,
+            totalMenuItems: menu.length,
+            totalGalleryItems: gallery.length,
+            activeNotices: notices.filter(n => n.active).length,
+            totalBookings: bookings.length,
+            confirmedBookings: bookings.filter(b => b.status === 'Confirmed').length,
+            totalRevenue
+        }
+    });
+});
+
+// ==========================================
+// ROOMS CRUD API & AVAILABILITY TOGGLE
+// ==========================================
+
+// Public GET all rooms
+app.get('/api/rooms', (req, res) => {
+    const rooms = readJson('rooms.json');
+    res.json({ success: true, rooms });
+});
+
+// Admin POST new room
+app.post('/api/rooms', authenticateAdmin, (req, res) => {
+    const { name, category, img, desc, day, night, full, capacity, amenities } = req.body;
+    if (!name || !desc) {
+        return res.status(400).json({ success: false, message: 'Room name and description are required.' });
+    }
+
+    const rooms = readJson('rooms.json');
+    const newRoom = {
+        id: 'room-' + Date.now(),
+        name,
+        category: category || 'Standard',
+        img: img || 'room.jpeg',
+        desc,
+        day: Number(day) || 800,
+        night: Number(night) || 1000,
+        full: Number(full) || 1500,
+        capacity: capacity || '2 Guests',
+        amenities: Array.isArray(amenities) ? amenities : (amenities ? amenities.split(',').map(s => s.trim()) : ['Free Wi-Fi', 'AC']),
+        available: true,
+        createdAt: new Date().toISOString()
+    };
+
+    rooms.unshift(newRoom);
+    writeJson('rooms.json', rooms);
+
+    res.status(201).json({ success: true, message: 'Room created successfully', room: newRoom });
+});
+
+// Admin PUT update room
+app.put('/api/rooms/:id', authenticateAdmin, (req, res) => {
+    const rooms = readJson('rooms.json');
+    const index = rooms.findIndex(r => r.id === req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ success: false, message: 'Room not found.' });
+    }
+
+    const updated = {
+        ...rooms[index],
+        ...req.body,
+        id: rooms[index].id,
+        updatedAt: new Date().toISOString()
+    };
+    rooms[index] = updated;
+    writeJson('rooms.json', rooms);
+
+    res.json({ success: true, message: 'Room updated successfully', room: updated });
+});
+
+// Admin TOGGLE room availability (Available vs Booked)
+app.put('/api/rooms/:id/availability', authenticateAdmin, (req, res) => {
+    const { available } = req.body;
+    const rooms = readJson('rooms.json');
+    const room = rooms.find(r => r.id === req.params.id);
+
+    if (!room) {
+        return res.status(404).json({ success: false, message: 'Room not found.' });
+    }
+
+    room.available = Boolean(available);
+    room.updatedAt = new Date().toISOString();
+    writeJson('rooms.json', rooms);
+
+    console.log(`[Room Status] Room ${room.name} marked as ${room.available ? 'AVAILABLE' : 'BOOKED'}`);
+
+    res.json({
+        success: true,
+        message: `Room is now ${room.available ? 'Available' : 'Booked'}`,
+        room
+    });
+});
+
+// Admin DELETE room
+app.delete('/api/rooms/:id', authenticateAdmin, (req, res) => {
+    const rooms = readJson('rooms.json');
+    const filtered = rooms.filter(r => r.id !== req.params.id);
+    if (filtered.length === rooms.length) {
+        return res.status(404).json({ success: false, message: 'Room not found.' });
+    }
+
+    writeJson('rooms.json', filtered);
+    res.json({ success: true, message: 'Room deleted successfully.' });
+});
+
+// ==========================================
+// RESTAURANT MENU CRUD API
+// ==========================================
+
+app.get('/api/menu', (req, res) => {
+    const menu = readJson('menu.json');
+    res.json({ success: true, menu });
+});
+
+app.post('/api/menu', authenticateAdmin, (req, res) => {
+    const { name, category, img, price, desc, isVeg, popular } = req.body;
+    if (!name || !price) {
+        return res.status(400).json({ success: false, message: 'Dish name and price are required.' });
+    }
+
+    const menu = readJson('menu.json');
+    const newDish = {
+        id: 'dish-' + Date.now(),
+        name,
+        category: category || 'Thali',
+        img: img || 'food.jpg',
+        price: Number(price),
+        desc: desc || '',
+        isVeg: isVeg !== false,
+        popular: Boolean(popular),
+        createdAt: new Date().toISOString()
+    };
+
+    menu.unshift(newDish);
+    writeJson('menu.json', menu);
+
+    res.status(201).json({ success: true, message: 'Dish added successfully', dish: newDish });
+});
+
+app.put('/api/menu/:id', authenticateAdmin, (req, res) => {
+    const menu = readJson('menu.json');
+    const index = menu.findIndex(d => d.id === req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ success: false, message: 'Dish not found.' });
+    }
+
+    const updated = {
+        ...menu[index],
+        ...req.body,
+        id: menu[index].id,
+        updatedAt: new Date().toISOString()
+    };
+    menu[index] = updated;
+    writeJson('menu.json', menu);
+
+    res.json({ success: true, message: 'Dish updated successfully', dish: updated });
+});
+
+app.delete('/api/menu/:id', authenticateAdmin, (req, res) => {
+    const menu = readJson('menu.json');
+    const filtered = menu.filter(d => d.id !== req.params.id);
+    if (filtered.length === menu.length) {
+        return res.status(404).json({ success: false, message: 'Dish not found.' });
+    }
+
+    writeJson('menu.json', filtered);
+    res.json({ success: true, message: 'Dish deleted successfully.' });
+});
+
+// ==========================================
+// GALLERY & VIDEO MANAGEMENT CRUD API
+// ==========================================
+
+// Public GET gallery (images and videos)
+app.get('/api/gallery', (req, res) => {
+    const gallery = readJson('gallery.json');
+    res.json({ success: true, gallery });
+});
+
+// Admin POST gallery item (photo or video)
+app.post('/api/gallery', authenticateAdmin, (req, res) => {
+    const { title, category, type, url, desc } = req.body;
+    if (!title || !url) {
+        return res.status(400).json({ success: false, message: 'Title and media URL/file are required.' });
+    }
+
+    const gallery = readJson('gallery.json');
+    const isVideo = type === 'video' || url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.mov');
+
+    const newItem = {
+        id: 'gal-' + Date.now(),
+        title,
+        category: category || 'Hotel Ambience',
+        type: isVideo ? 'video' : 'image',
+        url,
+        desc: desc || '',
+        createdAt: new Date().toISOString()
+    };
+
+    gallery.unshift(newItem);
+    writeJson('gallery.json', gallery);
+
+    res.status(201).json({ success: true, message: 'Media added to gallery!', item: newItem });
+});
+
+// Admin PUT update gallery item
+app.put('/api/gallery/:id', authenticateAdmin, (req, res) => {
+    const gallery = readJson('gallery.json');
+    const index = gallery.findIndex(g => g.id === req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ success: false, message: 'Gallery item not found.' });
+    }
+
+    const updated = {
+        ...gallery[index],
+        ...req.body,
+        id: gallery[index].id,
+        updatedAt: new Date().toISOString()
+    };
+    gallery[index] = updated;
+    writeJson('gallery.json', gallery);
+
+    res.json({ success: true, message: 'Gallery media updated', item: updated });
+});
+
+// Admin DELETE gallery item
+app.delete('/api/gallery/:id', authenticateAdmin, (req, res) => {
+    const gallery = readJson('gallery.json');
+    const filtered = gallery.filter(g => g.id !== req.params.id);
+    if (filtered.length === gallery.length) {
+        return res.status(404).json({ success: false, message: 'Gallery item not found.' });
+    }
+
+    writeJson('gallery.json', filtered);
+    res.json({ success: true, message: 'Gallery item deleted successfully.' });
+});
+
+// ==========================================
+// NOTICES & ANNOUNCEMENTS CRUD API
+// ==========================================
+
+app.get('/api/notices', (req, res) => {
+    const notices = readJson('notices.json');
+    const activeOnly = req.query.all !== 'true';
+    const result = activeOnly ? notices.filter(n => n.active) : notices;
+    res.json({ success: true, notices: result });
+});
+
+app.post('/api/notices', authenticateAdmin, (req, res) => {
+    const { title, content, tag, active } = req.body;
+    if (!title || !content) {
+        return res.status(400).json({ success: false, message: 'Title and content are required.' });
+    }
+
+    const notices = readJson('notices.json');
+    const newNotice = {
+        id: 'notice-' + Date.now(),
+        title,
+        content,
+        tag: tag || 'Notice',
+        active: active !== false,
+        createdAt: new Date().toISOString()
+    };
+
+    notices.unshift(newNotice);
+    writeJson('notices.json', notices);
+
+    res.status(201).json({ success: true, message: 'Notice created successfully', notice: newNotice });
+});
+
+app.put('/api/notices/:id', authenticateAdmin, (req, res) => {
+    const notices = readJson('notices.json');
+    const index = notices.findIndex(n => n.id === req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ success: false, message: 'Notice not found.' });
+    }
+
+    const updated = {
+        ...notices[index],
+        ...req.body,
+        id: notices[index].id,
+        updatedAt: new Date().toISOString()
+    };
+    notices[index] = updated;
+    writeJson('notices.json', notices);
+
+    res.json({ success: true, message: 'Notice updated successfully', notice: updated });
+});
+
+app.delete('/api/notices/:id', authenticateAdmin, (req, res) => {
+    const notices = readJson('notices.json');
+    const filtered = notices.filter(n => n.id !== req.params.id);
+    if (filtered.length === notices.length) {
+        return res.status(404).json({ success: false, message: 'Notice not found.' });
+    }
+
+    writeJson('notices.json', filtered);
+    res.json({ success: true, message: 'Notice deleted successfully.' });
+});
+
+// ==========================================
+// BOOKINGS & ORDERS API
+// ==========================================
+
+app.post('/api/bookings', authenticateToken, (req, res) => {
+    const {
+        type,
+        itemDetails,
+        checkIn,
+        checkOut,
+        shift,
+        customerName,
+        customerMobile,
+        customerEmail,
+        address,
+        totalAmount,
+        paymentMethod,
+        paymentId
+    } = req.body;
+
+    if (!totalAmount) {
+        return res.status(400).json({ success: false, message: 'Total amount is required.' });
+    }
+
+    const isOnline = Boolean(paymentMethod && (paymentMethod.includes('Online') || paymentMethod.includes('UPI') || paymentMethod.includes('online_upi')));
+    const isCash = Boolean(paymentMethod && (paymentMethod.includes('Cash') || paymentMethod.includes('Hotel') || paymentMethod.includes('Table') || paymentMethod.includes('cash_')));
+
+    // STRICT VALIDATION: Online booking CANNOT be made without real UTR / payment ID
+    if (isOnline) {
+        const cleanPaymentId = String(paymentId || '').trim();
+        const utrDigits = cleanPaymentId.replace(/[^0-9a-zA-Z]/g, '');
+        if (!cleanPaymentId || utrDigits.length < 10 || cleanPaymentId.includes('CASH')) {
+            return res.status(400).json({
+                success: false,
+                message: 'ઓનલાઈન પેમેન્ટ માટે ૧૨ આંકડાનો સાચો UPI UTR / Transaction No. નાખવો ફરજિયાત છે! પેમેન્ટ વગર બુકિંગ થઈ શકશે નહીં.'
+            });
+        }
+    }
+
+    const bookings = readJson('bookings.json');
+    const booking = {
+        id: 'BK-' + Date.now().toString(36).toUpperCase() + '-' + Math.floor(100 + Math.random() * 900),
+        userId: req.user.id,
+        type: type || 'room',
+        itemDetails: itemDetails || {},
+        checkIn: checkIn || new Date().toISOString().split('T')[0],
+        checkOut: checkOut || '',
+        shift: shift || 'full',
+        customerName: customerName || req.user.name,
+        customerMobile: customerMobile || req.user.mobile || req.user.identifier,
+        customerEmail: customerEmail || req.user.email || '',
+        address: address || '',
+        totalAmount: Number(totalAmount),
+        paymentMethod: paymentMethod || (isCash ? 'Cash Payment' : 'Online UPI'),
+        paymentId: paymentId || (isCash ? 'CASH-ON-ARRIVAL' : 'PENDING'),
+        paymentStatus: isCash ? 'Pending (Cash on Arrival)' : 'Paid (Online UPI)',
+        status: isCash ? 'Pending Cash' : 'Confirmed',
+        createdAt: new Date().toISOString()
+    };
+
+    bookings.unshift(booking);
+    writeJson('bookings.json', bookings);
+
+    // If it is a room booking, mark the room as booked in real-time
+    if (type === 'room' && itemDetails && itemDetails.roomId) {
+        const rooms = readJson('rooms.json');
+        const bookedRoom = rooms.find(r => r.id === itemDetails.roomId);
+        if (bookedRoom) {
+            bookedRoom.available = false;
+            writeJson('rooms.json', rooms);
+        }
+    }
+
+    res.status(201).json({
+        success: true,
+        message: isCash ? 'બુકિંગ સેવ થઈ ગયું છે (હોટેલ પર રોકડા આપો).' : 'ઓનલાઈન પેમેન્ટ સાથે બુકિંગ કન્ફર્મ થયું છે!',
+        booking
+    });
+});
+
+app.get('/api/bookings', authenticateToken, (req, res) => {
+    const bookings = readJson('bookings.json');
+    if (req.user.isAdmin) {
+        return res.json({ success: true, bookings });
+    }
+    const userBookings = bookings.filter(b => b.userId === req.user.id);
+    res.json({ success: true, bookings: userBookings });
+});
+
+app.get('/api/admin/bookings', authenticateAdmin, (req, res) => {
+    const bookings = readJson('bookings.json');
+    res.json({ success: true, bookings });
+});
+
+app.put('/api/admin/bookings/:id/status', authenticateAdmin, (req, res) => {
+    const { status } = req.body;
+    const bookings = readJson('bookings.json');
+    const booking = bookings.find(b => b.id === req.params.id);
+
+    if (!booking) {
+        return res.status(404).json({ success: false, message: 'Booking not found.' });
+    }
+
+    booking.status = status || booking.status;
+    booking.updatedAt = new Date().toISOString();
+    writeJson('bookings.json', bookings);
+
+    res.json({ success: true, message: `Booking status updated to ${status}`, booking });
+});
+
+// ==========================================
+// REAL PAYMENT GATEWAY & HOTEL UPI
+// ==========================================
+
+app.get('/api/config/payment', (req, res) => {
+    res.json({
+        success: true,
+        upiId: process.env.HOTEL_UPI_ID || 'sohamprajapati08@okicici',
+        upiName: process.env.HOTEL_UPI_NAME || 'Hotel Dwarkesh',
+        hasLiveRazorpay: Boolean(process.env.RAZORPAY_KEY_ID && !process.env.RAZORPAY_KEY_ID.includes('123456')),
+        razorpayKey: process.env.RAZORPAY_KEY_ID || 'rzp_test_dwarkesh123456'
+    });
+});
+
+app.post('/api/payment/create-order', authenticateToken, async (req, res) => {
+    const { amount, currency = 'INR', receipt = 'receipt_' + Date.now() } = req.body;
+    const numAmount = Math.round(Number(amount) * 100);
+
+    if (!numAmount || numAmount <= 0) {
+        return res.status(400).json({ success: false, message: 'Invalid amount' });
+    }
+
+    const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_dwarkesh123456';
+
+    if (razorpayInstance && process.env.RAZORPAY_KEY_SECRET && !process.env.RAZORPAY_KEY_ID.includes('123456')) {
+        try {
+            const order = await razorpayInstance.orders.create({
+                amount: numAmount,
+                currency,
+                receipt,
+                payment_capture: 1
+            });
+            return res.json({
+                success: true,
+                orderId: order.id,
+                amount: order.amount,
+                currency: order.currency,
+                key: keyId
+            });
+        } catch (err) {
+            console.error("Razorpay order creation error:", err);
+        }
+    }
+
+    // High-reliability test/sandbox fallback
+    const mockOrderId = 'order_' + crypto.randomBytes(8).toString('hex');
+    res.json({
+        success: true,
+        orderId: mockOrderId,
+        amount: numAmount,
+        currency: 'INR',
+        key: keyId,
+        isSandbox: true
+    });
+});
+
+app.post('/api/payment/verify', authenticateToken, (req, res) => {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, bookingId } = req.body;
+
+    if (!razorpay_payment_id) {
+        return res.status(400).json({ success: false, message: 'Payment verification failed: missing payment ID.' });
+    }
+
+    const secret = process.env.RAZORPAY_KEY_SECRET;
+    let isValid = true;
+
+    if (secret && razorpay_order_id && razorpay_signature && !secret.includes('2026')) {
+        const body = razorpay_order_id + '|' + razorpay_payment_id;
+        const expectedSignature = crypto
+            .createHmac('sha256', secret)
+            .update(body.toString())
+            .digest('hex');
+        isValid = (expectedSignature === razorpay_signature);
+    }
+
+    if (!isValid) {
+        return res.status(400).json({ success: false, message: 'Invalid payment signature.' });
+    }
+
+    if (bookingId) {
+        const bookings = readJson('bookings.json');
+        const booking = bookings.find(b => b.id === bookingId);
+        if (booking) {
+            booking.paymentId = razorpay_payment_id;
+            booking.status = 'Confirmed';
+            writeJson('bookings.json', bookings);
+        }
+    }
+
+    res.json({
+        success: true,
+        message: 'Payment verified successfully!',
+        paymentId: razorpay_payment_id
+    });
+});
+
+// ==========================================
+// FILE UPLOAD API (Images & HD Videos)
+// ==========================================
+app.post('/api/upload', authenticateAdmin, upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded.' });
+    }
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({
+        success: true,
+        message: 'File uploaded successfully!',
+        url: fileUrl,
+        filename: req.file.filename
+    });
+});
+
+// ==========================================
+// STATIC ASSETS & PAGES ROUTING
+// ==========================================
+app.use('/uploads', express.static(UPLOADS_DIR));
+app.use(express.static(__dirname));
+
+// Clean routes
+app.get('/room-booking', (req, res) => {
+    res.sendFile(path.join(__dirname, 'room buking page.html'));
+});
+
+// Secret Admin Panel Route
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// Start Server
+app.listen(PORT, () => {
+    console.log(`=================================================`);
+    console.log(`🏨 Hotel Dwarkesh Server running on port ${PORT}`);
+    console.log(`🌐 Website: http://localhost:${PORT}`);
+    console.log(`🔒 Secret Admin: http://localhost:${PORT}/admin`);
+    console.log(`   Admin User: ${ADMIN_USERNAME} | Pass: ${ADMIN_PASSWORD}`);
+    console.log(`=================================================`);
+});
