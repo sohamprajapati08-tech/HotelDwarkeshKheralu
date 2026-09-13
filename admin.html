@@ -559,7 +559,7 @@
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px; text-align: left; font-size: 0.86rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 20px; white-space: pre-wrap; max-height: 220px; overflow-y: auto;" id="waMessagePreview"></div>
 
             <a id="waDirectBtn" href="#" target="_blank" class="btn-glass-primary" style="background: #25D366; border: none; color: #fff; font-weight: 700; width: 100%; padding: 13px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: var(--radius-sm); text-decoration: none; box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);">
-                <span style="font-size: 1.25rem;">🟢</span> ગ્રાહકને WhatsApp મોકલો (Open WhatsApp)
+                <span style="font-size: 1.25rem;">🟢</span> Send WhatsApp Message
             </a>
         </div>
     </div>
@@ -1345,8 +1345,8 @@
                     const cleanMob = String(b.customerMobile || '').replace(/\D/g, '');
                     const waMob = cleanMob.length === 12 && cleanMob.startsWith('91') ? cleanMob.slice(2) : cleanMob;
                     const itemDesc = b.itemDetails?.roomName || b.itemDetails?.dishName || b.itemDetails?.name || b.type || 'Room / Dining';
-                    const waStatusText = b.status === 'Completed' ? 'પૂર્ણ થયેલ છે' : (b.status === 'Cancelled' ? 'કેન્સલ થયેલ છે' : 'કન્ફર્મ છે');
-                    const defaultMsg = encodeURIComponent(`🏨 હોટેલ દ્વારકેશ ખેરાલુ: નમસ્તે ${b.customerName || 'ગ્રાહક'}જી, તમારો ઓર્ડર/બુકિંગ #${b.id} (${itemDesc}) ${waStatusText}. હેલ્પલાઇન: +91 6353848203`);
+                    const waStatusText = b.status === 'Completed' ? 'COMPLETED' : (b.status === 'Cancelled' ? 'CANCELLED' : 'CONFIRMED');
+                    const defaultMsg = encodeURIComponent(`🏨 Hotel Dwarkesh Kheralu: Dear ${b.customerName || 'Valued Guest'}, your booking #${b.id} (${itemDesc}) is ${waStatusText}. Helpline: +91 6353848203`);
                     const waLink = waMob.length === 10 ? `https://api.whatsapp.com/send?phone=91${waMob}&text=${defaultMsg}` : '';
                     const bookingDateTime = b.createdAt ? new Date(b.createdAt).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }) : '-';
 
@@ -1405,16 +1405,16 @@
         }
 
         function generateWhatsAppMessage(booking, status) {
-            const custName = booking.customerName || 'આદરણીય ગ્રાહક';
-            const itemDesc = booking.itemDetails?.roomName || booking.itemDetails?.dishName || booking.itemDetails?.name || booking.type || 'રૂમ / ભોજન બુકિંગ';
+            const custName = booking.customerName || 'Valued Guest';
+            const itemDesc = booking.itemDetails?.roomName || booking.itemDetails?.dishName || booking.itemDetails?.name || booking.type || 'Room / Dining';
             const amount = booking.totalAmount || '0';
 
             if (status === 'Completed') {
-                return `🏨 *હોટેલ દ્વારકેશ (ખેરાલુ)*\n\nનમસ્તે *${custName}*જી,\n\nતમારો ઓર્ડર / બુકિંગ સફળતાપૂર્વક *પૂર્ણ (COMPLETED)* થઈ ગયેલ છે! ✅\n\n📋 *બુકિંગ વિગત:*\n• બુકિંગ ID: #${booking.id}\n• આઇટમ: ${itemDesc}\n• કુલ રકમ: ₹${amount}\n\n📍 *હોટેલ સરનામું:*\nચંદ્રપુષ્પા શોપિંગ સેન્ટર, વૃંદાવન સર્કલ પાસે, અંબાજી હાઇવે, ખેરાલુ, ગુજરાત - 384325.\n\n📞 *24/7 હેલ્પલાઇન:* +91 6353848203\n\nહોટેલ દ્વારકેશની મુલાકાત બદલ આપનો ખૂબ ખૂબ આભાર! આપનો દિવસ શુભ રહે! 🙏✨`;
+                return `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${custName}*,\n\nYour order / booking has been successfully *COMPLETED*! ✅\n\n📋 *Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemDesc}\n• Total Amount: ₹${amount}\n\n📍 *Hotel Address:*\nChandra Pushpa Shopping Centre, Near Vrundavan Circle, Ambaji Highway, Kheralu, Gujarat - 384325.\n\n📞 *24/7 Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh! We look forward to serving you again. Have a wonderful day! 🙏✨`;
             } else if (status === 'Cancelled') {
-                return `🏨 *હોટેલ દ્વારકેશ (ખેરાલુ)*\n\nનમસ્તે *${custName}*જી,\n\nતમારો ઓર્ડર / બુકિંગ *કેન્સલ (CANCELLED)* કરવામાં આવેલ છે. ❌\n\n📋 *બુકિંગ વિગત:*\n• બુકિંગ ID: #${booking.id}\n• આઇટમ: ${itemDesc}\n\nજો આપને કોઈ પ્રશ્ન હોય અથવા સહાયની જરૂર હોય તો અમારો સંપર્ક કરો:\n📞 *24/7 હેલ્પલાઇન:* +91 6353848203\n\nહોટેલ દ્વારકેશ ખેરાલુ.`;
+                return `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${custName}*,\n\nYour order / booking has been *CANCELLED*. ❌\n\n📋 *Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemDesc}\n\nIf you have any questions or require assistance, please contact our front desk:\n📞 *24/7 Helpline:* +91 6353848203\n\nHotel Dwarkesh, Kheralu.`;
             } else {
-                return `🏨 *હોટેલ દ્વારકેશ (ખેરાલુ)*\n\nનમસ્તે *${custName}*જી,\n\nતમારું બુકિંગ (#${booking.id}) *કન્ફર્મ (CONFIRMED)* થયેલ છે. ✅\n• આઇટમ: ${itemDesc}\n• રકમ: ₹${amount}\n\n📞 હેલ્પલાઇન: +91 6353848203`;
+                return `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${custName}*,\n\nYour booking (#${booking.id}) is *CONFIRMED*! ✅\n• Item: ${itemDesc}\n• Total Amount: ₹${amount}\n\n📍 *Location:* Near Vrundavan Circle, Ambaji Highway, Kheralu.\n📞 *24/7 Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh! 🙏`;
             }
         }
 
@@ -1506,7 +1506,7 @@
                 tbody.innerHTML = loadedUsersData.map(u => {
                     const cleanMob = String(u.mobile || u.identifier || '').replace(/\D/g, '');
                     const waMob = cleanMob.length === 12 && cleanMob.startsWith('91') ? cleanMob.slice(2) : cleanMob;
-                    const waLink = waMob.length === 10 ? `https://api.whatsapp.com/send?phone=91${waMob}&text=${encodeURIComponent(`નમસ્તે ${u.name || 'ગ્રાહક'}જી, હોટેલ દ્વારકેશ ખેરાલુ તરફથી હાર્દિક સ્વાગત છે.`)}` : '';
+                    const waLink = waMob.length === 10 ? `https://api.whatsapp.com/send?phone=91${waMob}&text=${encodeURIComponent(`Hello ${u.name || 'Valued Guest'}, Greetings from Hotel Dwarkesh Kheralu! How may we assist you today?`)}` : '';
 
                     const regDateTime = u.createdAt ? new Date(u.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
                     const lastActiveDateTime = u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : regDateTime;
@@ -1602,7 +1602,7 @@
                 tbody.innerHTML = loadedContactsData.map(c => {
                     const cleanMob = String(c.mobile || '').replace(/\D/g, '');
                     const waMob = cleanMob.length === 12 && cleanMob.startsWith('91') ? cleanMob.slice(2) : cleanMob;
-                    const waLink = waMob.length === 10 ? `https://api.whatsapp.com/send?phone=91${waMob}&text=${encodeURIComponent(`નમસ્તે ${c.name}જી, હોટેલ દ્વારકેશ ખેરાલુ તરફથી આપની પૂછપરછ (${c.subject || 'ઇન્કવાયરી'}) બાબતે સંપર્ક.`)}` : '';
+                    const waLink = waMob.length === 10 ? `https://api.whatsapp.com/send?phone=91${waMob}&text=${encodeURIComponent(`Hello ${c.name}, Greetings from Hotel Dwarkesh Kheralu regarding your inquiry (${c.subject || 'General Inquiry'}). Helpline: +91 6353848203`)}` : '';
                     const contactDateTime = c.createdAt ? new Date(c.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '-';
 
                     return `

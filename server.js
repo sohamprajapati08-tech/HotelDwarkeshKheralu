@@ -917,20 +917,22 @@ async function sendOrderStatusNotification(booking, newStatus) {
     const customerName = booking.customerName || 'Valued Guest';
     const itemName = booking.itemDetails?.roomName || booking.itemDetails?.dishName || booking.itemDetails?.name || booking.type || 'Room / Dining';
 
-    let statusGuj = 'કન્ફર્મ (Confirmed)';
     let statusEng = 'CONFIRMED';
+    let whatsappMessage = '';
     if (newStatus === 'Completed') {
-        statusGuj = 'સફળતાપૂર્વક પૂર્ણ (COMPLETED)';
         statusEng = 'COMPLETED';
+        whatsappMessage = `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${customerName}*,\n\nYour order / booking has been successfully *COMPLETED*! ✅\n\n📋 *Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemName}\n• Total Amount: ₹${booking.totalAmount}\n\n📍 *Hotel Address:*\nChandra Pushpa Shopping Centre, Near Vrundavan Circle, Ambaji Highway, Kheralu, Gujarat - 384325.\n\n📞 *24/7 Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh! We look forward to welcoming you again. Have a wonderful day! 🙏✨`;
     } else if (newStatus === 'Cancelled') {
-        statusGuj = 'કેન્સલ (CANCELLED)';
         statusEng = 'CANCELLED';
+        whatsappMessage = `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${customerName}*,\n\nYour order / booking has been *CANCELLED*. ❌\n\n📋 *Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemName}\n\nIf you have any questions or need assistance, please contact us:\n📞 *24/7 Helpline:* +91 6353848203\n\nHotel Dwarkesh, Kheralu.`;
+    } else {
+        whatsappMessage = `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${customerName}*,\n\nYour booking (#${booking.id}) is *CONFIRMED*! ✅\n• Item: ${itemName}\n• Total Amount: ₹${booking.totalAmount}\n\n📍 *Location:* Near Vrundavan Circle, Ambaji Highway, Kheralu.\n📞 *24/7 Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh! 🙏`;
     }
 
     const smsMessage = `Hotel Dwarkesh: Dear ${customerName}, your booking #${booking.id} (${itemName}) is now ${statusEng}. Thank you! Helpline: +916353848203`;
-    const gujMessage = `🏨 હોટેલ દ્વારકેશ (ખેરાલુ)\n\nનમસ્તે ${customerName}જી,\nતમારો ઓર્ડર / બુકિંગ #${booking.id} (${itemName}) ${statusGuj} થયેલ છે.\n\nકુલ રકમ: ₹${booking.totalAmount}\nસ્થળ: ચંદ્રપુષ્પા શોપિંગ સેન્ટર, વૃંદાવન સર્કલ, અંબાજી હાઇવે, ખેરાલુ.\nહેલ્પલાઇન: +91 6353848203\n\nહોટેલ દ્વારકેશની મુલાકાત બદલ આભાર! 🙏`;
+    const gujMessage = whatsappMessage;
 
-    const whatsappUrl = cleanMobile.length === 10 ? `https://api.whatsapp.com/send?phone=91${cleanMobile}&text=${encodeURIComponent(gujMessage)}` : '';
+    const whatsappUrl = cleanMobile.length === 10 ? `https://api.whatsapp.com/send?phone=91${cleanMobile}&text=${encodeURIComponent(whatsappMessage)}` : '';
 
     // 1. Fast2SMS Mobile SMS Gateway
     if (process.env.FAST2SMS_API_KEY && cleanMobile.length === 10) {
