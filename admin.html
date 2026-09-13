@@ -436,11 +436,14 @@
 
             <!-- TAB 5: BOOKINGS & ORDERS HUB -->
             <div id="tabBookings" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
                     <div>
                         <h2 style="color: #fff; font-size: 1.8rem;">Customer Bookings & Orders</h2>
                         <p style="color: var(--text-muted); font-size: 0.9rem;">Live view of all verified room bookings and dining reservations</p>
                     </div>
+                    <button class="btn-glass-primary btn-glass-sm" onclick="exportBookingsToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
+                        <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
+                    </button>
                 </div>
 
                 <div class="glass-card" style="padding: 10px; overflow-x: auto;">
@@ -467,11 +470,14 @@
 
             <!-- TAB 6: CONTACT INQUIRIES & MESSAGES -->
             <div id="tabContacts" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
                     <div>
                         <h2 style="color: #fff; font-size: 1.8rem;">Customer Inquiries & Contact Messages</h2>
                         <p style="color: var(--text-muted); font-size: 0.9rem;">Live messages and questions submitted through the Contact Us page</p>
                     </div>
+                    <button class="btn-glass-primary btn-glass-sm" onclick="exportContactsToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
+                        <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
+                    </button>
                 </div>
 
                 <div class="glass-card" style="padding: 10px; overflow-x: auto;">
@@ -1251,7 +1257,9 @@
             } catch (e) {}
         }
 
-        // ================= BOOKINGS =================
+        // ================= BOOKINGS & EXCEL EXPORT =================
+        let loadedBookingsData = [];
+
         async function loadBookings() {
             const tbody = document.getElementById('bookingsTableBody');
             try {
@@ -1259,11 +1267,13 @@
                     headers: { 'Authorization': `Bearer ${getAdminToken()}` }
                 });
                 const data = await res.json();
-                if (!data.bookings || data.bookings.length === 0) {
+                loadedBookingsData = data.bookings || [];
+
+                if (!loadedBookingsData.length) {
                     tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No bookings recorded yet.</td></tr>';
                     return;
                 }
-                tbody.innerHTML = data.bookings.map(b => {
+                tbody.innerHTML = loadedBookingsData.map(b => {
                     const isCash = String(b.paymentId).includes('CASH') || (b.paymentMethod && b.paymentMethod.includes('Cash'));
                     return `
                     <tr>
@@ -1314,7 +1324,9 @@
             } catch (e) {}
         }
 
-        // ================= CONTACT INQUIRIES =================
+        // ================= CONTACT INQUIRIES & EXCEL EXPORT =================
+        let loadedContactsData = [];
+
         async function loadContacts() {
             const tbody = document.getElementById('contactsTableBody');
             try {
@@ -1322,11 +1334,13 @@
                     headers: { 'Authorization': `Bearer ${getAdminToken()}` }
                 });
                 const data = await res.json();
-                if (!data.contacts || data.contacts.length === 0) {
+                loadedContactsData = data.contacts || [];
+
+                if (!loadedContactsData.length) {
                     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No inquiries received yet.</td></tr>';
                     return;
                 }
-                tbody.innerHTML = data.contacts.map(c => `
+                tbody.innerHTML = loadedContactsData.map(c => `
                     <tr>
                         <td><span style="font-size:0.8rem; color:var(--text-muted);">${new Date(c.createdAt).toLocaleDateString()}</span></td>
                         <td><strong>${c.name}</strong></td>
@@ -1358,6 +1372,90 @@
                     loadStats();
                 }
             } catch (e) {}
+        }
+
+        // ================= UNIVERSAL EXCEL (.CSV) EXPORTER =================
+        function exportToExcelFile(data, filename) {
+            if (!data || !data.length) {
+                showToast('Excel માં કન્વર્ટ કરવા માટે કોઈ ડેટા નથી.', 'info');
+                return;
+            }
+
+            const headers = Object.keys(data[0]);
+            const csvRows = [];
+            // Header Row
+            csvRows.push(headers.map(h => `"${h.replace(/"/g, '""')}"`).join(','));
+
+            // Data Rows
+            for (const row of data) {
+                const values = headers.map(header => {
+                    const val = row[header] === null || row[header] === undefined ? '' : String(row[header]);
+                    return `"${val.replace(/"/g, '""')}"`;
+                });
+                csvRows.push(values.join(','));
+            }
+
+            // UTF-8 BOM (\uFEFF) ensures Excel displays Gujarati & English Unicode perfectly
+            const csvContent = '\uFEFF' + csvRows.join('\r\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('Excel (.CSV) ફાઈલ ડાઉનલોડ થઈ ગઈ છે!', 'success');
+        }
+
+        function exportBookingsToExcel() {
+            if (!loadedBookingsData || !loadedBookingsData.length) {
+                showToast('બુકિંગ ડેટા ઉપલબ્ધ નથી.', 'info');
+                return;
+            }
+
+            const formatted = loadedBookingsData.map(b => {
+                const isCash = String(b.paymentId).includes('CASH') || (b.paymentMethod && b.paymentMethod.includes('Cash'));
+                return {
+                    'Booking ID': b.id,
+                    'Date of Booking': b.createdAt ? new Date(b.createdAt).toLocaleDateString() : '',
+                    'Customer Name': b.customerName || 'Guest',
+                    'Mobile Number': b.customerMobile || '',
+                    'Email Address': b.customerEmail || '',
+                    'Room / Dish Ordered': b.itemDetails?.roomName || b.itemDetails?.dishName || b.itemDetails?.name || b.type,
+                    'Check-In Date': b.checkIn || '',
+                    'Shift': b.shift || 'full',
+                    'Total Amount (₹)': b.totalAmount,
+                    'Payment Mode': isCash ? 'Cash on Arrival' : 'Online UPI',
+                    'Payment Ref / UTR': b.paymentId || 'N/A',
+                    'Payment Status': isCash ? 'Pending (Cash at Hotel)' : 'Paid (Verified UPI)',
+                    'Booking Status': b.status || 'Confirmed'
+                };
+            });
+
+            const dateStr = new Date().toISOString().split('T')[0];
+            exportToExcelFile(formatted, `Hotel_Dwarkesh_Bookings_${dateStr}.csv`);
+        }
+
+        function exportContactsToExcel() {
+            if (!loadedContactsData || !loadedContactsData.length) {
+                showToast('કોઈ પૂછપરછ મેસેજ ઉપલબ્ધ નથી.', 'info');
+                return;
+            }
+
+            const formatted = loadedContactsData.map(c => ({
+                'Inquiry ID': c.id,
+                'Date Received': c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '',
+                'Customer Name': c.name,
+                'Mobile Number': c.mobile,
+                'Email Address': c.email || '',
+                'Subject': c.subject || 'General',
+                'Message Details': c.message
+            }));
+
+            const dateStr = new Date().toISOString().split('T')[0];
+            exportToExcelFile(formatted, `Hotel_Dwarkesh_Customer_Inquiries_${dateStr}.csv`);
         }
 
         async function uploadImageFile(event, targetInputId) {
