@@ -292,10 +292,40 @@
             if (nav) nav.classList.toggle('show');
         }
 
-        function handleContactSubmit(e) {
+        async function handleContactSubmit(e) {
             e.preventDefault();
-            HotelAuth.showToast('Thank you! Your message has been received. Our team will contact you shortly.', 'success');
-            document.getElementById('contactForm').reset();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = 'સંદેશો મોકલાઈ રહ્યો છે...';
+            btn.disabled = true;
+
+            const payload = {
+                name: document.getElementById('contactName').value.trim(),
+                mobile: document.getElementById('contactMobile').value.trim(),
+                email: document.getElementById('contactEmail').value.trim(),
+                subject: document.getElementById('contactSubject').value,
+                message: document.getElementById('contactMessage').value.trim()
+            };
+
+            try {
+                const res = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    HotelAuth.showToast(data.message || 'તમારો મેસેજ મળી ગયો છે!', 'success');
+                    document.getElementById('contactForm').reset();
+                } else {
+                    HotelAuth.showToast(data.message || 'મેસેજ મોકલવામાં ભૂલ આવી.', 'error');
+                }
+            } catch (err) {
+                HotelAuth.showToast('સર્વર એરર: મેસેજ મોકલી શકાયો નથી.', 'error');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
         }
     </script>
 </body>

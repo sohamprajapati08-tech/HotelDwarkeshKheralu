@@ -458,6 +458,8 @@ app.get('/api/admin/stats', authenticateAdmin, (req, res) => {
         .filter(b => b.status === 'Confirmed' || b.status === 'Completed')
         .reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
 
+    const contacts = readJson('contacts.json');
+
     res.json({
         success: true,
         stats: {
@@ -467,7 +469,8 @@ app.get('/api/admin/stats', authenticateAdmin, (req, res) => {
             activeNotices: notices.filter(n => n.active).length,
             totalBookings: bookings.length,
             confirmedBookings: bookings.filter(b => b.status === 'Confirmed').length,
-            totalRevenue
+            totalRevenue,
+            totalInquiries: contacts.length
         }
     });
 });
@@ -869,6 +872,76 @@ app.put('/api/admin/bookings/:id/status', authenticateAdmin, (req, res) => {
     writeJson('bookings.json', bookings);
 
     res.json({ success: true, message: `Booking status updated to ${status}`, booking });
+});
+
+// ==========================================
+// CONTACT MESSAGES & INQUIRIES API
+// ==========================================
+
+app.post('/api/contact', async (req, res) => {
+    const { name, mobile, email, subject, message } = req.body;
+    if (!name || !mobile || !message) {
+        return res.status(400).json({ success: false, message: 'Name, mobile, and message are required.' });
+    }
+
+    const contacts = readJson('contacts.json');
+    const newContact = {
+        id: 'MSG-' + Date.now().toString(36).toUpperCase(),
+        name: String(name).trim(),
+        mobile: String(mobile).trim(),
+        email: (email && String(email).trim()) || '',
+        subject: subject || 'General Inquiry',
+        message: String(message).trim(),
+        createdAt: new Date().toISOString()
+    };
+
+    contacts.unshift(newContact);
+    writeJson('contacts.json', contacts);
+
+    // Send email alert to hotel owner
+    if (transporter && process.env.EMAIL_USER) {
+        try {
+            await transporter.sendMail({
+                from: `"Hotel Dwarkesh" <${process.env.EMAIL_USER}>`,
+                to: process.env.HOTEL_OWNER_EMAIL || process.env.EMAIL_USER,
+                subject: `🔔 New Website Inquiry from ${newContact.name} (${newContact.subject})`,
+                html: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; border: 1px solid #ff7a00; border-radius: 8px;">
+                        <h2 style="color: #ff7a00; margin-top: 0;">🏨 Hotel Dwarkesh - New Inquiry Received</h2>
+                        <p><strong>Customer Name:</strong> ${newContact.name}</p>
+                        <p><strong>Mobile Number:</strong> <a href="tel:${newContact.mobile}">${newContact.mobile}</a></p>
+                        <p><strong>Email:</strong> ${newContact.email || 'N/A'}</p>
+                        <p><strong>Subject:</strong> ${newContact.subject}</p>
+                        <p><strong>Message:</strong></p>
+                        <div style="background: #f8f9fa; padding: 14px; border-radius: 6px; border-left: 4px solid #ff7a00; font-size: 15px;">
+                            ${newContact.message}
+                        </div>
+                        <p style="font-size: 12px; color: #888; margin-top: 20px;">Submitted at: ${new Date().toLocaleString()}</p>
+                    </div>
+                `
+            });
+        } catch (e) {
+            console.log("Contact email notification error:", e.message);
+        }
+    }
+
+    res.status(201).json({
+        success: true,
+        message: 'તમારો મેસેજ મળી ગયો છે. હોટેલ ટીમ ટૂંક સમયમાં તમારો સંપર્ક કરશે.',
+        contact: newContact
+    });
+});
+
+app.get('/api/admin/contacts', authenticateAdmin, (req, res) => {
+    const contacts = readJson('contacts.json');
+    res.json({ success: true, contacts });
+});
+
+app.delete('/api/admin/contacts/:id', authenticateAdmin, (req, res) => {
+    const contacts = readJson('contacts.json');
+    const filtered = contacts.filter(c => c.id !== req.params.id);
+    writeJson('contacts.json', filtered);
+    res.json({ success: true, message: 'Inquiry deleted successfully.' });
 });
 
 // ==========================================

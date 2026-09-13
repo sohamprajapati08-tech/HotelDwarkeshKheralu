@@ -241,6 +241,9 @@
                 <div class="admin-nav-item" onclick="switchAdminTab('bookings')">
                     <span>📋</span> Bookings & Orders
                 </div>
+                <div class="admin-nav-item" onclick="switchAdminTab('contacts')">
+                    <span>✉️</span> Inquiries / સંપર્ક મેસેજ
+                </div>
             </nav>
 
             <div style="border-top: 1px solid var(--border-glass); padding-top: 20px;">
@@ -294,6 +297,13 @@
                         <div class="metric-val" id="statGallery">0</div>
                     </div>
                     <div class="metric-icon">📸</div>
+                </div>
+                <div class="glass-card metric-card">
+                    <div>
+                        <div class="metric-label">Inquiries</div>
+                        <div class="metric-val" id="statInquiries">0</div>
+                    </div>
+                    <div class="metric-icon">✉️</div>
                 </div>
             </div>
 
@@ -450,6 +460,35 @@
                         </thead>
                         <tbody id="bookingsTableBody">
                             <tr><td colspan="9" style="text-align: center;">Loading bookings...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 6: CONTACT INQUIRIES & MESSAGES -->
+            <div id="tabContacts" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <div>
+                        <h2 style="color: #fff; font-size: 1.8rem;">Customer Inquiries & Contact Messages</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Live messages and questions submitted through the Contact Us page</p>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 10px; overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Guest Name</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactsTableBody">
+                            <tr><td colspan="7" style="text-align: center;">Loading inquiries...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -724,12 +763,14 @@
             document.getElementById('tabGallery').style.display = tab === 'gallery' ? 'block' : 'none';
             document.getElementById('tabNotices').style.display = tab === 'notices' ? 'block' : 'none';
             document.getElementById('tabBookings').style.display = tab === 'bookings' ? 'block' : 'none';
+            document.getElementById('tabContacts').style.display = tab === 'contacts' ? 'block' : 'none';
 
             if (tab === 'rooms') loadRooms();
             if (tab === 'menu') loadMenu();
             if (tab === 'gallery') loadGallery();
             if (tab === 'notices') loadNotices();
             if (tab === 'bookings') loadBookings();
+            if (tab === 'contacts') loadContacts();
         }
 
         async function loadStats() {
@@ -745,6 +786,9 @@
                     document.getElementById('statMenu').textContent = data.stats.totalMenuItems;
                     if (document.getElementById('statGallery')) {
                         document.getElementById('statGallery').textContent = data.stats.totalGalleryItems || 0;
+                    }
+                    if (document.getElementById('statInquiries')) {
+                        document.getElementById('statInquiries').textContent = data.stats.totalInquiries || 0;
                     }
                 }
             } catch (e) {}
@@ -1265,6 +1309,52 @@
                 if (data.success) {
                     showToast(data.message, 'success');
                     loadBookings();
+                    loadStats();
+                }
+            } catch (e) {}
+        }
+
+        // ================= CONTACT INQUIRIES =================
+        async function loadContacts() {
+            const tbody = document.getElementById('contactsTableBody');
+            try {
+                const res = await fetch('/api/admin/contacts', {
+                    headers: { 'Authorization': `Bearer ${getAdminToken()}` }
+                });
+                const data = await res.json();
+                if (!data.contacts || data.contacts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No inquiries received yet.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = data.contacts.map(c => `
+                    <tr>
+                        <td><span style="font-size:0.8rem; color:var(--text-muted);">${new Date(c.createdAt).toLocaleDateString()}</span></td>
+                        <td><strong>${c.name}</strong></td>
+                        <td><a href="tel:${c.mobile}" style="color:var(--primary); text-decoration:none; font-weight:700;">📞 ${c.mobile}</a></td>
+                        <td>${c.email ? `<a href="mailto:${c.email}" style="color:#cbd5e1; text-decoration:none;">${c.email}</a>` : '-'}</td>
+                        <td><span style="background:rgba(255,122,0,0.15); color:var(--primary); padding:3px 8px; border-radius:6px; font-size:0.8rem; font-weight:600;">${c.subject || 'General'}</span></td>
+                        <td style="max-width:320px; font-size:0.88rem; line-height:1.5;">${c.message}</td>
+                        <td>
+                            <button class="action-btn delete" onclick="deleteContact('${c.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Failed to load inquiries.</td></tr>';
+            }
+        }
+
+        async function deleteContact(id) {
+            if (!confirm('Delete this inquiry?')) return;
+            try {
+                const res = await fetch(`/api/admin/contacts/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${getAdminToken()}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Inquiry deleted', 'info');
+                    loadContacts();
                     loadStats();
                 }
             } catch (e) {}
