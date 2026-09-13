@@ -399,39 +399,9 @@
             }
         }
 
-        // Sync Mobile Drawer Nav
-        const navLinks = document.getElementById('navLinks');
-        if (navLinks) {
-            let mobileAuth = document.getElementById('mobileNavAuthDrawer');
-            if (!mobileAuth) {
-                mobileAuth = document.createElement('div');
-                mobileAuth.id = 'mobileNavAuthDrawer';
-                mobileAuth.className = 'mobile-nav-auth-drawer';
-                navLinks.appendChild(mobileAuth);
-            }
-            const user = window.HotelAuth.getUser();
-            if (user) {
-                const firstLetter = (user.name || 'U').charAt(0).toUpperCase();
-                mobileAuth.innerHTML = `
-                    <div class="mobile-drawer-user">
-                        <div class="user-avatar-circle">${firstLetter}</div>
-                        <div class="mobile-drawer-user-details">
-                            <span class="mobile-drawer-name">${user.name || 'Guest'}</span>
-                            <span class="mobile-drawer-phone">${user.mobile ? '📱 ' + user.mobile : ''}</span>
-                        </div>
-                    </div>
-                    <button class="mobile-drawer-logout-btn" onclick="HotelAuth.logout()">
-                        🚪 Logout (સાઇન આઉટ)
-                    </button>
-                `;
-            } else {
-                mobileAuth.innerHTML = `
-                    <button class="btn-glass-primary mobile-drawer-login-btn" onclick="HotelAuth.showModal()">
-                        👤 Login / સાઇન ઇન
-                    </button>
-                `;
-            }
-        }
+        // Ensure no duplicate mobile drawers exist
+        const existingDrawer = document.getElementById('mobileNavAuthDrawer');
+        if (existingDrawer) existingDrawer.remove();
     }
 
     // =========================================================================

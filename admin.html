@@ -546,6 +546,24 @@
         </main>
     </div>
 
+    <!-- MODAL: WHATSAPP NOTIFICATION POPUP -->
+    <div class="glass-modal-overlay" id="whatsappModal">
+        <div class="glass-modal-box" style="max-width: 500px; text-align: center; border: 1px solid #25D366; box-shadow: 0 0 35px rgba(37, 211, 102, 0.25);">
+            <button class="glass-modal-close" onclick="closeModal('whatsappModal')">✕</button>
+            <div style="font-size: 3rem; margin-bottom: 10px;">📲</div>
+            <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 6px;">WhatsApp Message</h3>
+            <p style="color: #34d399; font-size: 0.88rem; font-weight: 600; margin-bottom: 15px;" id="waModalSubtitle">
+                Customer Notification Ready
+            </p>
+            
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px; text-align: left; font-size: 0.86rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 20px; white-space: pre-wrap; max-height: 220px; overflow-y: auto;" id="waMessagePreview"></div>
+
+            <a id="waDirectBtn" href="#" target="_blank" class="btn-glass-primary" style="background: #25D366; border: none; color: #fff; font-weight: 700; width: 100%; padding: 13px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: var(--radius-sm); text-decoration: none; box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);">
+                <span style="font-size: 1.25rem;">🟢</span> ગ્રાહકને WhatsApp મોકલો (Open WhatsApp)
+            </a>
+        </div>
+    </div>
+
     <!-- MODAL: ADD/EDIT ROOM -->
     <div class="glass-modal-overlay" id="roomModal">
         <div class="glass-modal-box">
@@ -1373,10 +1391,10 @@
                             </span>
                         </td>
                         <td>
-                            <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                            <div style="display:flex; gap:5px; flex-wrap:wrap;">
                                 <button class="action-btn edit" onclick="updateBookingStatus('${b.id}', 'Completed')" title="Complete & Notify">✓ Complete</button>
                                 <button class="action-btn delete" onclick="updateBookingStatus('${b.id}', 'Cancelled')" title="Cancel & Notify">✕ Cancel</button>
-                                ${waLink ? `<a href="${waLink}" target="_blank" class="action-btn" style="border-color:#10b981; color:#34d399; text-decoration:none; display:inline-flex; align-items:center; gap:2px;" title="Send WhatsApp Message">📱 WA</a>` : ''}
+                                <button class="action-btn" style="background:#25D366; color:#fff; border-color:#25D366; font-weight:700; display:inline-flex; align-items:center; gap:3px;" onclick="openWhatsAppForBooking('${b.id}')" title="Send WhatsApp Message">🟢 WhatsApp</button>
                             </div>
                         </td>
                     </tr>
@@ -1386,8 +1404,62 @@
             }
         }
 
+        function generateWhatsAppMessage(booking, status) {
+            const custName = booking.customerName || 'આદરણીય ગ્રાહક';
+            const itemDesc = booking.itemDetails?.roomName || booking.itemDetails?.dishName || booking.itemDetails?.name || booking.type || 'રૂમ / ભોજન બુકિંગ';
+            const amount = booking.totalAmount || '0';
+
+            if (status === 'Completed') {
+                return `🏨 *હોટેલ દ્વારકેશ (ખેરાલુ)*\n\nનમસ્તે *${custName}*જી,\n\nતમારો ઓર્ડર / બુકિંગ સફળતાપૂર્વક *પૂર્ણ (COMPLETED)* થઈ ગયેલ છે! ✅\n\n📋 *બુકિંગ વિગત:*\n• બુકિંગ ID: #${booking.id}\n• આઇટમ: ${itemDesc}\n• કુલ રકમ: ₹${amount}\n\n📍 *હોટેલ સરનામું:*\nચંદ્રપુષ્પા શોપિંગ સેન્ટર, વૃંદાવન સર્કલ પાસે, અંબાજી હાઇવે, ખેરાલુ, ગુજરાત - 384325.\n\n📞 *24/7 હેલ્પલાઇન:* +91 6353848203\n\nહોટેલ દ્વારકેશની મુલાકાત બદલ આપનો ખૂબ ખૂબ આભાર! આપનો દિવસ શુભ રહે! 🙏✨`;
+            } else if (status === 'Cancelled') {
+                return `🏨 *હોટેલ દ્વારકેશ (ખેરાલુ)*\n\nનમસ્તે *${custName}*જી,\n\nતમારો ઓર્ડર / બુકિંગ *કેન્સલ (CANCELLED)* કરવામાં આવેલ છે. ❌\n\n📋 *બુકિંગ વિગત:*\n• બુકિંગ ID: #${booking.id}\n• આઇટમ: ${itemDesc}\n\nજો આપને કોઈ પ્રશ્ન હોય અથવા સહાયની જરૂર હોય તો અમારો સંપર્ક કરો:\n📞 *24/7 હેલ્પલાઇન:* +91 6353848203\n\nહોટેલ દ્વારકેશ ખેરાલુ.`;
+            } else {
+                return `🏨 *હોટેલ દ્વારકેશ (ખેરાલુ)*\n\nનમસ્તે *${custName}*જી,\n\nતમારું બુકિંગ (#${booking.id}) *કન્ફર્મ (CONFIRMED)* થયેલ છે. ✅\n• આઇટમ: ${itemDesc}\n• રકમ: ₹${amount}\n\n📞 હેલ્પલાઇન: +91 6353848203`;
+            }
+        }
+
+        function showWhatsAppModal(booking, status, waUrl) {
+            const modal = document.getElementById('whatsappModal');
+            if (!modal) return;
+            const msgText = generateWhatsAppMessage(booking, status);
+            document.getElementById('waModalSubtitle').textContent = `Customer: ${booking.customerName || 'Guest'} (📞 ${booking.customerMobile || ''})`;
+            document.getElementById('waMessagePreview').textContent = msgText;
+            const directBtn = document.getElementById('waDirectBtn');
+            directBtn.href = waUrl;
+            modal.classList.add('active');
+        }
+
+        function openWhatsAppForBooking(id) {
+            const booking = loadedBookingsData.find(b => b.id === id);
+            if (!booking) return;
+            const cleanMob = String(booking.customerMobile || '').replace(/\D/g, '');
+            const waMob = cleanMob.length === 12 && cleanMob.startsWith('91') ? cleanMob.slice(2) : cleanMob;
+            const msgText = generateWhatsAppMessage(booking, booking.status || 'Confirmed');
+            const waUrl = waMob.length === 10 ? `https://wa.me/91${waMob}?text=${encodeURIComponent(msgText)}` : '';
+            if (waUrl) {
+                window.open(waUrl, '_blank');
+                showWhatsAppModal(booking, booking.status || 'Confirmed', waUrl);
+            } else {
+                showToast('ગ્રાહકનો માન્ય મોબાઈલ નંબર ઉપલબ્ધ નથી.', 'error');
+            }
+        }
+
         async function updateBookingStatus(id, status) {
-            if (!confirm(`શું તમે આ ઓર્ડર / બુકિંગને '${status}' કરવા માંગો છો?\nગ્રાહકના મોબાઈલ પર આપોઆપ મેસેજ મોકલાશે.`)) return;
+            const booking = loadedBookingsData.find(b => b.id === id);
+            if (!booking) return;
+
+            const cleanMob = String(booking.customerMobile || '').replace(/\D/g, '');
+            const waMob = cleanMob.length === 12 && cleanMob.startsWith('91') ? cleanMob.slice(2) : cleanMob;
+            const msgText = generateWhatsAppMessage(booking, status);
+            const waUrl = waMob.length === 10 ? `https://wa.me/91${waMob}?text=${encodeURIComponent(msgText)}` : '';
+
+            if (!confirm(`શું તમે આ ઓર્ડર / બુકિંગને '${status}' કરવા માંગો છો?\nગ્રાહકના WhatsApp પર આપોઆપ મેસેજ ખૂલશે.`)) return;
+
+            // Open WhatsApp immediately upon click
+            if (waUrl) {
+                window.open(waUrl, '_blank');
+            }
+
             try {
                 const res = await fetch(`/api/admin/bookings/${id}/status`, {
                     method: 'PUT',
@@ -1399,17 +1471,12 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showToast(data.message, 'success');
+                    showToast(`ઓર્ડર #${id} ${status} થઈ ગયો છે અને ગ્રાહકનું WhatsApp ખૂલી ગયું છે!`, 'success');
                     loadBookings();
                     loadStats();
 
-                    // If WhatsApp link available, offer 1-click WhatsApp messaging
-                    if (data.whatsappUrl) {
-                        setTimeout(() => {
-                            if (confirm(`મેસેજ પ્રોસેસ થઈ ગયો છે!\nશું તમે ગ્રાહકને વોટ્સએપ પર પણ ડાયરેક્ટ મેસેજ મોકલવા માંગો છો?`)) {
-                                window.open(data.whatsappUrl, '_blank');
-                            }
-                        }, 300);
+                    if (waUrl) {
+                        showWhatsAppModal(booking, status, waUrl);
                     }
                 } else {
                     showToast(data.message || 'Status update failed', 'error');
