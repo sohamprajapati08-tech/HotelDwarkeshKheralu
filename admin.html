@@ -724,6 +724,27 @@
                 તમે આ ડેટાને સીધો Google Drive / Sheets માં ૩ સરળ રીતે કન્વર્ટ કરી શકો છો:
             </p>
 
+            <!-- Success Prompt when Google Sheet is opened -->
+            <div id="gdSuccessPrompt" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 18px;">
+                <div style="font-size: 2.2rem; margin-bottom: 6px;">✅</div>
+                <h4 style="color: #34d399; margin-bottom: 6px; font-size: 1.15rem; font-weight: 700;">ડેટા કોપી થઈ ગયો છે અને નવી Google Sheet ખૂલી ગઈ છે!</h4>
+                <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin-bottom: 12px;">
+                    નવી <strong>Google Sheet</strong> નવી ટેબમાં ખૂલી ગઈ છે.<br>
+                    હવે ફક્ત Google Sheet માં પ્રથમ ખાના (A1) પર ક્લિક કરીને કીબોર્ડ પર <strong style="color: #fff; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 4px; border: 1px solid #34d399; font-size: 0.95rem;">Ctrl + V</strong> (Paste) દબાવો! તમામ કોલમ્સ આપોઆપ ગોઠવાઈ જશે.
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <a href="https://sheets.new" target="_blank" class="btn-glass-primary btn-glass-sm" style="text-decoration: none; padding: 7px 15px; font-weight: 700; background: #10b981;">
+                        🔗 Google Sheet ખોલો
+                    </a>
+                    <button type="button" class="action-btn" onclick="instantGoogleSheetsPaste(true)" style="background: rgba(255,255,255,0.1); border-color: #34d399; color: #34d399; padding: 6px 14px;">
+                        📋 ફરીથી ડેટા કોપી કરો
+                    </button>
+                    <button type="button" class="btn-glass-secondary btn-glass-sm" onclick="closeModal('googleDriveModal')">
+                        સમજાઈ ગયું (Close)
+                    </button>
+                </div>
+            </div>
+
             <!-- Option 1: 1-Click Instant Open & Auto-Paste -->
             <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
                 <div style="margin-bottom: 10px;">
@@ -999,8 +1020,14 @@
             }, 3000);
         }
 
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('active');
+        }
+
         function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -2100,8 +2127,11 @@ function appendSingleRow(sheet, itemObj) {
                 'users': 'Registered Website Users'
             };
             const label = titleMap[activeGdriveCategory] || 'Records';
+            const data = getCategoryExportData(activeGdriveCategory) || [];
             document.getElementById('gdModalTitle').textContent = `${label} -> Google Drive`;
-            document.getElementById('gdModalSubtitle').textContent = `Convert ${activeGdriveCategory.toUpperCase()} data directly to Google Drive / Sheets`;
+            document.getElementById('gdModalSubtitle').textContent = `Convert ${data.length} records directly to Google Drive / Sheets`;
+            const prompt = document.getElementById('gdSuccessPrompt');
+            if (prompt) prompt.style.display = 'none';
             openModal('googleDriveModal');
         }
 
@@ -2153,11 +2183,21 @@ function appendSingleRow(sheet, itemObj) {
             return null;
         }
 
-        async function instantGoogleSheetsPaste() {
+        async function instantGoogleSheetsPaste(copyOnly = false) {
             const data = getCategoryExportData(activeGdriveCategory);
             if (!data || !data.length) {
                 showToast('કન્વર્ટ કરવા માટે કોઈ ડેટા ઉપલબ્ધ નથી.', 'info');
                 return;
+            }
+
+            // Immediately launch new Google Sheet tab in direct user click context
+            let newTab = null;
+            if (!copyOnly) {
+                try {
+                    newTab = window.open('https://sheets.new', '_blank');
+                } catch (e) {
+                    console.warn('Popup blocked:', e);
+                }
             }
 
             const headers = Object.keys(data[0]);
@@ -2172,21 +2212,43 @@ function appendSingleRow(sheet, itemObj) {
             }
             const tsvContent = tsvRows.join('\n');
 
-            try {
-                await navigator.clipboard.writeText(tsvContent);
-            } catch (err) {
-                const ta = document.createElement('textarea');
-                ta.value = tsvContent;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
+            let copied = false;
+            // Primary method: modern clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(tsvContent);
+                    copied = true;
+                } catch (err) {
+                    console.warn('navigator.clipboard failed:', err);
+                }
             }
 
-            // Open sheets.new in new tab
-            window.open('https://sheets.new', '_blank');
-            closeModal('googleDriveModal');
-            showToast('📋 ડેટા કોપી થઈ ગયો છે! નવી Google Sheet માં A1 પર ક્લિક કરી Ctrl + V દબાવો.', 'success');
+            // Fallback method: hidden textarea
+            if (!copied) {
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = tsvContent;
+                    ta.setAttribute('readonly', '');
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-9999px';
+                    ta.style.top = '0';
+                    document.body.appendChild(ta);
+                    ta.focus();
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    copied = true;
+                } catch (e) {
+                    console.warn('execCommand fallback failed:', e);
+                }
+            }
+
+            const prompt = document.getElementById('gdSuccessPrompt');
+            if (prompt) {
+                prompt.style.display = 'block';
+                prompt.scrollIntoView({ behavior: 'smooth' });
+            }
+            showToast('📋 ડેટા કોપી થઈ ગયો છે! Google Sheet માં Ctrl + V દબાવો.', 'success');
         }
 
         async function syncCurrentCategoryToGoogleDrive() {
@@ -2199,7 +2261,9 @@ function appendSingleRow(sheet, itemObj) {
             else if (activeGdriveCategory === 'contacts') exportContactsToExcel();
             else if (activeGdriveCategory === 'users') exportUsersToExcel();
 
-            window.open('https://drive.google.com/drive/u/0/my-drive', '_blank');
+            setTimeout(() => {
+                window.open('https://drive.google.com/drive/my-drive', '_blank');
+            }, 300);
             closeModal('googleDriveModal');
         }
 
