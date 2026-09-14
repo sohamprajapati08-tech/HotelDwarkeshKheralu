@@ -3,6 +3,16 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
+      "package_name": "com.onrender.hoteldwarkeshkheralu.twa",
+      "sha256_cert_fingerprints": [
+        "90:ED:C3:CF:37:A1:58:C6:F6:25:A5:F2:7F:77:90:23:51:97:6D:16:51:4F:6B:9C:D9:98:A7:AE:5D:95:AE:41"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
       "package_name": "com.hoteldwarkesh.app",
       "sha256_cert_fingerprints": [
         "7B:C0:4F:3B:C7:77:8C:BC:BA:04:62:98:6F:3B:1E:71:97:68:50:72:42:B4:8D:BF:54:C8:A4:A9:3B:A1:49:7C"
