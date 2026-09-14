@@ -2,3 +2,7 @@ node_modules/
 .env
 .DS_Store
 Thumbs.db
+android/.gradle/
+android/app/build/
+android/build/
+*.lock
