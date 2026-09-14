@@ -1477,13 +1477,15 @@ html.is-app-mode .app-only-header {
 }
 
 @media (max-width: 768px) {
-    /* 1. HIDE OLD DESKTOP NAVBAR & 20MB HERO VIDEO */
-    .glass-nav {
-        display: none !important;
-    }
-    .hero-video-container {
-        display: none !important;
-    }
+    /* 1. HIDE ALL DESKTOP SECTIONS & WEBSITE FOOTER IN MOBILE APP */
+    .glass-nav,
+    .hero-video-container,
+    .hero-running-ticker,
+    .glass-slider-section,
+    .section-container,
+    .glass-back-to-top,
+    .glass-footer,
+    footer,
     .app-only-header {
         display: none !important;
     }
@@ -1491,10 +1493,26 @@ html.is-app-mode .app-only-header {
     /* 2. SHOW MOBILE APP LAYOUT */
     .mobile-app-layout {
         display: block !important;
-        padding: 16px 16px 85px;
+        padding: 0 16px 95px !important;
         background: #080C14;
         color: #FFFFFF;
         min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* 3. STICKY FIXED TOP HEADER (GREETING + SEARCH + CATEGORIES FIXED ON SCROLL) */
+    .app-sticky-top-wrap {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1000 !important;
+        background: #080C14 !important;
+        padding-top: 14px !important;
+        padding-bottom: 4px !important;
+        margin-left: -16px !important;
+        margin-right: -16px !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55) !important;
     }
 
     /* Top Greeting Header */
@@ -1502,7 +1520,7 @@ html.is-app-mode .app-only-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 16px;
+        margin-bottom: 14px;
     }
 
     .app-greeting-title {
@@ -1737,18 +1755,18 @@ html.is-app-mode .app-only-header {
         gap: 4px;
     }
 
-    /* 2-Column Recommended Rooms Grid */
+    /* 2-Column Recommended Rooms Grid - Compact Sleek Design */
     .app-recommend-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 25px;
+        gap: 9px;
+        margin-bottom: 20px;
     }
 
     .app-stay-card {
         background: rgba(20, 27, 43, 0.95);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 18px;
+        border-radius: 14px;
         overflow: hidden;
         cursor: pointer;
         display: flex;
@@ -1762,7 +1780,7 @@ html.is-app-mode .app-only-header {
 
     .stay-thumb-box {
         position: relative;
-        height: 115px;
+        height: 86px;
         width: 100%;
         overflow: hidden;
     }
@@ -1775,15 +1793,15 @@ html.is-app-mode .app-only-header {
 
     .stay-badge-tag {
         position: absolute;
-        top: 8px;
-        left: 8px;
-        background: rgba(30, 41, 59, 0.85);
-        backdrop-filter: blur(8px);
+        top: 6px;
+        left: 6px;
+        background: rgba(15, 23, 42, 0.88);
+        backdrop-filter: blur(6px);
         color: #38BDF8;
-        font-size: 0.65rem;
+        font-size: 0.58rem;
         font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 6px;
+        padding: 2px 6px;
+        border-radius: 5px;
     }
     .stay-badge-tag.tag-food {
         color: #34D399;
@@ -1791,18 +1809,18 @@ html.is-app-mode .app-only-header {
 
     .stay-rating-pill {
         position: absolute;
-        bottom: 8px;
-        left: 8px;
-        background: rgba(0, 0, 0, 0.75);
+        bottom: 6px;
+        left: 6px;
+        background: rgba(0, 0, 0, 0.8);
         color: #FBBF24;
-        font-size: 0.68rem;
+        font-size: 0.62rem;
         font-weight: 700;
-        padding: 2px 7px;
-        border-radius: 6px;
+        padding: 2px 6px;
+        border-radius: 5px;
     }
 
     .stay-card-info {
-        padding: 10px;
+        padding: 7px 8px;
         display: flex;
         flex-direction: column;
         flex: 1;
@@ -1810,30 +1828,33 @@ html.is-app-mode .app-only-header {
     }
 
     .stay-card-name {
-        font-size: 0.82rem;
+        font-size: 0.74rem;
         font-weight: 700;
         color: #F8FAFC;
-        margin: 0 0 6px 0;
-        line-height: 1.25;
+        margin: 0 0 4px 0;
+        line-height: 1.2;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     .stay-price-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-top: 2px;
     }
 
     .stay-price-amount {
-        font-size: 0.90rem;
+        font-size: 0.80rem;
         font-weight: 800;
         color: #F59E0B;
     }
     .stay-price-amount small {
-        font-size: 0.65rem;
+        font-size: 0.58rem;
         color: #94A3B8;
     }
 
@@ -1841,10 +1862,10 @@ html.is-app-mode .app-only-header {
         background: #D4AF37;
         color: #0B0F19;
         border: none;
-        border-radius: 8px;
-        font-size: 0.72rem;
+        border-radius: 6px;
+        font-size: 0.66rem;
         font-weight: 800;
-        padding: 4px 10px;
+        padding: 3px 8px;
         cursor: pointer;
     }
     .stay-quick-book-btn.btn-food {
@@ -1944,6 +1965,11 @@ html.light-theme .app-greeting-title {
 
 html.light-theme .app-greeting-sub {
     color: #64748B !important;
+}
+
+html.light-theme .app-sticky-top-wrap {
+    background: #F1F5F9 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
 }
 
 html.light-theme .app-menu-pill-btn {
