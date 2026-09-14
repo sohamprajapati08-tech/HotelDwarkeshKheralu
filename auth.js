@@ -27,6 +27,11 @@
                 window.location.reload();
             }, 800);
         },
+        handleUserBadgeClick: () => {
+            if (window.innerWidth <= 768 && typeof window.toggleMobileMenu === 'function') {
+                window.toggleMobileMenu();
+            }
+        },
         requireAuth: (actionCallback) => {
             if (window.HotelAuth.isLoggedIn()) {
                 if (typeof actionCallback === 'function') actionCallback(window.HotelAuth.getUser());
@@ -382,7 +387,7 @@
                 const firstLetter = (user.name || 'U').charAt(0).toUpperCase();
                 const firstName = (user.name || 'Guest').split(' ')[0];
                 navAuth.innerHTML = `
-                    <div class="user-profile-badge" title="Logged in as ${user.name}">
+                    <div class="user-profile-badge" onclick="HotelAuth.handleUserBadgeClick()" title="Logged in as ${user.name}">
                         <div class="user-avatar-circle">${firstLetter}</div>
                         <span class="user-profile-name">${firstName}</span>
                     </div>
@@ -396,6 +401,33 @@
                         Login
                     </button>
                 `;
+            }
+        }
+
+        // Also ensure mobile navigation links contain a clean full-width Logout button when logged in
+        const navLinks = document.getElementById('navLinks') || document.querySelector('.nav-links');
+        if (navLinks) {
+            let mobileUserItem = document.getElementById('mobileNavUserItem');
+            const user = window.HotelAuth.getUser();
+            if (user) {
+                if (!mobileUserItem) {
+                    mobileUserItem = document.createElement('div');
+                    mobileUserItem.id = 'mobileNavUserItem';
+                    mobileUserItem.className = 'mobile-nav-user-item';
+                    navLinks.appendChild(mobileUserItem);
+                }
+                const firstLetter = (user.name || 'U').charAt(0).toUpperCase();
+                mobileUserItem.innerHTML = `
+                    <div class="mobile-user-card">
+                        <div class="mobile-user-info">
+                            <div class="user-avatar-circle" style="width: 28px; height: 28px; font-size: 0.8rem;">${firstLetter}</div>
+                            <span class="mobile-user-name">${user.name || 'Guest'}</span>
+                        </div>
+                        <button class="btn-glass-secondary btn-glass-sm" onclick="HotelAuth.logout()" style="padding: 6px 14px; font-size: 0.8rem;">Logout</button>
+                    </div>
+                `;
+            } else if (mobileUserItem) {
+                mobileUserItem.remove();
             }
         }
 
