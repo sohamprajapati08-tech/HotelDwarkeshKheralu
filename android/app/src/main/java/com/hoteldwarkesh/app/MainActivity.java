@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private final static int FILE_CHOOSER_RESULT_CODE = 1001;
 
     // Live Render URL
-    private static final String DEFAULT_URL = "https://hoteldwarkeshkheralu.onrender.com";
+    private static final String DEFAULT_URL = "https://hoteldwarkeshkheralu.onrender.com/?app=true";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
