@@ -929,11 +929,34 @@ body {
     }
     .ticker-label {
         font-size: 0.72rem;
-        padding: 0 12px;
+        padding: 0 10px;
+        gap: 5px;
+    }
+    .ticker-pulse {
+        width: 6px;
+        height: 6px;
+    }
+    .ticker-text-desktop {
+        display: none;
+    }
+    .ticker-text-mobile {
+        display: inline-block;
+        font-weight: 800;
+        font-size: 0.72rem;
+        letter-spacing: 0.5px;
+    }
+    .ticker-track-wrap {
+        mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent);
     }
     .ticker-item {
         font-size: 0.82rem;
-        padding: 0 16px;
+        padding: 0 14px;
+        gap: 6px;
+    }
+    .ticker-tag {
+        font-size: 0.65rem;
+        padding: 1px 6px;
     }
 
     .hero-badge {

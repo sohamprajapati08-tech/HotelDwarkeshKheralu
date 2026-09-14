@@ -35,7 +35,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            filter: brightness(0.68);
+            filter: brightness(0.85) contrast(1.05);
         }
 
         .hero-overlay-content {
@@ -46,7 +46,7 @@
             justify-content: center;
             padding: 95px 24px 70px;
             box-sizing: border-box;
-            background: radial-gradient(circle at center, rgba(46, 71, 61, 0.45) 0%, rgba(30, 49, 41, 0.75) 65%, rgba(18, 30, 25, 0.95) 100%);
+            background: radial-gradient(ellipse at center, rgba(22, 18, 15, 0.40) 0%, rgba(18, 14, 12, 0.65) 55%, rgba(10, 8, 7, 0.88) 100%);
         }
 
         /* Unboxed Pure Premium Text (No Box, No Card) */
@@ -150,20 +150,21 @@
             font-size: 1.05rem;
             font-weight: 700;
             border-radius: var(--radius-pill);
-            background: rgba(46, 71, 61, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(245, 240, 230, 0.4);
+            background: rgba(245, 240, 230, 0.12);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(245, 240, 230, 0.45);
             color: #F5F0E6 !important;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
             transition: all 0.3s ease;
         }
 
         .hero-cta-group .btn-glass-secondary:hover {
-            background: rgba(46, 71, 61, 0.95);
-            border-color: #F5F0E6;
+            background: rgba(200, 112, 91, 0.28);
+            border-color: var(--accent);
             transform: translateY(-3px) scale(1.03);
             color: #ffffff !important;
+            box-shadow: 0 10px 35px rgba(200, 112, 91, 0.3);
         }
 
         /* ===== RUNNING NOTICE TICKER (MARQUEE LINE) ===== */
@@ -173,7 +174,7 @@
             left: 0;
             width: 100%;
             height: 48px;
-            background: rgba(30, 49, 41, 0.96);
+            background: rgba(18, 14, 12, 0.96);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             border-top: 1px solid rgba(200, 112, 91, 0.4);
@@ -181,7 +182,7 @@
             align-items: center;
             overflow: hidden;
             z-index: 20;
-            box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.4);
         }
 
         .ticker-label {
@@ -194,12 +195,20 @@
             font-weight: 800;
             letter-spacing: 1px;
             text-transform: uppercase;
-            padding: 0 20px;
+            padding: 0 18px;
             height: 100%;
             white-space: nowrap;
             z-index: 2;
             box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
             flex-shrink: 0;
+        }
+
+        .ticker-text-desktop {
+            display: inline;
+        }
+
+        .ticker-text-mobile {
+            display: none;
         }
 
         .ticker-pulse {
@@ -391,6 +400,54 @@
                 height: 350px;
             }
         }
+
+        @media (max-width: 600px) {
+            .hero-overlay-content {
+                padding: 85px 16px 52px !important;
+            }
+            .hero-title {
+                font-size: clamp(1.75rem, 6.8vw, 2.3rem) !important;
+                margin-bottom: 12px !important;
+            }
+            .hero-subtitle {
+                font-size: 0.92rem !important;
+                margin-bottom: 20px !important;
+                line-height: 1.5 !important;
+            }
+            .hero-running-ticker {
+                height: 42px !important;
+            }
+            .ticker-text-desktop {
+                display: none !important;
+            }
+            .ticker-text-mobile {
+                display: inline-block !important;
+                font-size: 0.72rem !important;
+                letter-spacing: 0.5px !important;
+                font-weight: 800 !important;
+            }
+            .ticker-label {
+                padding: 0 10px !important;
+                gap: 5px !important;
+            }
+            .ticker-pulse {
+                width: 6px !important;
+                height: 6px !important;
+            }
+            .ticker-track-wrap {
+                mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent) !important;
+                -webkit-mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent) !important;
+            }
+            .ticker-item {
+                padding: 0 14px !important;
+                font-size: 0.82rem !important;
+                gap: 6px !important;
+            }
+            .ticker-tag {
+                font-size: 0.65rem !important;
+                padding: 1px 6px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -456,7 +513,8 @@
             <div class="hero-running-ticker" id="heroRunningTicker">
                 <div class="ticker-label">
                     <span class="ticker-pulse"></span>
-                    <span>LATEST ANNOUNCEMENTS</span>
+                    <span class="ticker-text-desktop">LATEST ANNOUNCEMENTS</span>
+                    <span class="ticker-text-mobile">UPDATES</span>
                 </div>
                 <div class="ticker-track-wrap">
                     <div class="ticker-track" id="tickerTrack">
@@ -761,8 +819,12 @@
                 </div>
             `).join('');
 
-            // Repeat to ensure seamless continuous scroll
-            track.innerHTML = itemsHtml + itemsHtml + itemsHtml;
+            // Duplicate for seamless 50% translation infinite loop
+            track.innerHTML = itemsHtml + itemsHtml;
+
+            // Touch-pause support on mobile devices for easy reading
+            track.addEventListener('touchstart', () => { track.style.animationPlayState = 'paused'; }, { passive: true });
+            track.addEventListener('touchend', () => { track.style.animationPlayState = 'running'; }, { passive: true });
         }
         loadHomeNotice();
     </script>
