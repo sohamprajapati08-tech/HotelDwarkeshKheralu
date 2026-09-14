@@ -90,7 +90,7 @@
 
                 <div class="glass-tab-nav">
                     <button class="glass-tab-btn active" id="tabBtnMobile" onclick="switchAuthTab('mobile')">📱 Mobile Login</button>
-                    <button class="glass-tab-btn" id="tabBtnEmail" onclick="switchAuthTab('email')">✉️ Gmail Real OTP</button>
+                    <button class="glass-tab-btn" id="tabBtnEmail" onclick="switchAuthTab('email')">✉️ Gmail OTP</button>
                 </div>
 
                 <!-- Mobile Auth Tab (Fast Direct Free Login) -->

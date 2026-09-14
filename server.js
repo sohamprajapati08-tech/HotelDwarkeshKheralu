@@ -889,6 +889,13 @@ app.post('/api/bookings', authenticateToken, (req, res) => {
         }
     }
 
+    // Auto-sync new booking to Google Drive / Sheets in real-time if enabled
+    triggerGoogleSheetsSync({
+        action: 'append_booking',
+        type: 'bookings',
+        booking: formatBookingForSheet(booking)
+    });
+
     res.status(201).json({
         success: true,
         message: isCash ? 'બુકિંગ સેવ થઈ ગયું છે (હોટેલ પર રોકડા આપો).' : 'ઓનલાઈન પેમેન્ટ સાથે બુકિંગ કન્ફર્મ થયું છે!',
@@ -1072,6 +1079,13 @@ app.post('/api/contact', async (req, res) => {
         }
     }
 
+    // Auto-sync new customer inquiry to Google Drive / Sheets in real-time if enabled
+    triggerGoogleSheetsSync({
+        action: 'append_contact',
+        type: 'contacts',
+        contact: formatContactForSheet(newContact)
+    });
+
     res.status(201).json({
         success: true,
         message: 'તમારો મેસેજ મળી ગયો છે. હોટેલ ટીમ ટૂંક સમયમાં તમારો સંપર્ક કરશે.',
@@ -1201,6 +1215,173 @@ app.post('/api/upload', authenticateAdmin, upload.single('image'), (req, res) =>
         url: fileUrl,
         filename: req.file.filename
     });
+});
+
+// ==========================================
+// GOOGLE DRIVE & GOOGLE SHEETS LIVE SYNC HELPERS & API
+// ==========================================
+
+function formatBookingForSheet(b) {
+    const isCash = String(b.paymentId).includes('CASH') || (b.paymentMethod && b.paymentMethod.includes('Cash'));
+    return {
+        'Booking ID': b.id,
+        'Date & Time of Booking': b.createdAt ? new Date(b.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : '',
+        'Customer Name': b.customerName || 'Guest',
+        'Mobile Number': b.customerMobile || '',
+        'Email Address': b.customerEmail || '',
+        'Room / Dish Ordered': b.itemDetails?.roomName || b.itemDetails?.dishName || b.itemDetails?.name || b.type || '',
+        'Check-In Date': b.checkIn || '',
+        'Shift': b.shift || 'full',
+        'Total Amount (₹)': b.totalAmount || 0,
+        'Payment Mode': isCash ? 'Cash on Arrival' : 'Online UPI',
+        'Payment Ref / UTR': b.paymentId || 'N/A',
+        'Payment Status': isCash ? 'Pending (Cash at Hotel)' : 'Paid (Verified UPI)',
+        'Booking Status': b.status || 'Confirmed'
+    };
+}
+
+function formatContactForSheet(c) {
+    return {
+        'Inquiry ID': c.id,
+        'Date & Time Received': c.createdAt ? new Date(c.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : '',
+        'Guest Name': c.name || '',
+        'Phone Number': c.mobile || '',
+        'Email Address': c.email || '',
+        'Subject': c.subject || 'General Inquiry',
+        'Message Details': c.message || ''
+    };
+}
+
+function formatUserForSheet(u) {
+    return {
+        'User ID': u.id,
+        'Customer Name': u.name || 'Guest User',
+        'Mobile Number': u.mobile || u.identifier || '',
+        'Email Address': u.email || '',
+        'Registration Date & Time': u.createdAt ? new Date(u.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'N/A',
+        'Last Active Date & Time': u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'N/A',
+        'Total Bookings Count': u.totalBookings || 0,
+        'Total Spent Amount (₹)': u.totalSpent || 0
+    };
+}
+
+async function triggerGoogleSheetsSync(payload) {
+    try {
+        const settings = readJson('settings.json', { googleSheetWebhookUrl: '', autoSyncDrive: false });
+        if (!settings.googleSheetWebhookUrl || !settings.autoSyncDrive) return;
+
+        await fetch(settings.googleSheetWebhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            redirect: 'follow'
+        });
+        console.log(`[Google Sheets Auto-Sync] Sent successfully for ${payload.action || payload.type}`);
+    } catch (e) {
+        console.warn(`[Google Sheets Auto-Sync Warning]:`, e.message);
+    }
+}
+
+// GET admin settings (Google Drive / Sheets config)
+app.get('/api/admin/settings', authenticateAdmin, (req, res) => {
+    const settings = readJson('settings.json', {
+        googleSheetWebhookUrl: '',
+        autoSyncDrive: false
+    });
+    res.json({ success: true, settings });
+});
+
+// POST admin settings (Google Drive / Sheets config)
+app.post('/api/admin/settings', authenticateAdmin, (req, res) => {
+    const { googleSheetWebhookUrl, autoSyncDrive } = req.body;
+    const settings = readJson('settings.json', {
+        googleSheetWebhookUrl: '',
+        autoSyncDrive: false
+    });
+
+    if (googleSheetWebhookUrl !== undefined) {
+        settings.googleSheetWebhookUrl = String(googleSheetWebhookUrl).trim();
+    }
+    if (autoSyncDrive !== undefined) {
+        settings.autoSyncDrive = Boolean(autoSyncDrive);
+    }
+
+    writeJson('settings.json', settings);
+    res.json({
+        success: true,
+        message: 'Google Drive સેટિંગ્સ સફળતાપૂર્વક સાચવવામાં આવ્યા છે.',
+        settings
+    });
+});
+
+// POST manual sync to Google Drive / Sheets
+app.post('/api/admin/sync-google-sheets', authenticateAdmin, async (req, res) => {
+    const { type } = req.body; // 'bookings', 'contacts', 'users', or 'all'
+    const settings = readJson('settings.json', { googleSheetWebhookUrl: '', autoSyncDrive: false });
+
+    if (!settings.googleSheetWebhookUrl) {
+        return res.status(400).json({
+            success: false,
+            message: 'Google Sheets Webhook URL સેટ કરેલ નથી. કૃપા કરીને સેટિંગ્સમાં Webhook URL દાખલ કરો.'
+        });
+    }
+
+    try {
+        const payload = { type: type || 'all', timestamp: new Date().toISOString() };
+
+        if (type === 'bookings' || type === 'all' || !type) {
+            const bookings = readJson('bookings.json');
+            payload.bookings = bookings.map(formatBookingForSheet);
+        }
+
+        if (type === 'contacts' || type === 'all' || !type) {
+            const contacts = readJson('contacts.json');
+            payload.contacts = contacts.map(formatContactForSheet);
+        }
+
+        if (type === 'users' || type === 'all' || !type) {
+            const users = readJson('users.json');
+            const bookings = readJson('bookings.json');
+            const enriched = users.map(user => {
+                const cleanUserMobile = user.mobile ? String(user.mobile).replace(/\D/g, '') : '';
+                const userBookings = bookings.filter(b => {
+                    const cleanBookingMobile = b.customerMobile ? String(b.customerMobile).replace(/\D/g, '') : '';
+                    return b.userId === user.id || (cleanUserMobile && cleanBookingMobile && cleanUserMobile === cleanBookingMobile);
+                });
+                const totalSpent = userBookings
+                    .filter(b => b.status === 'Confirmed' || b.status === 'Completed')
+                    .reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
+                return {
+                    ...user,
+                    totalBookings: userBookings.length,
+                    totalSpent
+                };
+            });
+            payload.users = enriched.map(formatUserForSheet);
+        }
+
+        const gRes = await fetch(settings.googleSheetWebhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            redirect: 'follow'
+        });
+
+        const gText = await gRes.text();
+        console.log('[Google Sheets Manual Sync Result]:', gText);
+
+        res.json({
+            success: true,
+            message: 'Google Drive / Sheets માં ડેટા સફળતાપૂર્વક મોકલાઈ ગયો છે!',
+            response: gText
+        });
+    } catch (err) {
+        console.error('Google Sheets Sync Failed:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Google Sheets સાથે કનેક્ટ કરવામાં ભૂલ આવી: ' + err.message
+        });
+    }
 });
 
 // ==========================================

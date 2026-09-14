@@ -15,13 +15,17 @@
 
     <style>
         /* Specific page enhancements */
+        /* Full-screen 100vh Hero Video Container without bottom gap */
         .hero-video-container {
             position: relative;
             width: 100%;
-            height: 92vh;
-            min-height: 600px;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
             overflow: hidden;
-            border-bottom: 1px solid var(--border-glass);
+            margin: 0;
+            padding: 0;
+            border-bottom: none;
         }
 
         .hero-video-container video {
@@ -31,7 +35,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            filter: brightness(0.7);
+            filter: brightness(0.68);
         }
 
         .hero-overlay-content {
@@ -40,71 +44,227 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 105px 20px 30px;
+            padding: 95px 24px 70px;
             box-sizing: border-box;
-            background: radial-gradient(circle at center, rgba(10, 14, 26, 0.4) 0%, rgba(10, 14, 26, 0.85) 100%);
+            background: radial-gradient(circle at center, rgba(10, 14, 26, 0.2) 0%, rgba(10, 14, 26, 0.6) 55%, rgba(6, 9, 18, 0.92) 100%);
         }
 
-        .hero-glass-box {
-            background: rgba(18, 26, 47, 0.72);
-            backdrop-filter: var(--glass-blur-heavy);
-            -webkit-backdrop-filter: var(--glass-blur-heavy);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: var(--radius-lg);
-            padding: 45px 55px;
+        /* Unboxed Pure Premium Text (No Box, No Card) */
+        .hero-text-wrapper {
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            padding: 0 !important;
             text-align: center;
-            max-width: 820px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(255, 122, 0, 0.2);
-            animation: heroFloat 4s ease-in-out infinite alternate;
+            max-width: 980px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 5;
+            animation: heroFloat 5s ease-in-out infinite alternate;
         }
 
         @keyframes heroFloat {
             0% { transform: translateY(0); }
-            100% { transform: translateY(-8px); }
+            100% { transform: translateY(-7px); }
         }
 
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 122, 0, 0.15);
-            border: 1px solid rgba(255, 122, 0, 0.35);
-            padding: 6px 18px;
+            background: rgba(255, 122, 0, 0.16);
+            border: 1px solid rgba(255, 122, 0, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 8px 24px;
             border-radius: var(--radius-pill);
-            color: #ff9d3b;
-            font-size: 0.9rem;
+            color: #ffaa48;
+            font-size: 0.92rem;
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(255, 122, 0, 0.3);
         }
 
         .hero-title {
-            font-size: clamp(2.2rem, 5vw, 3.8rem);
-            font-weight: 800;
+            font-size: clamp(2.5rem, 5.8vw, 4.4rem);
+            font-weight: 900;
             color: #ffffff;
             line-height: 1.15;
-            margin-bottom: 18px;
+            margin-bottom: 22px;
+            letter-spacing: -0.5px;
+            text-shadow: 0 3px 18px rgba(0, 0, 0, 0.9);
         }
 
         .hero-title span {
-            background: var(--primary-gradient);
+            color: #ff9d3b;
+            background: linear-gradient(135deg, #ffd180 0%, #ff9100 50%, #ff5722 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: none;
+            filter: drop-shadow(0 3px 16px rgba(255, 122, 0, 0.5));
+            display: inline-block;
         }
 
         .hero-subtitle {
-            font-size: 1.15rem;
-            color: var(--text-secondary);
-            margin-bottom: 30px;
-            line-height: 1.6;
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: #f1f5f9;
+            margin: 0 auto 36px;
+            line-height: 1.65;
+            max-width: 820px;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.95), 0 1px 6px rgba(0, 0, 0, 0.95);
+            font-weight: 400;
         }
 
         .hero-cta-group {
             display: flex;
-            gap: 15px;
+            gap: 18px;
             justify-content: center;
             flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .hero-cta-group .btn-glass-primary {
+            padding: 14px 34px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-radius: var(--radius-pill);
+            box-shadow: 0 8px 30px rgba(255, 122, 0, 0.45);
+            transition: all 0.3s ease;
+        }
+
+        .hero-cta-group .btn-glass-primary:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 12px 35px rgba(255, 122, 0, 0.65);
+        }
+
+        .hero-cta-group .btn-glass-secondary {
+            padding: 14px 34px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-radius: var(--radius-pill);
+            background: rgba(18, 26, 47, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .hero-cta-group .btn-glass-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-3px) scale(1.03);
+            color: #fff;
+        }
+
+        /* ===== RUNNING NOTICE TICKER (MARQUEE LINE) ===== */
+        .hero-running-ticker {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background: rgba(8, 12, 22, 0.92);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-top: 1px solid rgba(255, 122, 0, 0.35);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            z-index: 20;
+            box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .ticker-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #ff7a00, #e65100);
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 0 20px;
+            height: 100%;
+            white-space: nowrap;
+            z-index: 2;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+        }
+
+        .ticker-pulse {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        .ticker-track-wrap {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            mask-image: linear-gradient(to right, transparent, black 30px, black calc(100% - 30px), transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 30px, black calc(100% - 30px), transparent);
+        }
+
+        .ticker-track {
+            display: flex;
+            white-space: nowrap;
+            will-change: transform;
+            animation: marqueeScroll 32s linear infinite;
+        }
+
+        .ticker-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes marqueeScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 28px;
+            font-size: 0.94rem;
+            color: #f1f5f9;
+            font-weight: 500;
+        }
+
+        .ticker-tag {
+            background: rgba(255, 122, 0, 0.22);
+            border: 1px solid rgba(255, 122, 0, 0.45);
+            color: #ff9d3b;
+            padding: 2px 9px;
+            border-radius: var(--radius-pill);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .ticker-separator {
+            color: var(--primary);
+            opacity: 0.7;
+            margin: 0 8px;
+            font-size: 1.1rem;
         }
 
         /* Glass Slider */
@@ -222,9 +382,6 @@
             .map-glass-card {
                 grid-template-columns: 1fr;
             }
-            .hero-glass-box {
-                padding: 30px 20px;
-            }
             .carousel-item {
                 height: 350px;
             }
@@ -266,23 +423,14 @@
             </div>
         </header>
 
-        <!-- DYNAMIC NOTICES TICKER (Populated from backend /api/notices) -->
-        <div id="homeNoticeContainer" style="display: none;">
-            <div class="glass-notice-bar" id="homeNoticeBar">
-                <span class="notice-pill" id="homeNoticeTag">OFFER</span>
-                <span class="notice-text" id="homeNoticeText">Special discount for pilgrims!</span>
-                <button class="notice-close" onclick="document.getElementById('homeNoticeContainer').style.display='none'">✕</button>
-            </div>
-        </div>
-
-        <!-- HERO VIDEO SECTION -->
+        <!-- HERO VIDEO SECTION (100% FULL SCREEN - NO GAP) -->
         <section class="hero-video-container" id="home">
             <video autoplay muted loop playsinline id="bgVideo">
                 <source src="vidio.mp4" type="video/mp4">
             </video>
 
             <div class="hero-overlay-content">
-                <div class="hero-glass-box" data-aos="zoom-in" data-aos-duration="900">
+                <div class="hero-text-wrapper" data-aos="fade-up" data-aos-duration="900">
                     <div class="hero-badge">✨ Welcome to Kheralu's Finest Hotel</div>
                     <h1 class="hero-title">Experience Luxury & Comfort at <span>Hotel Dwarkesh</span></h1>
                     <p class="hero-subtitle">
@@ -295,6 +443,19 @@
                         <a href="menu.html" class="btn-glass-secondary">
                             🍽️ Explore Food Menu
                         </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RUNNING LINE NOTICE TICKER (Marquee Line) -->
+            <div class="hero-running-ticker" id="heroRunningTicker">
+                <div class="ticker-label">
+                    <span class="ticker-pulse"></span>
+                    <span>📢 LATEST NOTICES</span>
+                </div>
+                <div class="ticker-track-wrap">
+                    <div class="ticker-track" id="tickerTrack">
+                        <!-- Loaded dynamically via JavaScript -->
                     </div>
                 </div>
             </div>
@@ -552,33 +713,52 @@
             }
         });
 
-        // Load active notice from backend
+        // Load active notices into Running Line Ticker
         async function loadHomeNotice() {
+            const track = document.getElementById('tickerTrack');
+            if (!track) return;
+
+            let notices = [];
             try {
-                let data = null;
-                try {
-                    const res = await fetch('/api/notices');
-                    const contentType = res.headers.get('content-type') || '';
-                    if (res.ok && contentType.includes('application/json')) {
-                        data = await res.json();
+                const res = await fetch('/api/notices');
+                const contentType = res.headers.get('content-type') || '';
+                if (res.ok && contentType.includes('application/json')) {
+                    const data = await res.json();
+                    if (data.success && data.notices && data.notices.length > 0) {
+                        notices = data.notices.filter(n => n.active !== false);
                     }
-                } catch (e) {}
-
-                if (!data || !data.notices) {
-                    const staticRes = await fetch('data/notices.json');
-                    const staticData = await staticRes.json();
-                    data = { success: true, notices: staticData.filter(n => n.active !== false) };
-                }
-
-                if (data.success && data.notices && data.notices.length > 0) {
-                    const activeNotice = data.notices[0];
-                    document.getElementById('homeNoticeTag').textContent = activeNotice.tag || 'ANNOUNCEMENT';
-                    document.getElementById('homeNoticeText').textContent = `${activeNotice.title} - ${activeNotice.content}`;
-                    document.getElementById('homeNoticeContainer').style.display = 'block';
                 }
             } catch (e) {
-                console.log('Notice load error:', e);
+                console.log('Notice API fetch error:', e);
             }
+
+            if (!notices.length) {
+                try {
+                    const staticRes = await fetch('data/notices.json');
+                    const staticData = await staticRes.json();
+                    notices = staticData.filter(n => n.active !== false);
+                } catch (e) {}
+            }
+
+            if (!notices.length) {
+                notices = [
+                    { tag: 'Special Offer', title: 'Pilgrim Discount', content: 'Special 15% discount on room bookings for Ambaji and Dwarka Dham pilgrims!' },
+                    { tag: 'Dining Fest', title: 'Kathiyawadi & Punjabi Thali', content: 'Unlimited pure vegetarian delicacies available 24/7!' },
+                    { tag: '24/7 Helpline', title: 'Direct Booking', content: 'Call +91 6353848203 for immediate room & table bookings on Ambaji Highway.' }
+                ];
+            }
+
+            const itemsHtml = notices.map(n => `
+                <div class="ticker-item">
+                    <span class="ticker-tag">${n.tag || 'OFFER'}</span>
+                    <strong style="color: #ffffff;">${n.title}</strong>
+                    <span style="color: #cbd5e1;">- ${n.content}</span>
+                    <span class="ticker-separator">✦</span>
+                </div>
+            `).join('');
+
+            // Repeat to ensure seamless continuous scroll
+            track.innerHTML = itemsHtml + itemsHtml + itemsHtml;
         }
         loadHomeNotice();
     </script>

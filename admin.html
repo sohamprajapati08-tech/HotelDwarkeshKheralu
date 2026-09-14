@@ -244,8 +244,11 @@
                 <div class="admin-nav-item" onclick="switchAdminTab('contacts')">
                     <span>✉️</span> Inquiries / સંપર્ક મેસેજ
                 </div>
-                <div class="admin-nav-item" onclick="switchAdminTab('users')">
+                <div class="admin-nav-item" data-tab="users" onclick="switchAdminTab('users')">
                     <span>👥</span> Users / ગ્રાહકો
+                </div>
+                <div class="admin-nav-item" data-tab="googledrive" onclick="switchAdminTab('googledrive')">
+                    <span>📁</span> Google Drive સિંક
                 </div>
             </nav>
 
@@ -451,9 +454,14 @@
                         <h2 style="color: #fff; font-size: 1.8rem;">Customer Bookings & Orders</h2>
                         <p style="color: var(--text-muted); font-size: 0.9rem;">Live view of all verified room bookings and dining reservations</p>
                     </div>
-                    <button class="btn-glass-primary btn-glass-sm" onclick="exportBookingsToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
-                        <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
-                    </button>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-glass-primary btn-glass-sm" onclick="exportBookingsToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
+                            <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
+                        </button>
+                        <button class="btn-glass-secondary btn-glass-sm" onclick="openGoogleDriveModal('bookings')" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill); background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); color: #4ade80;">
+                            <span style="font-size: 1.15rem;">📁</span> Google Drive / Sheets માં કન્વર્ટ કરો
+                        </button>
+                    </div>
                 </div>
 
                 <div class="glass-card" style="padding: 10px; overflow-x: auto;">
@@ -485,9 +493,14 @@
                         <h2 style="color: #fff; font-size: 1.8rem;">Customer Inquiries & Contact Messages</h2>
                         <p style="color: var(--text-muted); font-size: 0.9rem;">Live messages and questions submitted through the Contact Us page</p>
                     </div>
-                    <button class="btn-glass-primary btn-glass-sm" onclick="exportContactsToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
-                        <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
-                    </button>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-glass-primary btn-glass-sm" onclick="exportContactsToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
+                            <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
+                        </button>
+                        <button class="btn-glass-secondary btn-glass-sm" onclick="openGoogleDriveModal('contacts')" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill); background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); color: #4ade80;">
+                            <span style="font-size: 1.15rem;">📁</span> Google Drive / Sheets માં કન્વર્ટ કરો
+                        </button>
+                    </div>
                 </div>
 
                 <div class="glass-card" style="padding: 10px; overflow-x: auto;">
@@ -517,9 +530,14 @@
                         <h2 style="color: #fff; font-size: 1.8rem;">Registered Website Users / ગ્રાહકો</h2>
                         <p style="color: var(--text-muted); font-size: 0.9rem;">Live database of all customer accounts registered via mobile number or OTP on Hotel Dwarkesh</p>
                     </div>
-                    <button class="btn-glass-primary btn-glass-sm" onclick="exportUsersToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
-                        <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
-                    </button>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-glass-primary btn-glass-sm" onclick="exportUsersToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
+                            <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
+                        </button>
+                        <button class="btn-glass-secondary btn-glass-sm" onclick="openGoogleDriveModal('users')" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill); background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); color: #4ade80;">
+                            <span style="font-size: 1.15rem;">📁</span> Google Drive / Sheets માં કન્વર્ટ કરો
+                        </button>
+                    </div>
                 </div>
 
                 <div class="glass-card" style="padding: 10px; overflow-x: auto;">
@@ -543,7 +561,214 @@
                     </table>
                 </div>
             </div>
+
+            <!-- TAB 8: GOOGLE DRIVE & GOOGLE SHEETS SYNC HUB -->
+            <div id="tabGoogleDrive" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2 style="color: #fff; font-size: 1.8rem; display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 2rem;">📁</span> Google Drive & Sheets Integration Hub
+                        </h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">હોટેલ દ્વારકેશના બુકિંગ, સંપર્ક ઇન્ક્વાયરી અને ગ્રાહક ડેટાને સીધા Google Drive / Sheets માં કન્વર્ટ અને સિંક કરો</p>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="https://sheets.new" target="_blank" class="btn-glass-secondary btn-glass-sm" style="display: flex; align-items: center; gap: 8px; text-decoration: none; border-color: rgba(34, 197, 94, 0.4); color: #4ade80;">
+                            <span>📗</span> New Google Sheet
+                        </a>
+                        <a href="https://drive.google.com" target="_blank" class="btn-glass-secondary btn-glass-sm" style="display: flex; align-items: center; gap: 8px; text-decoration: none; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+                            <span>📁</span> Open Google Drive
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Integration Status & Quick Sync Cards -->
+                <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-bottom: 25px;">
+                    <div class="glass-card metric-card" style="border-left: 4px solid #10b981;">
+                        <div>
+                            <div class="metric-label">Google Drive Status</div>
+                            <div class="metric-val" id="gdriveStatusBadge" style="font-size: 1.3rem; display: flex; align-items: center; gap: 8px; margin-top: 10px; color: #34d399;">
+                                <span>🟢</span> Ready for Sync
+                            </div>
+                        </div>
+                        <div class="metric-icon">☁️</div>
+                    </div>
+
+                    <div class="glass-card metric-card" style="border-left: 4px solid var(--primary);">
+                        <div>
+                            <div class="metric-label">1-Click Quick Actions</div>
+                            <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+                                <button class="action-btn" onclick="openGoogleDriveModal('bookings')" style="color: #fff; background: rgba(255,122,0,0.2); border-color: var(--primary); padding: 7px 12px;">📋 Bookings</button>
+                                <button class="action-btn" onclick="openGoogleDriveModal('contacts')" style="color: #fff; background: rgba(56,189,248,0.2); border-color: #38bdf8; padding: 7px 12px;">✉️ Inquiries</button>
+                                <button class="action-btn" onclick="openGoogleDriveModal('users')" style="color: #fff; background: rgba(168,85,247,0.2); border-color: #a855f7; padding: 7px 12px;">👥 Users</button>
+                            </div>
+                        </div>
+                        <div class="metric-icon">⚡</div>
+                    </div>
+
+                    <div class="glass-card metric-card" style="border-left: 4px solid #38bdf8;">
+                        <div>
+                            <div class="metric-label">Full Cloud Sync</div>
+                            <button class="btn-glass-primary btn-glass-sm" onclick="syncGoogleSheets('all')" style="margin-top: 10px; font-weight: 700; width: 100%; justify-content: center;">
+                                🔄 Sync All Data Now
+                            </button>
+                        </div>
+                        <div class="metric-icon">📊</div>
+                    </div>
+                </div>
+
+                <!-- Google Drive Webhook Config Card -->
+                <div class="glass-card" style="padding: 28px; margin-bottom: 30px;">
+                    <h3 style="color: #fff; font-size: 1.25rem; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                        <span>⚙️</span> Google Sheets Webhook Configuration (ગૂગલ શીટ લાઈવ કનેક્શન)
+                    </h3>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 22px;">
+                        તમારી Google Sheet સાથે ઓટોમેટિક જોડાણ કરવા માટે નીચે Google Apps Script Web App URL દાખલ કરો.
+                    </p>
+
+                    <form id="gdriveSettingsForm" onsubmit="saveGoogleDriveSettings(event)">
+                        <div class="glass-form-group">
+                            <label class="glass-label" style="font-weight: 600;">Google Apps Script Web App URL *</label>
+                            <input type="url" id="gdriveWebhookInput" class="glass-input" placeholder="https://script.google.com/macros/s/AKfycbx.../exec" style="font-family: monospace; font-size: 0.9rem;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">
+                                આ URL પર તમામ બુકિંગ અને સંપર્ક ડેટા સીધો Google Drive શીટમાં જમા થશે.
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 12px; margin: 18px 0; background: rgba(255,255,255,0.03); padding: 14px 18px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+                            <input type="checkbox" id="gdriveAutoSyncToggle" style="width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer;">
+                            <label for="gdriveAutoSyncToggle" style="color: #fff; font-size: 0.92rem; font-weight: 600; cursor: pointer;">
+                                ⚡ Real-Time Auto-Sync: દરેક નવું બુકિંગ કે ઇન્ક્વાયરી આવે ત્યારે આપોઆપ Google Drive શીટમાં સેવ કરો
+                            </label>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;">
+                            <button type="submit" class="btn-glass-primary" style="padding: 12px 24px;">
+                                💾 Save Google Drive Settings
+                            </button>
+                            <button type="button" class="btn-glass-secondary" onclick="syncGoogleSheets('bookings')" style="padding: 12px 20px;">
+                                📋 Push Bookings
+                            </button>
+                            <button type="button" class="btn-glass-secondary" onclick="syncGoogleSheets('contacts')" style="padding: 12px 20px;">
+                                ✉️ Push Inquiries
+                            </button>
+                            <button type="button" class="btn-glass-secondary" onclick="syncGoogleSheets('users')" style="padding: 12px 20px;">
+                                👥 Push Users
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 1-Minute Setup Guide & Script Code -->
+                <div class="glass-card" style="padding: 28px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h3 style="color: #fff; font-size: 1.25rem; display: flex; align-items: center; gap: 10px;">
+                                <span>📖</span> ૧ મિનિટમાં Google Drive / Google Sheets સાથે કેવી રીતે જોડવું? (Setup Guide)
+                            </h3>
+                            <p style="color: var(--text-muted); font-size: 0.88rem;">સરળ ૪ સ્ટેપ્સ અનુસરીને Google Drive માં લાઈવ ડેટા સેવ કરો</p>
+                        </div>
+                        <button class="btn-glass-secondary btn-glass-sm" onclick="copyGoogleAppsScript()" style="border-color: var(--primary); color: var(--primary); font-weight: 700;">
+                            📋 Copy Apps Script Code
+                        </button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 22px;">
+                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid #ff7a00;">
+                            <strong style="color: #ff7a00; font-size: 0.95rem;">સ્ટેપ ૧: નવી Google Sheet બનાવો</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; line-height: 1.5;">
+                                તમારા Google Drive માં જાઓ અથવા <a href="https://sheets.new" target="_blank" style="color: #38bdf8; text-decoration: underline;">sheets.new</a> ખોલી નવી Sheet બનાવો અને નામ આપો <em>"Hotel Dwarkesh Live Database"</em>.
+                            </p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid #38bdf8;">
+                            <strong style="color: #38bdf8; font-size: 0.95rem;">સ્ટેપ ૨: Extensions -> Apps Script</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; line-height: 1.5;">
+                                Google Sheet ના મેનૂમાં ઉપર <strong>Extensions</strong> પર ક્લિક કરો અને પછી <strong>Apps Script</strong> પસંદ કરો.
+                            </p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid #34d399;">
+                            <strong style="color: #34d399; font-size: 0.95rem;">સ્ટેપ ૩: કોડ પેસ્ટ કરો</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; line-height: 1.5;">
+                                ત્યાં જૂનો કોડ હટાવી નીચે આપેલ તૈયાર સ્ક્રિપ્ટ કોડ પેસ્ટ કરો અને Save (Ctrl+S) કરો.
+                            </p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid #a855f7;">
+                            <strong style="color: #a855f7; font-size: 0.95rem;">સ્ટેપ ૪: Deploy -> Web app</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; line-height: 1.5;">
+                                ઉપર વાદળી બટન <strong>Deploy</strong> -> <strong>New deployment</strong> -> Type માં <strong>Web app</strong> -> Who has access: <strong>Anyone</strong> પસંદ કરી Deploy કરો અને મળેલ URL ઉપર પેસ્ટ કરો!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Code Box Preview -->
+                    <div style="position: relative;">
+                        <pre id="appsScriptCodeBlock" style="background: #0d1322; border: 1px solid var(--border-glass); border-radius: 8px; padding: 18px; color: #a5b4fc; font-family: 'Consolas', monospace; font-size: 0.82rem; overflow-x: auto; max-height: 250px; line-height: 1.5;"></pre>
+                    </div>
+                </div>
+            </div>
         </main>
+    </div>
+
+    <!-- MODAL: GOOGLE DRIVE & GOOGLE SHEETS DIRECT CONVERTER -->
+    <div class="glass-modal-overlay" id="googleDriveModal">
+        <div class="glass-modal-box" style="max-width: 580px; text-align: left; border: 1px solid rgba(34, 197, 94, 0.4); box-shadow: 0 0 35px rgba(34, 197, 94, 0.2);">
+            <button class="glass-modal-close" onclick="closeModal('googleDriveModal')">✕</button>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <span style="font-size: 2.2rem;">📁</span>
+                <div>
+                    <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;" id="gdModalTitle">Google Drive / Sheets માં કન્વર્ટ કરો</h3>
+                    <p style="color: #4ade80; font-size: 0.85rem; font-weight: 600;" id="gdModalSubtitle">Hotel Dwarkesh Live Exporter</p>
+                </div>
+            </div>
+
+            <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">
+                તમે આ ડેટાને સીધો Google Drive / Sheets માં ૩ સરળ રીતે કન્વર્ટ કરી શકો છો:
+            </p>
+
+            <!-- Option 1: 1-Click Instant Open & Auto-Paste -->
+            <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
+                <div style="margin-bottom: 10px;">
+                    <strong style="color: #fff; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+                        ⚡ ૧-ક્લિક: નવી Google Sheet માં ડેટા ખોલો (Instant Convert)
+                    </strong>
+                    <div style="color: var(--text-secondary); font-size: 0.84rem; margin-top: 4px; line-height: 1.4;">
+                        ડેટા આપોઆપ ક્લિપબોર્ડમાં કોપી થશે અને નવી Google Sheet ખુલી જશે. ફક્ત <strong>Ctrl + V</strong> દબાવતા જ તમામ કોલમ્સ ગોઠવાઈ જશે.
+                    </div>
+                </div>
+                <button class="btn-glass-primary" onclick="instantGoogleSheetsPaste()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; width: 100%; padding: 12px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>🚀</span> નવી Google Sheet માં ખોલો & ડેટા પેસ્ટ કરો
+                </button>
+            </div>
+
+            <!-- Option 2: Live Cloud Webhook Sync -->
+            <div style="background: rgba(255, 122, 0, 0.08); border: 1px solid rgba(255, 122, 0, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
+                <div style="margin-bottom: 10px;">
+                    <strong style="color: #fff; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+                        ☁️ Live Cloud Sync: સીધું Google Drive Sheet માં સેવ કરો
+                    </strong>
+                    <div style="color: var(--text-secondary); font-size: 0.84rem; margin-top: 4px; line-height: 1.4;">
+                        સેટિંગ્સમાં Google Webhook URL આપેલ હોય તો એક ક્લિકમાં સીધો ડેટા તમારી Google Drive શીટમાં સેવ થઈ જશે.
+                    </div>
+                </div>
+                <button class="btn-glass-primary" onclick="syncCurrentCategoryToGoogleDrive()" style="font-weight: 700; width: 100%; padding: 12px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;" id="gdModalSyncBtn">
+                    <span>🔄</span> Google Drive Sheet માં સેવ કરો
+                </button>
+            </div>
+
+            <!-- Option 3: Download CSV & Open Google Drive -->
+            <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 18px;">
+                <div style="margin-bottom: 10px;">
+                    <strong style="color: #fff; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+                        📥 ડાઉનલોડ CSV & Open Google Drive
+                    </strong>
+                    <div style="color: var(--text-secondary); font-size: 0.84rem; margin-top: 4px; line-height: 1.4;">
+                        ફાઈલ ડાઉનલોડ થશે અને સીધું Google Drive ખુલશે જેથી તમે ફાઈલ ડ્રેગ કરીને ડ્રાઈવમાં મૂકી શકો.
+                    </div>
+                </div>
+                <button class="btn-glass-secondary" onclick="downloadAndOpenDrive()" style="font-weight: 700; width: 100%; padding: 12px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-color: #38bdf8; color: #38bdf8;">
+                    <span>📁</span> Download CSV & Open Drive
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL: WHATSAPP NOTIFICATION POPUP -->
@@ -751,6 +976,14 @@
             return localStorage.getItem(ADMIN_TOKEN_KEY);
         }
 
+        function saveAdminToken(token) {
+            localStorage.setItem(ADMIN_TOKEN_KEY, token);
+        }
+
+        function removeAdminToken() {
+            localStorage.removeItem(ADMIN_TOKEN_KEY);
+        }
+
         function showToast(msg, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -788,6 +1021,7 @@
             document.getElementById('adminDashboardSection').style.display = 'flex';
             loadStats();
             loadRooms();
+            loadGoogleDriveSettings();
         }
 
         async function handleAdminLogin(e) {
@@ -802,10 +1036,9 @@
                     body: JSON.stringify({ username, password })
                 });
                 const data = await res.json();
-
                 if (data.success) {
-                    localStorage.setItem(ADMIN_TOKEN_KEY, data.token);
-                    showToast('Admin Authentication Successful!', 'success');
+                    saveAdminToken(data.token);
+                    showToast('Welcome back, Admin!', 'success');
                     showDashboard();
                 } else {
                     showToast(data.message || 'Access Denied', 'error');
@@ -1750,6 +1983,318 @@
             } catch (err) {
                 showToast('Upload error', 'error');
             }
+        }
+
+        // ================= GOOGLE DRIVE & SHEETS INTEGRATION LOGIC =================
+        let activeGdriveCategory = 'bookings'; // 'bookings', 'contacts', or 'users'
+        let gdriveSettingsCache = { googleSheetWebhookUrl: '', autoSyncDrive: false };
+
+        const GOOGLE_APPS_SCRIPT_TEMPLATE = `// ==============================================================
+// HOTEL DWARKESH - GOOGLE DRIVE & GOOGLE SHEETS SYNC SCRIPT
+// ==============================================================
+function doPost(e) {
+  try {
+    var raw = e.postData.contents;
+    var data = JSON.parse(raw);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // 1. Sync Bookings
+    if (data.type === 'bookings' || data.type === 'all') {
+      if (data.bookings && data.bookings.length) {
+        var sheet = getOrCreateSheet(ss, "Bookings");
+        updateSheetWithData(sheet, data.bookings);
+      }
+    }
+
+    // 2. Sync Inquiries / Contacts
+    if (data.type === 'contacts' || data.type === 'all') {
+      if (data.contacts && data.contacts.length) {
+        var sheet = getOrCreateSheet(ss, "Inquiries");
+        updateSheetWithData(sheet, data.contacts);
+      }
+    }
+
+    // 3. Sync Users
+    if (data.type === 'users' || data.type === 'all') {
+      if (data.users && data.users.length) {
+        var sheet = getOrCreateSheet(ss, "Registered Users");
+        updateSheetWithData(sheet, data.users);
+      }
+    }
+
+    // 4. Real-time Single Append (New Booking or Inquiry)
+    if (data.action === 'append_booking' && data.booking) {
+      var sheet = getOrCreateSheet(ss, "Bookings");
+      appendSingleRow(sheet, data.booking);
+    }
+    if (data.action === 'append_contact' && data.contact) {
+      var sheet = getOrCreateSheet(ss, "Inquiries");
+      appendSingleRow(sheet, data.contact);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "success",
+      message: "Data successfully synced to Google Drive / Sheets!"
+    })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: err.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function getOrCreateSheet(ss, name) {
+  var sheet = ss.getSheetByName(name);
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+  }
+  return sheet;
+}
+
+function updateSheetWithData(sheet, dataArray) {
+  if (!dataArray || !dataArray.length) return;
+  sheet.clear();
+  var headers = Object.keys(dataArray[0]);
+  var rows = [headers];
+  for (var i = 0; i < dataArray.length; i++) {
+    var row = [];
+    for (var j = 0; j < headers.length; j++) {
+      var val = dataArray[i][headers[j]];
+      row.push(val === null || val === undefined ? "" : val);
+    }
+    rows.push(row);
+  }
+  var range = sheet.getRange(1, 1, rows.length, headers.length);
+  range.setValues(rows);
+
+  var headerRange = sheet.getRange(1, 1, 1, headers.length);
+  headerRange.setBackground("#FF7A00");
+  headerRange.setFontColor("#FFFFFF");
+  headerRange.setFontWeight("bold");
+  sheet.autoResizeColumns(1, headers.length);
+}
+
+function appendSingleRow(sheet, itemObj) {
+  var headers = Object.keys(itemObj);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(headers);
+    var headerRange = sheet.getRange(1, 1, 1, headers.length);
+    headerRange.setBackground("#FF7A00");
+    headerRange.setFontColor("#FFFFFF");
+    headerRange.setFontWeight("bold");
+  }
+  var row = [];
+  for (var i = 0; i < headers.length; i++) {
+    var val = itemObj[headers[i]];
+    row.push(val === null || val === undefined ? "" : val);
+  }
+  sheet.appendRow(row);
+}`;
+
+        function openGoogleDriveModal(category) {
+            activeGdriveCategory = category || 'bookings';
+            const titleMap = {
+                'bookings': 'Customer Bookings & Orders',
+                'contacts': 'Customer Inquiries & Messages',
+                'users': 'Registered Website Users'
+            };
+            const label = titleMap[activeGdriveCategory] || 'Records';
+            document.getElementById('gdModalTitle').textContent = `${label} -> Google Drive`;
+            document.getElementById('gdModalSubtitle').textContent = `Convert ${activeGdriveCategory.toUpperCase()} data directly to Google Drive / Sheets`;
+            openModal('googleDriveModal');
+        }
+
+        function getCategoryExportData(category) {
+            if (category === 'bookings') {
+                if (!loadedBookingsData || !loadedBookingsData.length) return null;
+                return loadedBookingsData.map(b => {
+                    const isCash = String(b.paymentId).includes('CASH') || (b.paymentMethod && b.paymentMethod.includes('Cash'));
+                    return {
+                        'Booking ID': b.id,
+                        'Date & Time of Booking': b.createdAt ? new Date(b.createdAt).toLocaleString('en-IN') : '',
+                        'Customer Name': b.customerName || 'Guest',
+                        'Mobile Number': b.customerMobile || '',
+                        'Email Address': b.customerEmail || '',
+                        'Room / Dish Ordered': b.itemDetails?.roomName || b.itemDetails?.dishName || b.itemDetails?.name || b.type,
+                        'Check-In Date': b.checkIn || '',
+                        'Shift': b.shift || 'full',
+                        'Total Amount (₹)': b.totalAmount,
+                        'Payment Mode': isCash ? 'Cash on Arrival' : 'Online UPI',
+                        'Payment Ref / UTR': b.paymentId || 'N/A',
+                        'Payment Status': isCash ? 'Pending (Cash at Hotel)' : 'Paid (Verified UPI)',
+                        'Booking Status': b.status || 'Confirmed'
+                    };
+                });
+            } else if (category === 'contacts') {
+                if (!loadedContactsData || !loadedContactsData.length) return null;
+                return loadedContactsData.map(c => ({
+                    'Inquiry ID': c.id,
+                    'Date & Time Received': c.createdAt ? new Date(c.createdAt).toLocaleString('en-IN') : '',
+                    'Customer Name': c.name,
+                    'Mobile Number': c.mobile,
+                    'Email Address': c.email || '',
+                    'Subject': c.subject || 'General',
+                    'Message Details': c.message
+                }));
+            } else if (category === 'users') {
+                if (!loadedUsersData || !loadedUsersData.length) return null;
+                return loadedUsersData.map(u => ({
+                    'User ID': u.id,
+                    'Customer Name': u.name || 'Guest User',
+                    'Mobile Number': u.mobile || u.identifier || '',
+                    'Email Address': u.email || '',
+                    'Registration Date & Time': u.createdAt ? new Date(u.createdAt).toLocaleString('en-IN') : 'N/A',
+                    'Last Active Date & Time': u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('en-IN') : (u.createdAt ? new Date(u.createdAt).toLocaleString('en-IN') : 'N/A'),
+                    'Total Bookings Count': u.totalBookings || 0,
+                    'Total Spent Amount (₹)': u.totalSpent || 0
+                }));
+            }
+            return null;
+        }
+
+        async function instantGoogleSheetsPaste() {
+            const data = getCategoryExportData(activeGdriveCategory);
+            if (!data || !data.length) {
+                showToast('કન્વર્ટ કરવા માટે કોઈ ડેટા ઉપલબ્ધ નથી.', 'info');
+                return;
+            }
+
+            const headers = Object.keys(data[0]);
+            const tsvRows = [];
+            tsvRows.push(headers.join('\t'));
+            for (const row of data) {
+                const vals = headers.map(h => {
+                    let v = row[h] === null || row[h] === undefined ? '' : String(row[h]);
+                    return v.replace(/[\t\r\n]/g, ' ');
+                });
+                tsvRows.push(vals.join('\t'));
+            }
+            const tsvContent = tsvRows.join('\n');
+
+            try {
+                await navigator.clipboard.writeText(tsvContent);
+            } catch (err) {
+                const ta = document.createElement('textarea');
+                ta.value = tsvContent;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            }
+
+            // Open sheets.new in new tab
+            window.open('https://sheets.new', '_blank');
+            closeModal('googleDriveModal');
+            showToast('📋 ડેટા કોપી થઈ ગયો છે! નવી Google Sheet માં A1 પર ક્લિક કરી Ctrl + V દબાવો.', 'success');
+        }
+
+        async function syncCurrentCategoryToGoogleDrive() {
+            closeModal('googleDriveModal');
+            await syncGoogleSheets(activeGdriveCategory);
+        }
+
+        function downloadAndOpenDrive() {
+            if (activeGdriveCategory === 'bookings') exportBookingsToExcel();
+            else if (activeGdriveCategory === 'contacts') exportContactsToExcel();
+            else if (activeGdriveCategory === 'users') exportUsersToExcel();
+
+            window.open('https://drive.google.com/drive/u/0/my-drive', '_blank');
+            closeModal('googleDriveModal');
+        }
+
+        async function loadGoogleDriveSettings() {
+            const codeBlock = document.getElementById('appsScriptCodeBlock');
+            if (codeBlock) codeBlock.textContent = GOOGLE_APPS_SCRIPT_TEMPLATE;
+
+            try {
+                const res = await fetch('/api/admin/settings', {
+                    headers: { 'Authorization': `Bearer ${getAdminToken()}` }
+                });
+                const data = await res.json();
+                if (data.success && data.settings) {
+                    gdriveSettingsCache = data.settings;
+                    const input = document.getElementById('gdriveWebhookInput');
+                    const toggle = document.getElementById('gdriveAutoSyncToggle');
+                    const badge = document.getElementById('gdriveStatusBadge');
+                    if (input) input.value = data.settings.googleSheetWebhookUrl || '';
+                    if (toggle) toggle.checked = Boolean(data.settings.autoSyncDrive);
+                    if (badge) {
+                        if (data.settings.googleSheetWebhookUrl) {
+                            badge.innerHTML = '<span>🟢</span> Live Connected';
+                            badge.style.color = '#34d399';
+                        } else {
+                            badge.innerHTML = '<span>⚪</span> Not Configured';
+                            badge.style.color = 'var(--text-muted)';
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load Google Drive settings:', e);
+            }
+        }
+
+        async function saveGoogleDriveSettings(e) {
+            if (e) e.preventDefault();
+            const webhookUrl = document.getElementById('gdriveWebhookInput').value.trim();
+            const autoSync = document.getElementById('gdriveAutoSyncToggle').checked;
+
+            showToast('સેટિંગ્સ સેવ થઈ રહ્યા છે...', 'info');
+            try {
+                const res = await fetch('/api/admin/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAdminToken()}`
+                    },
+                    body: JSON.stringify({
+                        googleSheetWebhookUrl: webhookUrl,
+                        autoSyncDrive: autoSync
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message || 'Google Drive સેટિંગ્સ સફળતાપૂર્વક સેવ થયા!', 'success');
+                    loadGoogleDriveSettings();
+                } else {
+                    showToast(data.message || 'Error saving settings', 'error');
+                }
+            } catch (err) {
+                showToast('Network error saving settings', 'error');
+            }
+        }
+
+        async function syncGoogleSheets(type) {
+            showToast('Google Drive / Sheets માં ડેટા મોકલાઈ રહ્યો છે...', 'info');
+            try {
+                const res = await fetch('/api/admin/sync-google-sheets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAdminToken()}`
+                    },
+                    body: JSON.stringify({ type })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message || 'ડેટા સફળતાપૂર્વક Google Sheets માં સિંક થયો!', 'success');
+                } else {
+                    showToast(data.message || 'Sync failed', 'error');
+                    if (data.message && data.message.includes('Webhook URL')) {
+                        switchAdminTab('googledrive');
+                    }
+                }
+            } catch (err) {
+                showToast('Google Sheets Sync Network Error: ' + err.message, 'error');
+            }
+        }
+
+        function copyGoogleAppsScript() {
+            navigator.clipboard.writeText(GOOGLE_APPS_SCRIPT_TEMPLATE).then(() => {
+                showToast('📋 Google Apps Script કોડ કોપી થઈ ગયો છે! Google Sheet માં પેસ્ટ કરો.', 'success');
+            }).catch(() => {
+                showToast('Failed to copy code', 'error');
+            });
         }
     </script>
 </body>

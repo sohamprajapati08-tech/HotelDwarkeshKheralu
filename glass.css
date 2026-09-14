@@ -966,20 +966,38 @@ body {
 
     /* Hero adjustments */
     .hero-video-container {
-        height: 90vh;
-        min-height: 520px;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 560px;
     }
 
     .hero-overlay-content {
-        padding: 72px 12px 20px !important;
+        padding: 85px 16px 60px !important;
     }
 
+    .hero-text-wrapper,
     .hero-glass-box {
-        padding: 22px 14px !important;
-        border-radius: 18px !important;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        padding: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box;
+    }
+
+    .hero-running-ticker {
+        height: 42px;
+    }
+    .ticker-label {
+        font-size: 0.72rem;
+        padding: 0 12px;
+    }
+    .ticker-item {
+        font-size: 0.82rem;
+        padding: 0 16px;
     }
 
     .hero-badge {
