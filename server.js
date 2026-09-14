@@ -817,6 +817,73 @@ app.delete('/api/notices/:id', authenticateAdmin, (req, res) => {
 });
 
 // ==========================================
+// FOUNDER PROFILE & PHOTO API
+// ==========================================
+
+// Public GET Founder info & photo
+app.get('/api/founder', (req, res) => {
+    try {
+        const defaultFounder = {
+            name: "Soham Prajapati",
+            title: "Managing Director & Founder",
+            bio: "Dedicated to customer satisfaction, modern hospitality tech, and maintaining pristine cleanliness standards across Hotel Dwarkesh.",
+            photoUrl: "sp.jpeg"
+        };
+        const founder = readJson('founder.json', defaultFounder);
+        res.json({ success: true, founder });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to retrieve founder information.' });
+    }
+});
+
+// Admin UPDATE Founder details & photo (Supports JSON or Multipart Upload)
+app.post('/api/founder', authenticateAdmin, upload.single('photo'), (req, res) => {
+    try {
+        const defaultFounder = {
+            name: "Soham Prajapati",
+            title: "Managing Director & Founder",
+            bio: "Dedicated to customer satisfaction, modern hospitality tech, and maintaining pristine cleanliness standards across Hotel Dwarkesh.",
+            photoUrl: "sp.jpeg"
+        };
+        const founder = readJson('founder.json', defaultFounder);
+
+        if (req.body.name) founder.name = req.body.name.trim();
+        if (req.body.title) founder.title = req.body.title.trim();
+        if (req.body.bio) founder.bio = req.body.bio.trim();
+
+        if (req.file) {
+            founder.photoUrl = `/uploads/${req.file.filename}`;
+        } else if (req.body.photoUrl !== undefined && req.body.photoUrl.trim() !== '') {
+            founder.photoUrl = req.body.photoUrl.trim();
+        }
+
+        writeJson('founder.json', founder);
+        res.json({ success: true, message: 'Founder profile updated successfully!', founder });
+    } catch (err) {
+        console.error('Error updating founder profile:', err);
+        res.status(500).json({ success: false, message: 'Failed to update founder profile.' });
+    }
+});
+
+// Admin DELETE Founder photo
+app.delete('/api/founder/photo', authenticateAdmin, (req, res) => {
+    try {
+        const defaultFounder = {
+            name: "Soham Prajapati",
+            title: "Managing Director & Founder",
+            bio: "Dedicated to customer satisfaction, modern hospitality tech, and maintaining pristine cleanliness standards across Hotel Dwarkesh.",
+            photoUrl: ""
+        };
+        const founder = readJson('founder.json', defaultFounder);
+        founder.photoUrl = "";
+        writeJson('founder.json', founder);
+        res.json({ success: true, message: 'Founder photo removed successfully.', founder });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to remove founder photo.' });
+    }
+});
+
+// ==========================================
 // BOOKINGS & ORDERS API
 // ==========================================
 
@@ -1392,6 +1459,34 @@ app.use(express.static(__dirname));
 // Clean routes
 app.get('/room-booking', (req, res) => {
     res.sendFile(path.join(__dirname, 'room buking page.html'));
+});
+
+// Privacy Policy & Terms (Play Store Compliance)
+app.get('/privacy-policy', (req, res) => {
+    res.sendFile(path.join(__dirname, 'privacy-policy.html'));
+});
+app.get('/privacy-policy.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'privacy-policy.html'));
+});
+app.get('/terms', (req, res) => {
+    res.sendFile(path.join(__dirname, 'terms-conditions.html'));
+});
+app.get('/terms-conditions', (req, res) => {
+    res.sendFile(path.join(__dirname, 'terms-conditions.html'));
+});
+app.get('/terms-conditions.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'terms-conditions.html'));
+});
+
+// Google Play TWA Digital Asset Links
+app.get('/.well-known/assetlinks.json', (req, res) => {
+    const assetPath = path.join(__dirname, '.well-known', 'assetlinks.json');
+    if (fs.existsSync(assetPath)) {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(fs.readFileSync(assetPath, 'utf8'));
+    } else {
+        res.status(404).json({ error: 'Assetlinks not found' });
+    }
 });
 
 // Secret Admin Panel Route

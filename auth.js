@@ -416,6 +416,8 @@
                     mobileUserItem.className = 'mobile-nav-user-item';
                     navLinks.appendChild(mobileUserItem);
                 }
+                // Enforce inline display none on desktop so even cached CSS cannot show duplicate badge
+                mobileUserItem.style.display = window.innerWidth <= 768 ? 'block' : 'none';
                 const firstLetter = (user.name || 'U').charAt(0).toUpperCase();
                 mobileUserItem.innerHTML = `
                     <div class="mobile-user-card">
@@ -429,6 +431,17 @@
             } else if (mobileUserItem) {
                 mobileUserItem.remove();
             }
+        }
+
+        // Keep mobile user item hidden on desktop during window resize
+        if (!window._mobileUserResizeBound) {
+            window._mobileUserResizeBound = true;
+            window.addEventListener('resize', () => {
+                const mItem = document.getElementById('mobileNavUserItem');
+                if (mItem) {
+                    mItem.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+                }
+            });
         }
 
         // Ensure no duplicate mobile drawers exist

@@ -257,6 +257,9 @@
                 <div class="admin-nav-item" data-tab="googledrive" onclick="switchAdminTab('googledrive')">
                     Google Drive Hub
                 </div>
+                <div class="admin-nav-item" data-tab="founder" onclick="switchAdminTab('founder')">
+                    Founder Photo & Bio
+                </div>
             </nav>
 
             <div style="border-top: 1px solid rgba(245, 240, 230, 0.2); padding-top: 20px;">
@@ -710,6 +713,86 @@
                     </div>
                 </div>
             </div>
+
+            <!-- TAB 9: FOUNDER PROFILE & PHOTO MANAGEMENT -->
+            <div id="tabFounder" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2 style="color: var(--text-primary); font-size: 1.8rem;">
+                            Founder Profile & Photo Management
+                        </h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Upload, update, or remove the Founder photo and edit details displayed on the About Us page</p>
+                    </div>
+                    <div>
+                        <a href="about.html" target="_blank" class="btn-glass-secondary btn-glass-sm" style="display: flex; align-items: center; gap: 8px; text-decoration: none; border-color: var(--primary); color: var(--primary);">
+                            View on About Us Page ↗
+                        </a>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 30px;">
+                    <!-- Photo Card & Actions -->
+                    <div class="glass-card" style="padding: 28px; text-align: center;">
+                        <h3 style="color: var(--text-primary); font-size: 1.2rem; margin-bottom: 18px;">
+                            Current Founder Photo
+                        </h3>
+                        
+                        <div style="position: relative; max-width: 280px; margin: 0 auto 20px; border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.15); border: 2px solid var(--border-glass); background: rgba(46,71,61,0.05); min-height: 280px; display: flex; align-items: center; justify-content: center;">
+                            <img id="adminFounderPhotoPreview" src="sp.jpeg" alt="Founder Preview" style="width: 100%; height: 300px; object-fit: cover; display: block;">
+                            <div id="adminFounderPhotoEmpty" style="display: none; padding: 40px 20px; color: var(--text-muted); flex-direction: column; align-items: center; gap: 10px;">
+                                <div style="width: 70px; height: 70px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;">S</div>
+                                <span style="font-weight: 600;">No photo uploaded</span>
+                                <span style="font-size: 0.8rem;">Initials avatar is currently displayed</span>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                            <button type="button" class="btn-glass-secondary btn-glass-sm" onclick="document.getElementById('founderPhotoFileInput').click()" style="color: var(--primary); border-color: var(--primary); font-weight: 700;">
+                                Choose Photo File
+                            </button>
+                            <button type="button" class="action-btn" onclick="deleteFounderPhoto()" style="background: rgba(200, 112, 91, 0.12); border-color: var(--accent); color: var(--accent); padding: 8px 16px; border-radius: var(--radius-pill); font-weight: 700;">
+                                Delete Photo
+                            </button>
+                        </div>
+                        <input type="file" id="founderPhotoFileInput" accept="image/*" style="display: none;" onchange="handleFounderPhotoSelect(event)">
+                        <div id="selectedPhotoFileName" style="font-size: 0.82rem; color: var(--accent); margin-top: 10px; font-weight: 600;"></div>
+                    </div>
+
+                    <!-- Details & Upload Form -->
+                    <div class="glass-card" style="padding: 28px;">
+                        <h3 style="color: var(--text-primary); font-size: 1.2rem; margin-bottom: 18px;">
+                            Edit Founder Information & Photo URL
+                        </h3>
+                        
+                        <form id="founderDetailsForm" onsubmit="saveFounderDetails(event)">
+                            <div class="glass-form-group">
+                                <label class="glass-label">Founder Full Name *</label>
+                                <input type="text" id="founderInputName" class="glass-input" placeholder="e.g. Soham Prajapati" required>
+                            </div>
+
+                            <div class="glass-form-group">
+                                <label class="glass-label">Leadership Designation / Title *</label>
+                                <input type="text" id="founderInputTitle" class="glass-input" placeholder="e.g. Managing Director & Founder" required>
+                            </div>
+
+                            <div class="glass-form-group">
+                                <label class="glass-label">Photo Web URL (Optional)</label>
+                                <input type="text" id="founderInputPhotoUrl" class="glass-input" placeholder="sp.jpeg or /uploads/... or image link">
+                                <small style="color: var(--text-muted); font-size: 0.78rem;">You can paste an image URL or use the "Choose Photo File" button on the left.</small>
+                            </div>
+
+                            <div class="glass-form-group">
+                                <label class="glass-label">Founder Biography / Message</label>
+                                <textarea id="founderInputBio" class="glass-textarea" rows="4" placeholder="Enter founder bio..."></textarea>
+                            </div>
+
+                            <button type="submit" id="btnSaveFounder" class="btn-glass-primary" style="width: 100%; padding: 14px; font-weight: 700; margin-top: 10px;">
+                                Save & Update Founder Profile
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -1093,6 +1176,8 @@
             document.getElementById('tabBookings').style.display = tab === 'bookings' ? 'block' : 'none';
             document.getElementById('tabContacts').style.display = tab === 'contacts' ? 'block' : 'none';
             document.getElementById('tabUsers').style.display = tab === 'users' ? 'block' : 'none';
+            if (document.getElementById('tabGoogleDrive')) document.getElementById('tabGoogleDrive').style.display = tab === 'googledrive' ? 'block' : 'none';
+            if (document.getElementById('tabFounder')) document.getElementById('tabFounder').style.display = tab === 'founder' ? 'block' : 'none';
 
             if (tab === 'rooms') loadRooms();
             if (tab === 'menu') loadMenu();
@@ -1101,6 +1186,8 @@
             if (tab === 'bookings') loadBookings();
             if (tab === 'contacts') loadContacts();
             if (tab === 'users') loadUsers();
+            if (tab === 'googledrive') loadGoogleDriveSettings();
+            if (tab === 'founder') loadFounder();
         }
 
         async function loadStats() {
@@ -2359,6 +2446,155 @@ function appendSingleRow(sheet, itemObj) {
             }).catch(() => {
                 showToast('Failed to copy code', 'error');
             });
+        }
+
+        // ==========================================
+        // FOUNDER PROFILE & PHOTO MANAGEMENT
+        // ==========================================
+        let selectedFounderFile = null;
+
+        async function loadFounder() {
+            try {
+                const res = await fetch('/api/founder');
+                const data = await res.json();
+                if (data.success && data.founder) {
+                    const f = data.founder;
+                    const nameInput = document.getElementById('founderInputName');
+                    const titleInput = document.getElementById('founderInputTitle');
+                    const bioInput = document.getElementById('founderInputBio');
+                    const photoInput = document.getElementById('founderInputPhotoUrl');
+
+                    if (nameInput) nameInput.value = f.name || '';
+                    if (titleInput) titleInput.value = f.title || '';
+                    if (bioInput) bioInput.value = f.bio || '';
+                    if (photoInput) photoInput.value = f.photoUrl || '';
+
+                    const preview = document.getElementById('adminFounderPhotoPreview');
+                    const empty = document.getElementById('adminFounderPhotoEmpty');
+                    if (f.photoUrl && f.photoUrl.trim() !== '') {
+                        if (preview) {
+                            preview.src = f.photoUrl;
+                            preview.style.display = 'block';
+                        }
+                        if (empty) empty.style.display = 'none';
+                    } else {
+                        if (preview) preview.style.display = 'none';
+                        if (empty) empty.style.display = 'flex';
+                    }
+                }
+            } catch (err) {
+                showToast('Failed to load founder profile', 'error');
+            }
+        }
+
+        function handleFounderPhotoSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            selectedFounderFile = file;
+            const fileNameEl = document.getElementById('selectedPhotoFileName');
+            if (fileNameEl) fileNameEl.textContent = 'Selected: ' + file.name;
+
+            // Instant local preview
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const preview = document.getElementById('adminFounderPhotoPreview');
+                const empty = document.getElementById('adminFounderPhotoEmpty');
+                if (preview) {
+                    preview.src = evt.target.result;
+                    preview.style.display = 'block';
+                }
+                if (empty) empty.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function saveFounderDetails(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveFounder');
+            btn.disabled = true;
+            btn.textContent = 'Saving Profile & Photo...';
+
+            const name = document.getElementById('founderInputName').value.trim();
+            const title = document.getElementById('founderInputTitle').value.trim();
+            const bio = document.getElementById('founderInputBio').value.trim();
+            const photoUrl = document.getElementById('founderInputPhotoUrl').value.trim();
+
+            try {
+                let res, data;
+                if (selectedFounderFile) {
+                    // Upload via FormData
+                    const formData = new FormData();
+                    formData.append('photo', selectedFounderFile);
+                    formData.append('name', name);
+                    formData.append('title', title);
+                    formData.append('bio', bio);
+
+                    res = await fetch('/api/founder', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${getAdminToken()}`
+                        },
+                        body: formData
+                    });
+                } else {
+                    // Upload via JSON
+                    res = await fetch('/api/founder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getAdminToken()}`
+                        },
+                        body: JSON.stringify({ name, title, bio, photoUrl })
+                    });
+                }
+
+                data = await res.json();
+                if (data.success) {
+                    showToast(data.message || 'Founder profile updated successfully!', 'success');
+                    selectedFounderFile = null;
+                    const fileNameEl = document.getElementById('selectedPhotoFileName');
+                    if (fileNameEl) fileNameEl.textContent = '';
+                    const fileInput = document.getElementById('founderPhotoFileInput');
+                    if (fileInput) fileInput.value = '';
+                    loadFounder();
+                } else {
+                    showToast(data.message || 'Failed to update founder profile', 'error');
+                }
+            } catch (err) {
+                showToast('Server error while saving founder profile', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save & Update Founder Profile';
+            }
+        }
+
+        async function deleteFounderPhoto() {
+            if (!confirm('Are you sure you want to delete the founder photo? The About Us page will display the default initials avatar.')) {
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/founder/photo', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${getAdminToken()}`
+                    }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Founder photo removed successfully.', 'info');
+                    selectedFounderFile = null;
+                    const fileNameEl = document.getElementById('selectedPhotoFileName');
+                    if (fileNameEl) fileNameEl.textContent = '';
+                    const photoInput = document.getElementById('founderInputPhotoUrl');
+                    if (photoInput) photoInput.value = '';
+                    loadFounder();
+                } else {
+                    showToast(data.message || 'Failed to delete photo', 'error');
+                }
+            } catch (err) {
+                showToast('Server error while deleting photo', 'error');
+            }
         }
     </script>
 </body>

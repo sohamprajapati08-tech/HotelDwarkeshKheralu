@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.hoteldwarkesh.app",
+      "sha256_cert_fingerprints": [
+        "7B:C0:4F:3B:C7:77:8C:BC:BA:04:62:98:6F:3B:1E:71:97:68:50:72:42:B4:8D:BF:54:C8:A4:A9:3B:A1:49:7C"
+      ]
+    }
+  }
+]
