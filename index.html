@@ -522,32 +522,156 @@
             </div>
         </header>
 
-        <!-- APP-ONLY NATIVE HEADER (SHOWN IN MOBILE APP INSTEAD OF 20MB VIDEO) -->
-        <section class="app-only-header" id="appHomeHeader">
-            <div class="app-welcome-card">
-                <div class="app-welcome-top">
-                    <div class="app-brand-badge">
-                        <img src="/icons/icon-192.png" alt="Hotel Dwarkesh" class="app-logo-mini">
-                        <div>
-                            <span class="app-tag">WELCOME TO</span>
-                            <h2 class="app-title-text">Hotel Dwarkesh</h2>
-                        </div>
-                    </div>
-                    <a href="tel:+916353848203" class="app-call-badge" aria-label="Call Reception">
-                        <i class="fa-solid fa-phone"></i>
-                    </a>
+        <!-- NATIVE MOBILE APP INTERFACE (MATCHING USER SCREENSHOT) -->
+        <div class="mobile-app-layout" id="mobileAppLayout">
+            <!-- 1. Top Greeting Header -->
+            <div class="app-top-header">
+                <div class="app-user-info">
+                    <h1 class="app-greeting-title" id="appUserGreeting">Hey Guest 👋</h1>
+                    <p class="app-greeting-sub">Discover your next stay at Hotel Dwarkesh</p>
                 </div>
-                <p class="app-subtitle-text">Luxury AC Rooms & Authentic Kathiyawadi Dining on Ambaji Highway, Kheralu</p>
-                <div class="app-quick-actions">
-                    <a href="/room-booking" class="btn-app-action btn-app-primary">
-                        <i class="fa-solid fa-bed"></i> Book Room
-                    </a>
-                    <a href="/menu.html" class="btn-app-action btn-app-secondary">
-                        <i class="fa-solid fa-utensils"></i> View Menu
-                    </a>
+                <div class="app-header-actions">
+                    <button class="app-menu-pill-btn" onclick="HotelAuth.showModal()" aria-label="Account">
+                        <i class="fa-solid fa-user"></i>
+                    </button>
                 </div>
             </div>
-        </section>
+
+            <!-- 2. Search Bar -->
+            <div class="app-search-wrapper">
+                <div class="app-search-input-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="appSearchInput" placeholder="Search rooms, Kathiyawadi thali..." oninput="handleAppSearch(this.value)">
+                </div>
+            </div>
+
+            <!-- 3. Category Story Circles -->
+            <div class="app-categories-scroll">
+                <a href="/room-booking" class="app-category-item">
+                    <div class="cat-circle cat-gradient-orange">
+                        <i class="fa-solid fa-hotel"></i>
+                    </div>
+                    <span>All Stays</span>
+                </a>
+                <a href="/room-booking" class="app-category-item">
+                    <div class="cat-circle">
+                        <i class="fa-solid fa-snowflake"></i>
+                    </div>
+                    <span>AC Rooms</span>
+                </a>
+                <a href="/room-booking" class="app-category-item">
+                    <div class="cat-circle">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <span>Deluxe Suite</span>
+                </a>
+                <a href="/menu.html" class="app-category-item">
+                    <div class="cat-circle">
+                        <i class="fa-solid fa-bowl-food"></i>
+                    </div>
+                    <span>Kathiyawadi</span>
+                </a>
+                <a href="/menu.html" class="app-category-item">
+                    <div class="cat-circle">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <span>Gujarati Thali</span>
+                </a>
+                <a href="/contact.html" class="app-category-item">
+                    <div class="cat-circle">
+                        <i class="fa-solid fa-map-pin"></i>
+                    </div>
+                    <span>Ambaji Highway</span>
+                </a>
+            </div>
+
+            <!-- 4. Promotional Banner (Offer Slider Card) -->
+            <div class="app-promo-banner">
+                <div class="app-promo-content">
+                    <div class="promo-badge-tag">
+                        <i class="fa-solid fa-tag"></i> Special Offer
+                    </div>
+                    <h3 class="promo-title">Get Flat 15% Off</h3>
+                    <p class="promo-subtitle">On your online AC room reservation</p>
+                    <a href="/room-booking" class="promo-book-btn">BOOK NOW</a>
+                </div>
+                <div class="promo-image-box">
+                    <img src="/icons/icon-192.png" alt="Hotel Dwarkesh" class="promo-graphic-img">
+                </div>
+            </div>
+
+            <!-- 5. Recommended Stays (2-Column Grid) -->
+            <div class="app-section-header">
+                <h2 class="app-section-title">Recommended Stays & Dining</h2>
+                <a href="/room-booking" class="app-see-all-link">See All <i class="fa-solid fa-chevron-right"></i></a>
+            </div>
+
+            <div class="app-recommend-grid" id="appRoomsGrid">
+                <!-- Room 1 -->
+                <div class="app-stay-card" onclick="window.location.href='/room-booking'" data-name="Executive Deluxe AC Room">
+                    <div class="stay-thumb-box">
+                        <img src="room.jpeg" alt="Executive Deluxe AC Room">
+                        <span class="stay-badge-tag">Deluxe AC</span>
+                        <span class="stay-rating-pill">★ 4.8</span>
+                    </div>
+                    <div class="stay-card-info">
+                        <h4 class="stay-card-name">Executive AC Room</h4>
+                        <div class="stay-price-row">
+                            <span class="stay-price-amount">₹999<small>/night</small></span>
+                            <button class="stay-quick-book-btn">Book</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Room 2 -->
+                <div class="app-stay-card" onclick="window.location.href='/room-booking'" data-name="Royal Family AC Suite">
+                    <div class="stay-thumb-box">
+                        <img src="spp.webp" alt="Royal Family AC Suite">
+                        <span class="stay-badge-tag">Family Suite</span>
+                        <span class="stay-rating-pill">★ 4.9</span>
+                    </div>
+                    <div class="stay-card-info">
+                        <h4 class="stay-card-name">Royal Family Suite</h4>
+                        <div class="stay-price-row">
+                            <span class="stay-price-amount">₹1,499<small>/night</small></span>
+                            <button class="stay-quick-book-btn">Book</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dining 1 -->
+                <div class="app-stay-card" onclick="window.location.href='/menu.html'" data-name="Kathiyawadi Special Thali">
+                    <div class="stay-thumb-box">
+                        <img src="food.jpg" alt="Kathiyawadi & Gujarati Thali">
+                        <span class="stay-badge-tag tag-food">Pure Veg</span>
+                        <span class="stay-rating-pill">★ 5.0</span>
+                    </div>
+                    <div class="stay-card-info">
+                        <h4 class="stay-card-name">Kathiyawadi Special</h4>
+                        <div class="stay-price-row">
+                            <span class="stay-price-amount">₹180<small>/plate</small></span>
+                            <button class="stay-quick-book-btn btn-food">Order</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dining 2 -->
+                <div class="app-stay-card" onclick="window.location.href='/menu.html'" data-name="Unlimited Gujarati Thali">
+                    <div class="stay-thumb-box">
+                        <img src="WhatsApp Image 2026-01-31 at 3.39.29 PM.jpeg" alt="Unlimited Gujarati Thali">
+                        <span class="stay-badge-tag tag-food">Unlimited</span>
+                        <span class="stay-rating-pill">★ 4.9</span>
+                    </div>
+                    <div class="stay-card-info">
+                        <h4 class="stay-card-name">Unlimited Gujarati Thali</h4>
+                        <div class="stay-price-row">
+                            <span class="stay-price-amount">₹150<small>/plate</small></span>
+                            <button class="stay-quick-book-btn btn-food">Order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- HERO VIDEO SECTION (100% FULL SCREEN - ONLY ON WEBSITE) -->
         <section class="hero-video-container" id="home">
@@ -904,6 +1028,50 @@
                     .catch(err => console.warn('[PWA] Service Worker registration failed:', err));
             });
         }
+
+        // Interactive App Search Filter
+        function handleAppSearch(query) {
+            const q = (query || '').toLowerCase().trim();
+            const cards = document.querySelectorAll('#appRoomsGrid .app-stay-card');
+            cards.forEach(card => {
+                const name = (card.getAttribute('data-name') || '').toLowerCase();
+                if (!q || name.includes(q)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Dynamic User Greeting
+        function updateAppUserGreeting() {
+            try {
+                const greetingElem = document.getElementById('appUserGreeting');
+                if (!greetingElem) return;
+                const token = localStorage.getItem('hotel_token');
+                const userRaw = localStorage.getItem('hotel_user');
+                if (token && userRaw) {
+                    const u = JSON.parse(userRaw);
+                    const name = u.fullName || u.name || 'Guest';
+                    greetingElem.textContent = `Hey ${name} 👋`;
+                }
+            } catch(e) {}
+        }
+        updateAppUserGreeting();
+
+        // Strictly disable video on mobile and inside app to prevent 20MB data usage
+        function killVideoOnMobile() {
+            if (window.innerWidth <= 768 || document.documentElement.classList.contains('is-app-mode')) {
+                const bgVideo = document.getElementById('bgVideo');
+                if (bgVideo) {
+                    bgVideo.pause();
+                    bgVideo.removeAttribute('src');
+                    bgVideo.load();
+                }
+            }
+        }
+        killVideoOnMobile();
+        window.addEventListener('resize', killVideoOnMobile);
     </script>
 
     <!-- Mobile App Bottom Navigation Bar (Native App Feel) -->
