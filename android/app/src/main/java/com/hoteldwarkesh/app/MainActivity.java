@@ -15,6 +15,7 @@ import android.webkit.WebViewClient;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -120,15 +121,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Handle Back Button
+        // Handle Back Button with Double-Tap to Exit safety guard
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            private long backPressedTime = 0;
+            private Toast backToast;
+
             @Override
             public void handleOnBackPressed() {
                 if (webView.canGoBack()) {
                     webView.goBack();
                 } else {
-                    setEnabled(false);
-                    getOnBackPressedDispatcher().onBackPressed();
+                    if (backPressedTime + 2000 > System.currentTimeMillis()) {
+                        if (backToast != null) {
+                            backToast.cancel();
+                        }
+                        finish();
+                    } else {
+                        backToast = Toast.makeText(MainActivity.this, "Press back again to exit", Toast.LENGTH_SHORT);
+                        backToast.show();
+                        backPressedTime = System.currentTimeMillis();
+                    }
                 }
             }
         });

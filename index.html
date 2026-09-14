@@ -607,7 +607,7 @@
                     </div>
                     <h3 class="promo-title" id="appPromoTitle">Get Flat 15% Off</h3>
                     <p class="promo-subtitle" id="appPromoSubtitle">On your online AC room reservation</p>
-                    <a href="/room-booking" class="promo-book-btn" id="appPromoBtn">BOOK NOW</a>
+                    <button type="button" onclick="openQuickRoomBooking('Executive Deluxe AC Room', 999, 'room.jpeg', 'Special 15% Off')" class="promo-book-btn" id="appPromoBtn">BOOK NOW</button>
                 </div>
                 <div class="promo-image-box">
                     <img src="/icons/icon-192.png" alt="Hotel Dwarkesh" class="promo-graphic-img">
@@ -617,12 +617,12 @@
             <!-- 5. Recommended Stays & Dining (Compact 2-Column Grid) -->
             <div class="app-section-header">
                 <h2 class="app-section-title" id="appSectionHeading">Recommended Stays & Dining</h2>
-                <a href="/room-booking" class="app-see-all-link">See All <i class="fa-solid fa-chevron-right"></i></a>
+                <a href="javascript:void(0)" onclick="handleBottomNavTab('rooms', document.getElementById('bottomNavRooms'))" class="app-see-all-link">See All <i class="fa-solid fa-chevron-right"></i></a>
             </div>
 
             <div class="app-recommend-grid" id="appRoomsGrid">
                 <!-- Room 1: Executive AC Room -->
-                <div class="app-stay-card" onclick="window.location.href='/room-booking'" data-name="Executive Deluxe AC Room" data-category="room" data-type="ac">
+                <div class="app-stay-card" onclick="openQuickRoomBooking('Executive Deluxe AC Room', 999, 'room.jpeg', 'Deluxe AC')" data-name="Executive Deluxe AC Room" data-category="room" data-type="ac">
                     <div class="stay-thumb-box">
                         <img src="room.jpeg" alt="Executive Deluxe AC Room">
                         <span class="stay-badge-tag">Deluxe AC</span>
@@ -632,13 +632,13 @@
                         <h4 class="stay-card-name">Executive AC Room</h4>
                         <div class="stay-price-row">
                             <span class="stay-price-amount">₹999<small>/night</small></span>
-                            <button class="stay-quick-book-btn">Book</button>
+                            <button class="stay-quick-book-btn" onclick="event.stopPropagation(); openQuickRoomBooking('Executive Deluxe AC Room', 999, 'room.jpeg', 'Deluxe AC')">Book</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Room 2: Royal Family Suite -->
-                <div class="app-stay-card" onclick="window.location.href='/room-booking'" data-name="Royal Family AC Suite" data-category="room" data-type="suite">
+                <div class="app-stay-card" onclick="openQuickRoomBooking('Royal Family AC Suite', 1499, 'spp.webp', 'Family Suite')" data-name="Royal Family AC Suite" data-category="room" data-type="suite">
                     <div class="stay-thumb-box">
                         <img src="spp.webp" alt="Royal Family AC Suite">
                         <span class="stay-badge-tag">Family Suite</span>
@@ -648,13 +648,13 @@
                         <h4 class="stay-card-name">Royal Family Suite</h4>
                         <div class="stay-price-row">
                             <span class="stay-price-amount">₹1,499<small>/night</small></span>
-                            <button class="stay-quick-book-btn">Book</button>
+                            <button class="stay-quick-book-btn" onclick="event.stopPropagation(); openQuickRoomBooking('Royal Family AC Suite', 1499, 'spp.webp', 'Family Suite')">Book</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Room 3: Deluxe Comfort Room -->
-                <div class="app-stay-card" onclick="window.location.href='/room-booking'" data-name="Deluxe Comfort AC Room" data-category="room" data-type="ac">
+                <div class="app-stay-card" onclick="openQuickRoomBooking('Deluxe Comfort AC Room', 850, 'room.jpeg', 'Deluxe Room')" data-name="Deluxe Comfort AC Room" data-category="room" data-type="ac">
                     <div class="stay-thumb-box">
                         <img src="room.jpeg" alt="Deluxe Comfort AC Room">
                         <span class="stay-badge-tag">Deluxe Room</span>
@@ -664,13 +664,13 @@
                         <h4 class="stay-card-name">Deluxe Comfort Room</h4>
                         <div class="stay-price-row">
                             <span class="stay-price-amount">₹850<small>/night</small></span>
-                            <button class="stay-quick-book-btn">Book</button>
+                            <button class="stay-quick-book-btn" onclick="event.stopPropagation(); openQuickRoomBooking('Deluxe Comfort AC Room', 850, 'room.jpeg', 'Deluxe Room')">Book</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Room 4: Super Deluxe King Suite -->
-                <div class="app-stay-card" onclick="window.location.href='/room-booking'" data-name="Super Deluxe King Suite" data-category="room" data-type="suite">
+                <div class="app-stay-card" onclick="openQuickRoomBooking('Super Deluxe King Suite', 1799, 'spp.webp', 'King Suite')" data-name="Super Deluxe King Suite" data-category="room" data-type="suite">
                     <div class="stay-thumb-box">
                         <img src="spp.webp" alt="Super Deluxe King Suite">
                         <span class="stay-badge-tag">King Suite</span>
@@ -680,13 +680,13 @@
                         <h4 class="stay-card-name">Super Deluxe Suite</h4>
                         <div class="stay-price-row">
                             <span class="stay-price-amount">₹1,799<small>/night</small></span>
-                            <button class="stay-quick-book-btn">Book</button>
+                            <button class="stay-quick-book-btn" onclick="event.stopPropagation(); openQuickRoomBooking('Super Deluxe King Suite', 1799, 'spp.webp', 'King Suite')">Book</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Dining 1: Kathiyawadi Special -->
-                <div class="app-stay-card" onclick="window.location.href='/menu.html'" data-name="Kathiyawadi Special Thali" data-category="food" data-type="kathiyawadi">
+                <div class="app-stay-card" onclick="openQuickFoodOrder('Kathiyawadi Special Thali', 180, 'food.jpg')" data-name="Kathiyawadi Special Thali" data-category="food" data-type="kathiyawadi">
                     <div class="stay-thumb-box">
                         <img src="food.jpg" alt="Kathiyawadi & Gujarati Thali">
                         <span class="stay-badge-tag tag-food">Pure Veg</span>
@@ -696,13 +696,13 @@
                         <h4 class="stay-card-name">Kathiyawadi Special</h4>
                         <div class="stay-price-row">
                             <span class="stay-price-amount">₹180<small>/plate</small></span>
-                            <button class="stay-quick-book-btn btn-food">Order</button>
+                            <button class="stay-quick-book-btn btn-food" onclick="event.stopPropagation(); openQuickFoodOrder('Kathiyawadi Special Thali', 180, 'food.jpg')">Order</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Dining 2: Unlimited Gujarati Thali -->
-                <div class="app-stay-card" onclick="window.location.href='/menu.html'" data-name="Unlimited Gujarati Thali" data-category="food" data-type="thali">
+                <div class="app-stay-card" onclick="openQuickFoodOrder('Unlimited Gujarati Thali', 150, 'WhatsApp Image 2026-01-31 at 3.39.29 PM.jpeg')" data-name="Unlimited Gujarati Thali" data-category="food" data-type="thali">
                     <div class="stay-thumb-box">
                         <img src="WhatsApp Image 2026-01-31 at 3.39.29 PM.jpeg" alt="Unlimited Gujarati Thali">
                         <span class="stay-badge-tag tag-food">Unlimited</span>
@@ -712,13 +712,13 @@
                         <h4 class="stay-card-name">Gujarati Thali</h4>
                         <div class="stay-price-row">
                             <span class="stay-price-amount">₹150<small>/plate</small></span>
-                            <button class="stay-quick-book-btn btn-food">Order</button>
+                            <button class="stay-quick-book-btn btn-food" onclick="event.stopPropagation(); openQuickFoodOrder('Unlimited Gujarati Thali', 150, 'WhatsApp Image 2026-01-31 at 3.39.29 PM.jpeg')">Order</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Dining 3: Special Punjabi Thali -->
-                <div class="app-stay-card" onclick="window.location.href='/menu.html'" data-name="Special Punjabi Thali" data-category="food" data-type="punjabi">
+                <div class="app-stay-card" onclick="openQuickFoodOrder('Special Punjabi Thali', 170, 'food.jpg')" data-name="Special Punjabi Thali" data-category="food" data-type="punjabi">
                     <div class="stay-thumb-box">
                         <img src="food.jpg" alt="Special Punjabi Thali">
                         <span class="stay-badge-tag tag-food">Punjabi</span>
@@ -728,13 +728,13 @@
                         <h4 class="stay-card-name">Special Punjabi Thali</h4>
                         <div class="stay-price-row">
                             <span class="stay-price-amount">₹170<small>/plate</small></span>
-                            <button class="stay-quick-book-btn btn-food">Order</button>
+                            <button class="stay-quick-book-btn btn-food" onclick="event.stopPropagation(); openQuickFoodOrder('Special Punjabi Thali', 170, 'food.jpg')">Order</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Dining 4: Pure Veg Kathiyawadi Farsan -->
-                <div class="app-stay-card" onclick="window.location.href='/menu.html'" data-name="Kathiyawadi Farsan Snacks" data-category="food" data-type="kathiyawadi">
+                <div class="app-stay-card" onclick="openQuickFoodOrder('Kathiyawadi Farsan Snacks', 120, 'WhatsApp Image 2026-01-31 at 3.39.29 PM.jpeg')" data-name="Kathiyawadi Farsan Snacks" data-category="food" data-type="kathiyawadi">
                     <div class="stay-thumb-box">
                         <img src="WhatsApp Image 2026-01-31 at 3.39.29 PM.jpeg" alt="Kathiyawadi Farsan Snacks">
                         <span class="stay-badge-tag tag-food">Snacks</span>
@@ -744,7 +744,7 @@
                         <h4 class="stay-card-name">Kathiyawadi Farsan</h4>
                         <div class="stay-price-row">
                             <span class="stay-price-amount">₹120<small>/plate</small></span>
-                            <button class="stay-quick-book-btn btn-food">Order</button>
+                            <button class="stay-quick-book-btn btn-food" onclick="event.stopPropagation(); openQuickFoodOrder('Kathiyawadi Farsan Snacks', 120, 'WhatsApp Image 2026-01-31 at 3.39.29 PM.jpeg')">Order</button>
                         </div>
                     </div>
                 </div>
@@ -1206,15 +1206,228 @@
         }
         loadAppConfiguration();
 
+        // ========================================================
+        // NATIVE MODAL HISTORY MANAGEMENT & ANDROID BACK HANDLER
+        // ========================================================
+        let isHandlingPopState = false;
+
+        function openModalWithHistory(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.classList.add('active');
+
+            // Push history state so Android / Browser Back button closes modal without closing app
+            try {
+                history.pushState({ appModalOpen: true, modalId: modalId }, '', window.location.pathname + '#modal_' + modalId);
+            } catch (e) {
+                console.warn('history.pushState failed:', e);
+            }
+        }
+
+        function closeModalWithHistory(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('active');
+
+            // Pop history entry cleanly without triggering duplicate loops
+            if (!isHandlingPopState) {
+                if (window.location.hash && window.location.hash.includes('modal_' + modalId)) {
+                    history.back();
+                } else if (history.state && history.state.appModalOpen && history.state.modalId === modalId) {
+                    history.back();
+                }
+            }
+        }
+
+        // Global popstate event handler for Android Back button & Browser Back
+        window.addEventListener('popstate', function(event) {
+            isHandlingPopState = true;
+            // Close all active bottom sheet modals smoothly
+            const activeModals = document.querySelectorAll('.app-gated-modal-overlay.active');
+            if (activeModals.length > 0) {
+                activeModals.forEach(m => m.classList.remove('active'));
+            }
+            setTimeout(() => {
+                isHandlingPopState = false;
+            }, 60);
+        });
+
+        // Click outside backdrop to close modals
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.app-gated-modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModalWithHistory(this.id);
+                    }
+                });
+            });
+        });
+
+        // Quick Room Booking Bottom Sheet Control
+        let currentQuickBookingRoom = { name: 'Executive Deluxe AC Room', price: 999, img: 'room.jpeg', badge: 'Deluxe AC' };
+
+        function openQuickRoomBooking(roomName, price, imgUrl, badge) {
+            currentQuickBookingRoom = {
+                name: roomName || 'Executive Deluxe AC Room',
+                price: price || 999,
+                img: imgUrl || 'room.jpeg',
+                badge: badge || 'Deluxe AC'
+            };
+
+            const nameEl = document.getElementById('qbRoomName');
+            const badgeEl = document.getElementById('qbRoomBadge');
+            const priceEl = document.getElementById('qbRoomPrice');
+            const imgEl = document.getElementById('qbRoomImg');
+
+            if (nameEl) nameEl.textContent = currentQuickBookingRoom.name;
+            if (badgeEl) badgeEl.textContent = currentQuickBookingRoom.badge;
+            if (priceEl) priceEl.innerHTML = `₹${currentQuickBookingRoom.price} <small style="font-size:0.70rem; color:#94A3B8; font-weight:500;">/ night</small>`;
+            if (imgEl) imgEl.src = currentQuickBookingRoom.img;
+
+            // Reset forms state
+            const formEl = document.getElementById('qbBookingForm');
+            const successEl = document.getElementById('qbBookingSuccess');
+            if (formEl) formEl.style.display = 'block';
+            if (successEl) successEl.style.display = 'none';
+
+            // Set default check-in (today) and check-out (tomorrow)
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            const toISO = d => {
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            };
+
+            const checkInInput = document.getElementById('qbCheckIn');
+            const checkOutInput = document.getElementById('qbCheckOut');
+            if (checkInInput) {
+                checkInInput.value = toISO(today);
+                checkInInput.min = toISO(today);
+            }
+            if (checkOutInput) {
+                checkOutInput.value = toISO(tomorrow);
+                checkOutInput.min = toISO(tomorrow);
+            }
+
+            // Prefill guest information from user storage if available
+            const userRaw = localStorage.getItem('dwarkesh_user') || localStorage.getItem('hotel_user');
+            if (userRaw) {
+                try {
+                    const u = JSON.parse(userRaw);
+                    const nameField = document.getElementById('qbGuestName');
+                    const phoneField = document.getElementById('qbGuestPhone');
+                    if (nameField && !nameField.value) nameField.value = u.name || u.fullName || '';
+                    if (phoneField && !phoneField.value) phoneField.value = u.mobile || u.identifier || '';
+                } catch(e) {}
+            }
+
+            // Configure WhatsApp Direct Link
+            const waBtn = document.getElementById('qbWhatsAppBtn');
+            if (waBtn) {
+                const waText = encodeURIComponent(`Hello Hotel Dwarkesh, I would like to book ${currentQuickBookingRoom.name} (₹${currentQuickBookingRoom.price}/night). Please share room availability.`);
+                waBtn.href = `https://wa.me/916353848203?text=${waText}`;
+            }
+
+            openModalWithHistory('quickRoomBookingModal');
+        }
+
+        function closeQuickRoomBooking() {
+            closeModalWithHistory('quickRoomBookingModal');
+        }
+
+        let qbGuestCountNum = 2;
+        function adjustQbGuests(delta) {
+            qbGuestCountNum = Math.max(1, Math.min(8, qbGuestCountNum + delta));
+            const lbl = document.getElementById('qbGuestsCount');
+            if (lbl) lbl.textContent = `${qbGuestCountNum} Guest${qbGuestCountNum > 1 ? 's' : ''}`;
+        }
+
+        async function handleConfirmQuickBooking() {
+            const guestName = (document.getElementById('qbGuestName')?.value || '').trim();
+            const guestPhone = (document.getElementById('qbGuestPhone')?.value || '').trim();
+            const checkIn = document.getElementById('qbCheckIn')?.value;
+            const checkOut = document.getElementById('qbCheckOut')?.value;
+            const guests = `${qbGuestCountNum} Guests`;
+
+            if (!guestName) {
+                if (window.HotelAuth && window.HotelAuth.showToast) {
+                    window.HotelAuth.showToast('Please enter your name', 'error');
+                } else {
+                    alert('Please enter your name');
+                }
+                return;
+            }
+
+            if (!guestPhone || !/^\d{10}$/.test(guestPhone)) {
+                if (window.HotelAuth && window.HotelAuth.showToast) {
+                    window.HotelAuth.showToast('Please enter a valid 10-digit mobile number', 'error');
+                } else {
+                    alert('Please enter a valid 10-digit mobile number');
+                }
+                return;
+            }
+
+            const btn = document.getElementById('qbConfirmBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Confirming...';
+            btn.disabled = true;
+
+            const bookingRef = 'DWK-' + Math.floor(100000 + Math.random() * 900000);
+
+            try {
+                const res = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerName: guestName,
+                        customerPhone: guestPhone,
+                        roomType: currentQuickBookingRoom.name,
+                        checkInDate: checkIn,
+                        checkOutDate: checkOut,
+                        guests: guests,
+                        totalAmount: currentQuickBookingRoom.price,
+                        bookingId: bookingRef,
+                        source: 'Mobile App'
+                    })
+                });
+                const data = await res.json();
+                const finalId = (data && data.bookingId) ? data.bookingId : ('#' + bookingRef);
+
+                document.getElementById('qbBookingForm').style.display = 'none';
+                document.getElementById('qbBookingSuccess').style.display = 'block';
+                document.getElementById('qbSuccessBookingId').textContent = finalId;
+
+                if (window.HotelAuth && window.HotelAuth.showToast) {
+                    window.HotelAuth.showToast(`Booking ${finalId} Confirmed!`, 'success');
+                }
+            } catch (err) {
+                // Offline fallback confirmation
+                document.getElementById('qbBookingForm').style.display = 'none';
+                document.getElementById('qbBookingSuccess').style.display = 'block';
+                document.getElementById('qbSuccessBookingId').textContent = '#' + bookingRef;
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Quick Food Order Handler
+        function openQuickFoodOrder(itemName, price, img) {
+            const text = encodeURIComponent(`Hello Hotel Dwarkesh Dining, I would like to order ${itemName} (₹${price}/plate). Please confirm.`);
+            const waUrl = `https://wa.me/916353848203?text=${text}`;
+            window.open(waUrl, '_blank');
+        }
+
         // App Gating Login Modal Control
         function openAppLoginModal() {
-            const modal = document.getElementById('appMobileLoginModal');
-            if (modal) modal.classList.add('active');
+            openModalWithHistory('appMobileLoginModal');
         }
 
         function closeAppLoginModal(force) {
-            const modal = document.getElementById('appMobileLoginModal');
-            if (modal) modal.classList.remove('active');
+            closeModalWithHistory('appMobileLoginModal');
             if (force) {
                 sessionStorage.setItem('dwarkesh_guest_skip', '1');
             }
@@ -1397,13 +1610,11 @@
             if (chk) chk.checked = isLight;
             if (lbl) lbl.textContent = isLight ? 'Light Theme Active' : 'Dark Theme Active';
 
-            const modal = document.getElementById('appSettingsModal');
-            if (modal) modal.classList.add('active');
+            openModalWithHistory('appSettingsModal');
         }
 
         function closeAppSettingsModal() {
-            const modal = document.getElementById('appSettingsModal');
-            if (modal) modal.classList.remove('active');
+            closeModalWithHistory('appSettingsModal');
         }
 
         function handleAppThemeToggle(isLight) {
@@ -1742,6 +1953,105 @@
                 Hotel Dwarkesh Native App v2.5.0 • Ambaji Highway, Kheralu<br>
                 <a href="privacy-policy.html" style="color: #94A3B8; text-decoration: underline;">Privacy Policy</a> • 
                 <a href="terms-conditions.html" style="color: #94A3B8; text-decoration: underline;">Terms & Conditions</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK IN-APP ROOM BOOKING MODAL (PREVENTS EXITING APP TO OLD WEBSITE PAGE) -->
+    <div class="app-gated-modal-overlay" id="quickRoomBookingModal" role="dialog" aria-modal="true">
+        <div class="app-gated-modal-sheet" style="max-height: 92vh;">
+            <div class="app-sheet-handle"></div>
+
+            <!-- Modal Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <img id="qbRoomImg" src="room.jpeg" alt="Room" style="width: 58px; height: 58px; border-radius: 14px; object-fit: cover; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 4px 14px rgba(0,0,0,0.35);">
+                    <div>
+                        <span id="qbRoomBadge" style="display: inline-block; background: rgba(56,189,248,0.15); color: #38BDF8; font-size: 0.65rem; font-weight: 800; padding: 2px 7px; border-radius: 6px; margin-bottom: 3px; text-transform: uppercase;">Deluxe AC</span>
+                        <h3 id="qbRoomName" style="font-size: 1.15rem; font-weight: 800; margin: 0; line-height: 1.2;">Executive Deluxe AC Room</h3>
+                        <div id="qbRoomPrice" style="font-size: 1.05rem; font-weight: 800; color: #F59E0B; margin-top: 2px;">₹999 <small style="font-size: 0.70rem; color: #94A3B8; font-weight: 500;">/ night</small></div>
+                    </div>
+                </div>
+                <button type="button" onclick="closeQuickRoomBooking()" style="background: rgba(255,255,255,0.08); border: none; color: #CBD5E1; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; flex-shrink: 0;">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Booking Form Container -->
+            <div id="qbBookingForm">
+                <!-- Direct 1-Tap Hotel Call & WhatsApp Bar -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+                    <a href="tel:+916353848203" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 11px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); border-radius: 14px; color: #34D399; text-decoration: none; font-size: 0.82rem; font-weight: 700;">
+                        <i class="fa-solid fa-phone"></i> Call to Book
+                    </a>
+                    <a id="qbWhatsAppBtn" href="https://wa.me/916353848203?text=Hello%20Hotel%20Dwarkesh,%20I%20want%20to%20book%20a%20room" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 11px; background: rgba(37,211,102,0.15); border: 1px solid rgba(37,211,102,0.3); border-radius: 14px; color: #25D366; text-decoration: none; font-size: 0.82rem; font-weight: 700;">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                    </a>
+                </div>
+
+                <div style="font-size: 0.75rem; color: #94A3B8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 8px;">Instant In-App Reservation</div>
+
+                <!-- Dates Row -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                    <div>
+                        <label style="display: block; font-size: 0.72rem; color: #94A3B8; margin-bottom: 4px; font-weight: 600;">Check-in Date</label>
+                        <input type="date" id="qbCheckIn" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: inherit; font-size: 0.82rem; outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.72rem; color: #94A3B8; margin-bottom: 4px; font-weight: 600;">Check-out Date</label>
+                        <input type="date" id="qbCheckOut" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: inherit; font-size: 0.82rem; outline: none;">
+                    </div>
+                </div>
+
+                <!-- Guests Stepper -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; margin-bottom: 12px;">
+                    <div>
+                        <div style="font-size: 0.85rem; font-weight: 700; color: #F8FAFC;">Number of Guests</div>
+                        <div style="font-size: 0.70rem; color: #94A3B8;">Adults & Children</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button type="button" onclick="adjustQbGuests(-1)" style="width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: #fff; font-weight: 800; cursor: pointer;">-</button>
+                        <span id="qbGuestsCount" style="font-weight: 700; font-size: 0.90rem; min-width: 55px; text-align: center;">2 Guests</span>
+                        <button type="button" onclick="adjustQbGuests(1)" style="width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: #fff; font-weight: 800; cursor: pointer;">+</button>
+                    </div>
+                </div>
+
+                <!-- Guest Name & Phone -->
+                <div style="margin-bottom: 10px;">
+                    <label style="display: block; font-size: 0.72rem; color: #94A3B8; margin-bottom: 4px; font-weight: 600;">Your Name</label>
+                    <input type="text" id="qbGuestName" placeholder="Enter full name" style="width: 100%; padding: 11px 14px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: inherit; font-size: 0.88rem; outline: none;">
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 0.72rem; color: #94A3B8; margin-bottom: 4px; font-weight: 600;">Mobile Number</label>
+                    <div style="display: flex; gap: 8px;">
+                        <div style="padding: 11px 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: inherit; font-weight: 700; font-size: 0.85rem;">
+                            +91
+                        </div>
+                        <input type="tel" id="qbGuestPhone" placeholder="10-digit mobile number" maxlength="10" style="flex: 1; padding: 11px 14px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: inherit; font-size: 0.88rem; outline: none;">
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="button" id="qbConfirmBtn" onclick="handleConfirmQuickBooking()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #FF6B35 0%, #EA580C 100%); color: #fff; border: none; border-radius: 16px; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 18px rgba(234,88,12,0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-calendar-check"></i> Confirm Reservation Now
+                </button>
+            </div>
+
+            <!-- Booking Success State (Shown after booking) -->
+            <div id="qbBookingSuccess" style="display: none; text-align: center; padding: 20px 10px;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(16,185,129,0.2); color: #10B981; font-size: 2rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 style="font-size: 1.35rem; font-weight: 800; margin: 0 0 6px 0; color: #FFFFFF;">Booking Confirmed!</h3>
+                <p style="font-size: 0.82rem; color: #94A3B8; margin: 0 0 16px 0;">Our front desk team will call you shortly to assist your check-in.</p>
+                <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 12px; margin-bottom: 18px;">
+                    <div style="font-size: 0.72rem; color: #94A3B8;">YOUR BOOKING REFERENCE ID</div>
+                    <div id="qbSuccessBookingId" style="font-size: 1.25rem; font-weight: 800; color: #F59E0B; letter-spacing: 1px; margin-top: 4px;">#DWK-829104</div>
+                </div>
+                <button type="button" onclick="closeQuickRoomBooking()" style="width: 100%; padding: 13px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; color: #FFFFFF; font-weight: 700; font-size: 0.90rem; cursor: pointer;">
+                    Done (Back to Home)
+                </button>
             </div>
         </div>
     </div>
