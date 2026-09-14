@@ -77,7 +77,7 @@ if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
             pass: cleanPass
         }
     });
-    console.log(`✉️ Nodemailer initialized with ${process.env.GMAIL_USER}`);
+    console.log(`Nodemailer initialized with ${process.env.GMAIL_USER}`);
 }
 
 // Multer Storage Configuration (Supports Images and HD Videos up to 50MB)
@@ -850,7 +850,7 @@ app.post('/api/bookings', authenticateToken, (req, res) => {
         if (!cleanPaymentId || utrDigits.length < 10 || cleanPaymentId.includes('CASH')) {
             return res.status(400).json({
                 success: false,
-                message: 'ઓનલાઈન પેમેન્ટ માટે ૧૨ આંકડાનો સાચો UPI UTR / Transaction No. નાખવો ફરજિયાત છે! પેમેન્ટ વગર બુકિંગ થઈ શકશે નહીં.'
+                message: 'A valid 12-digit UPI UTR / Transaction number is required for online booking verification.'
             });
         }
     }
@@ -898,7 +898,7 @@ app.post('/api/bookings', authenticateToken, (req, res) => {
 
     res.status(201).json({
         success: true,
-        message: isCash ? 'બુકિંગ સેવ થઈ ગયું છે (હોટેલ પર રોકડા આપો).' : 'ઓનલાઈન પેમેન્ટ સાથે બુકિંગ કન્ફર્મ થયું છે!',
+        message: isCash ? 'Booking saved successfully (Pay cash upon arrival).' : 'Booking confirmed with online payment!',
         booking
     });
 });
@@ -928,16 +928,15 @@ async function sendOrderStatusNotification(booking, newStatus) {
     let whatsappMessage = '';
     if (newStatus === 'Completed') {
         statusEng = 'COMPLETED';
-        whatsappMessage = `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${customerName}*,\n\nYour order / booking has been successfully *COMPLETED*! ✅\n\n📋 *Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemName}\n• Total Amount: ₹${booking.totalAmount}\n\n📍 *Hotel Address:*\nChandra Pushpa Shopping Centre, Near Vrundavan Circle, Ambaji Highway, Kheralu, Gujarat - 384325.\n\n📞 *24/7 Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh! We look forward to welcoming you again. Have a wonderful day! 🙏✨`;
+        whatsappMessage = `*Hotel Dwarkesh (Kheralu)*\n\nDear *${customerName}*,\n\nYour order / booking has been successfully *COMPLETED*.\n\n*Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemName}\n• Total Amount: ₹${booking.totalAmount}\n\n*Hotel Address:*\nChandra Pushpa Shopping Centre, Near Vrundavan Circle, Ambaji Highway, Kheralu, Gujarat - 384325.\n\n*Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh. We look forward to welcoming you again.`;
     } else if (newStatus === 'Cancelled') {
         statusEng = 'CANCELLED';
-        whatsappMessage = `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${customerName}*,\n\nYour order / booking has been *CANCELLED*. ❌\n\n📋 *Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemName}\n\nIf you have any questions or need assistance, please contact us:\n📞 *24/7 Helpline:* +91 6353848203\n\nHotel Dwarkesh, Kheralu.`;
+        whatsappMessage = `*Hotel Dwarkesh (Kheralu)*\n\nDear *${customerName}*,\n\nYour order / booking has been *CANCELLED*.\n\n*Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemName}\n\nIf you have any questions or need assistance, please contact us:\n*Helpline:* +91 6353848203\n\nHotel Dwarkesh, Kheralu.`;
     } else {
-        whatsappMessage = `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${customerName}*,\n\nYour booking (#${booking.id}) is *CONFIRMED*! ✅\n• Item: ${itemName}\n• Total Amount: ₹${booking.totalAmount}\n\n📍 *Location:* Near Vrundavan Circle, Ambaji Highway, Kheralu.\n📞 *24/7 Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh! 🙏`;
+        whatsappMessage = `*Hotel Dwarkesh (Kheralu)*\n\nDear *${customerName}*,\n\nYour booking (#${booking.id}) is *CONFIRMED*.\n• Item: ${itemName}\n• Total Amount: ₹${booking.totalAmount}\n\n*Location:* Near Vrundavan Circle, Ambaji Highway, Kheralu.\n*Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh.`;
     }
 
     const smsMessage = `Hotel Dwarkesh: Dear ${customerName}, your booking #${booking.id} (${itemName}) is now ${statusEng}. Thank you! Helpline: +916353848203`;
-    const gujMessage = whatsappMessage;
 
     const whatsappUrl = cleanMobile.length === 10 ? `https://api.whatsapp.com/send?phone=91${cleanMobile}&text=${encodeURIComponent(whatsappMessage)}` : '';
 
@@ -972,18 +971,18 @@ async function sendOrderStatusNotification(booking, newStatus) {
                 to: booking.customerEmail,
                 subject: `Hotel Dwarkesh - Booking #${booking.id} Status: ${statusEng}`,
                 html: `
-                    <div style="font-family: Arial, sans-serif; background: #0a0e1a; color: #ffffff; padding: 30px 15px;">
-                        <div style="max-width: 550px; margin: 0 auto; background: #121a2f; border: 1px solid #ff7a00; border-radius: 12px; padding: 25px;">
-                            <h2 style="color: #ff7a00; margin-top: 0;">🏨 Hotel Dwarkesh Kheralu</h2>
+                    <div style="font-family: Arial, sans-serif; background: #F5F0E6; color: #3E2723; padding: 30px 15px;">
+                        <div style="max-width: 550px; margin: 0 auto; background: #ffffff; border: 1px solid #2E473D; border-radius: 12px; padding: 25px;">
+                            <h2 style="color: #2E473D; margin-top: 0;">Hotel Dwarkesh Kheralu</h2>
                             <p>Dear <strong>${customerName}</strong>,</p>
-                            <p>Your booking status is updated to: <strong style="color: ${newStatus === 'Completed' ? '#34d399' : (newStatus === 'Cancelled' ? '#f87171' : '#fbbf24')};">${statusEng}</strong></p>
-                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            <p>Your booking status is updated to: <strong style="color: ${newStatus === 'Completed' ? '#2E473D' : (newStatus === 'Cancelled' ? '#C8705B' : '#2E473D')};">${statusEng}</strong></p>
+                            <div style="background: rgba(46,71,61,0.06); padding: 15px; border-radius: 8px; margin: 15px 0;">
                                 <p style="margin: 4px 0;"><strong>Booking ID:</strong> ${booking.id}</p>
                                 <p style="margin: 4px 0;"><strong>Item:</strong> ${itemName}</p>
                                 <p style="margin: 4px 0;"><strong>Amount:</strong> ₹${booking.totalAmount}</p>
-                                <p style="margin: 4px 0;"><strong>Status:</strong> ${statusGuj}</p>
+                                <p style="margin: 4px 0;"><strong>Status:</strong> ${statusEng}</p>
                             </div>
-                            <p style="font-size: 13px; color: #94a3b8;">Helpline: +91 6353848203 | Ambaji Highway, Kheralu</p>
+                            <p style="font-size: 13px; color: #78716c;">Helpline: +91 6353848203 | Ambaji Highway, Kheralu</p>
                         </div>
                     </div>
                 `
@@ -994,7 +993,7 @@ async function sendOrderStatusNotification(booking, newStatus) {
         }
     }
 
-    return { smsMessage, gujMessage, whatsappUrl, cleanMobile };
+    return { smsMessage, whatsappUrl, cleanMobile };
 }
 
 app.put('/api/admin/bookings/:id/status', authenticateAdmin, async (req, res) => {
@@ -1020,7 +1019,7 @@ app.put('/api/admin/bookings/:id/status', authenticateAdmin, async (req, res) =>
 
     res.json({
         success: true,
-        message: `Booking #${booking.id} status updated to ${status}. ગ્રાહકને મેસેજ મોકલાઈ ગયો છે.`,
+        message: `Booking #${booking.id} status updated to ${status}. Notification prepared.`,
         booking,
         whatsappUrl: notificationInfo?.whatsappUrl || '',
         customerMobile: notificationInfo?.cleanMobile || booking.customerMobile
@@ -1058,19 +1057,19 @@ app.post('/api/contact', async (req, res) => {
             await emailTransporter.sendMail({
                 from: `"Hotel Dwarkesh" <${sender}>`,
                 to: process.env.HOTEL_OWNER_EMAIL || sender,
-                subject: `🔔 New Website Inquiry from ${newContact.name} (${newContact.subject})`,
+                subject: `New Website Inquiry from ${newContact.name} (${newContact.subject})`,
                 html: `
-                    <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; border: 1px solid #ff7a00; border-radius: 8px;">
-                        <h2 style="color: #ff7a00; margin-top: 0;">🏨 Hotel Dwarkesh - New Inquiry Received</h2>
+                    <div style="font-family: Arial, sans-serif; padding: 20px; color: #3E2723; max-width: 600px; border: 1px solid #2E473D; border-radius: 8px; background: #F5F0E6;">
+                        <h2 style="color: #2E473D; margin-top: 0;">Hotel Dwarkesh - New Inquiry Received</h2>
                         <p><strong>Customer Name:</strong> ${newContact.name}</p>
                         <p><strong>Mobile Number:</strong> <a href="tel:${newContact.mobile}">${newContact.mobile}</a></p>
                         <p><strong>Email:</strong> ${newContact.email || 'N/A'}</p>
                         <p><strong>Subject:</strong> ${newContact.subject}</p>
                         <p><strong>Message:</strong></p>
-                        <div style="background: #f8f9fa; padding: 14px; border-radius: 6px; border-left: 4px solid #ff7a00; font-size: 15px;">
+                        <div style="background: #ffffff; padding: 14px; border-radius: 6px; border-left: 4px solid #C8705B; font-size: 15px;">
                             ${newContact.message}
                         </div>
-                        <p style="font-size: 12px; color: #888; margin-top: 20px;">Submitted at: ${new Date().toLocaleString()}</p>
+                        <p style="font-size: 12px; color: #78716c; margin-top: 20px;">Submitted at: ${new Date().toLocaleString()}</p>
                     </div>
                 `
             });
@@ -1088,7 +1087,7 @@ app.post('/api/contact', async (req, res) => {
 
     res.status(201).json({
         success: true,
-        message: 'તમારો મેસેજ મળી ગયો છે. હોટેલ ટીમ ટૂંક સમયમાં તમારો સંપર્ક કરશે.',
+        message: 'Your message has been received. Our team will contact you shortly.',
         contact: newContact
     });
 });
@@ -1309,7 +1308,7 @@ app.post('/api/admin/settings', authenticateAdmin, (req, res) => {
     writeJson('settings.json', settings);
     res.json({
         success: true,
-        message: 'Google Drive સેટિંગ્સ સફળતાપૂર્વક સાચવવામાં આવ્યા છે.',
+        message: 'Google Drive settings saved successfully.',
         settings
     });
 });
@@ -1322,7 +1321,7 @@ app.post('/api/admin/sync-google-sheets', authenticateAdmin, async (req, res) =>
     if (!settings.googleSheetWebhookUrl) {
         return res.status(400).json({
             success: false,
-            message: 'Google Sheets Webhook URL સેટ કરેલ નથી. કૃપા કરીને સેટિંગ્સમાં Webhook URL દાખલ કરો.'
+            message: 'Google Sheets Webhook URL is not configured. Please enter the Webhook URL in settings.'
         });
     }
 
@@ -1372,14 +1371,14 @@ app.post('/api/admin/sync-google-sheets', authenticateAdmin, async (req, res) =>
 
         res.json({
             success: true,
-            message: 'Google Drive / Sheets માં ડેટા સફળતાપૂર્વક મોકલાઈ ગયો છે!',
+            message: 'Data successfully synchronized with Google Sheets!',
             response: gText
         });
     } catch (err) {
         console.error('Google Sheets Sync Failed:', err);
         res.status(500).json({
             success: false,
-            message: 'Google Sheets સાથે કનેક્ટ કરવામાં ભૂલ આવી: ' + err.message
+            message: 'Error connecting with Google Sheets: ' + err.message
         });
     }
 });
@@ -1407,9 +1406,9 @@ app.get('/admin.html', (req, res) => {
 // Start Server
 app.listen(PORT, () => {
     console.log(`=================================================`);
-    console.log(`🏨 Hotel Dwarkesh Server running on port ${PORT}`);
-    console.log(`🌐 Website: http://localhost:${PORT}`);
-    console.log(`🔒 Secret Admin: http://localhost:${PORT}/admin`);
-    console.log(`   Admin User: ${ADMIN_USERNAME} | Pass: ${ADMIN_PASSWORD}`);
+    console.log(`Hotel Dwarkesh Server running on port ${PORT}`);
+    console.log(`Website: http://localhost:${PORT}`);
+    console.log(`Admin Portal: http://localhost:${PORT}/admin`);
+    console.log(`Admin User: ${ADMIN_USERNAME} | Pass: ${ADMIN_PASSWORD}`);
     console.log(`=================================================`);
 });

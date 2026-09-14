@@ -45,7 +45,7 @@
 
             const toast = document.createElement('div');
             toast.className = `glass-toast ${type}`;
-            const icon = type === 'success' ? '✓' : (type === 'error' ? '✕' : 'ℹ');
+            const icon = type === 'success' ? '&check;' : (type === 'error' ? '&times;' : '&bull;');
             toast.innerHTML = `<span style="font-weight:bold; font-size:1.1rem;">${icon}</span> <span>${message}</span>`;
             container.appendChild(toast);
 
@@ -81,16 +81,16 @@
         const modalHtml = `
         <div class="glass-modal-overlay" id="authModalOverlay">
             <div class="glass-modal-box">
-                <button class="glass-modal-close" onclick="HotelAuth.hideModal()">✕</button>
+                <button class="glass-modal-close" onclick="HotelAuth.hideModal()">&times;</button>
                 
                 <div style="text-align: center; margin-bottom: 25px;">
-                    <h3 style="font-size: 1.6rem; color: #fff; margin-bottom: 6px;">Welcome to <span style="color: var(--primary);">Hotel Dwarkesh</span></h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Login with Mobile or Email to continue booking</p>
+                    <h3 style="font-size: 1.6rem; color: var(--text-primary); margin-bottom: 6px;">Welcome to <span style="color: var(--primary);">Hotel Dwarkesh</span></h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Sign in with Mobile or Email to continue booking</p>
                 </div>
 
                 <div class="glass-tab-nav">
-                    <button class="glass-tab-btn active" id="tabBtnMobile" onclick="switchAuthTab('mobile')">📱 Mobile Login</button>
-                    <button class="glass-tab-btn" id="tabBtnEmail" onclick="switchAuthTab('email')">✉️ Gmail OTP</button>
+                    <button class="glass-tab-btn active" id="tabBtnMobile" onclick="switchAuthTab('mobile')">Mobile Login</button>
+                    <button class="glass-tab-btn" id="tabBtnEmail" onclick="switchAuthTab('email')">Gmail OTP</button>
                 </div>
 
                 <!-- Mobile Auth Tab (Fast Direct Free Login) -->
@@ -98,7 +98,7 @@
                     <div class="glass-form-group">
                         <label class="glass-label">Enter 10-Digit Mobile Number</label>
                         <div style="display: flex; gap: 8px;">
-                            <span style="padding: 13px 14px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-glass); border-radius: var(--radius-md); color: #cbd5e1; font-weight: 600;">+91</span>
+                            <span style="padding: 13px 14px; background: rgba(46,71,61,0.08); border: 1px solid var(--border-glass); border-radius: var(--radius-md); color: var(--text-primary); font-weight: 600;">+91</span>
                             <input type="tel" id="authMobileInput" class="glass-input" placeholder="e.g. 9876543210" maxlength="10">
                         </div>
                     </div>
@@ -109,10 +109,10 @@
                     </div>
 
                     <button class="btn-glass-primary" id="btnDirectMobileLogin" onclick="handleDirectMobileLogin()" style="width: 100%; padding: 14px; margin-top: 10px; font-size: 1rem;">
-                        🚀 Verify & Continue
+                        Verify & Continue
                     </button>
-                    <div style="font-size: 0.78rem; color: #34d399; margin-top: 10px; text-align: center;">
-                        ✓ 100% Free Instant Verification • No SMS waiting
+                    <div style="font-size: 0.78rem; color: var(--primary); margin-top: 10px; text-align: center; font-weight: 600;">
+                        Instant Verification • Seamless Access
                     </div>
                 </div>
 
@@ -131,12 +131,12 @@
                         <div class="glass-form-group">
                             <label class="glass-label">Enter 6-Digit OTP received on Email</label>
                             <input type="text" id="authEmailOtpInput" class="glass-input" placeholder="Enter OTP code" maxlength="6" style="letter-spacing: 4px; font-weight: 700; font-size: 1.1rem; text-align: center;">
-                            <div id="emailOtpHint" style="font-size: 0.8rem; color: #34d399; margin-top: 6px; text-align: center;"></div>
+                            <div id="emailOtpHint" style="font-size: 0.8rem; color: var(--primary); margin-top: 6px; text-align: center;"></div>
                         </div>
                     </div>
 
                     <button class="btn-glass-primary" id="btnSendEmailOtp" onclick="handleSendOtp('email')" style="width: 100%; padding: 13px; margin-top: 5px;">
-                        Send Real OTP to Email
+                        Send Verification Code
                     </button>
                     <button class="btn-glass-primary" id="btnVerifyEmailOtp" onclick="handleVerifyOtp('email')" style="width: 100%; padding: 13px; margin-top: 5px; display: none;">
                         Verify & Continue
@@ -144,7 +144,7 @@
                 </div>
 
                 <div style="margin-top: 20px; text-align: center; font-size: 0.82rem; color: var(--text-muted);">
-                    🔒 100% Safe & Secure Authentication. Your data is protected by Hotel Dwarkesh.
+                    Safe & Secure Authentication. Protected by Hotel Dwarkesh.
                 </div>
             </div>
         </div>
@@ -239,7 +239,7 @@
         }
 
         if (btn) {
-            btn.textContent = '🚀 Verify & Continue';
+            btn.textContent = 'Verify & Continue';
             btn.disabled = false;
         }
     };
@@ -298,12 +298,12 @@
                 document.getElementById('btnSendOtp').style.display = 'none';
                 document.getElementById('btnVerifyOtp').style.display = 'block';
                 document.getElementById('authOtpInput').value = '';
-                document.getElementById('otpHint').textContent = `📲 Real SMS Verification Code dispatched via Fast2SMS to +91 ${identifier}`;
+                document.getElementById('otpHint').textContent = `SMS Verification Code sent to +91 ${identifier}`;
             } else {
                 document.getElementById('emailOtpGroup').style.display = 'block';
                 document.getElementById('btnSendEmailOtp').style.display = 'none';
                 document.getElementById('btnVerifyEmailOtp').style.display = 'block';
-                document.getElementById('emailOtpHint').textContent = `✉️ Verification email sent to ${identifier}. Check inbox/spam.`;
+                document.getElementById('emailOtpHint').textContent = `Verification email sent to ${identifier}. Check your inbox.`;
                 document.getElementById('authEmailOtpInput').value = '';
             }
         } else {
@@ -328,7 +328,7 @@
             : document.getElementById('authEmailNameInput').value.trim();
 
         if (!otp || otp.length !== 6) {
-            window.HotelAuth.showToast('Please enter the 6-digit OTP code received on SMS', 'error');
+            window.HotelAuth.showToast('Please enter the 6-digit verification code', 'error');
             return;
         }
 
@@ -367,7 +367,7 @@
                 cb(data.user);
             }
         } else {
-            window.HotelAuth.showToast((data && data.message) || 'Invalid OTP code entered', 'error');
+            window.HotelAuth.showToast((data && data.message) || 'Invalid verification code entered', 'error');
             btn.textContent = 'Verify & Continue';
             btn.disabled = false;
         }
@@ -386,14 +386,14 @@
                         <div class="user-avatar-circle">${firstLetter}</div>
                         <span class="user-profile-name">${firstName}</span>
                     </div>
-                    <button class="btn-glass-secondary btn-glass-sm btn-nav-logout" onclick="HotelAuth.logout()" title="Logout" style="border-color: rgba(239, 68, 68, 0.45); color: #fca5a5;">
-                        <span class="logout-icon">🚪</span><span class="logout-text"> Logout</span>
+                    <button class="btn-glass-secondary btn-glass-sm btn-nav-logout" onclick="HotelAuth.logout()" title="Logout">
+                        Logout
                     </button>
                 `;
             } else {
                 navAuth.innerHTML = `
                     <button class="btn-glass-primary btn-glass-sm" onclick="HotelAuth.showModal()">
-                        👤 Login
+                        Login
                     </button>
                 `;
             }

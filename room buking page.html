@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="gu">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,15 +60,16 @@
             position: absolute;
             top: 15px;
             left: 15px;
-            background: rgba(10, 14, 26, 0.8);
+            background: rgba(46, 71, 61, 0.9);
             backdrop-filter: blur(10px);
-            border: 1px solid var(--border-glass);
-            color: #fff;
+            border: 1px solid rgba(245, 240, 230, 0.2);
+            color: #F5F0E6;
             font-size: 0.75rem;
             font-weight: 700;
             padding: 4px 12px;
             border-radius: var(--radius-pill);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .room-content {
@@ -82,7 +83,7 @@
         .room-name {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-primary);
             margin-bottom: 8px;
         }
 
@@ -101,9 +102,9 @@
         }
 
         .amenity-tag {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(46, 71, 61, 0.08);
             border: 1px solid var(--border-glass);
-            color: #cbd5e1;
+            color: var(--text-secondary);
             font-size: 0.78rem;
             padding: 3px 10px;
             border-radius: var(--radius-pill);
@@ -112,7 +113,7 @@
         .pricing-tier-table {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            background: rgba(10, 14, 26, 0.6);
+            background: rgba(255, 255, 255, 0.85);
             border: 1px solid var(--border-glass);
             border-radius: var(--radius-md);
             padding: 10px;
@@ -131,11 +132,11 @@
         .tier-price {
             font-size: 1.05rem;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-primary);
         }
 
         .tier-price.highlight {
-            color: var(--primary);
+            color: var(--accent);
         }
 
         @media (max-width: 480px) {
@@ -172,20 +173,20 @@
             <div class="nav-actions">
                 <div id="navAuthContainer">
                     <button class="btn-glass-primary btn-glass-sm" onclick="HotelAuth.showModal()">
-                        👤 Login
+                        Login
                     </button>
                 </div>
-                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation">☰</button>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation">&#9776;</button>
             </div>
         </header>
 
         <!-- ROOMS HEADER -->
         <section class="rooms-header" data-aos="fade-down">
             <div class="hero-badge" style="display:inline-block; margin-bottom:12px;">Exclusive Accommodations</div>
-            <h1 style="font-size: clamp(2rem, 4vw, 3rem); font-weight:800; color:#fff; margin-bottom:10px;">
+            <h1 style="font-size: clamp(2rem, 4vw, 3rem); font-weight:800; color:var(--text-primary); margin-bottom:10px;">
                 Premium Room Categories
             </h1>
-            <p style="color:var(--text-muted); font-size:1.05rem; max-width:620px; margin:0 auto;">
+            <p style="color:var(--text-secondary); font-size:1.05rem; max-width:620px; margin:0 auto;">
                 Select your preferred room shift (Day, Night, or Full 24 Hours). Log in with Mobile or Email to guarantee your reservation.
             </p>
         </section>
@@ -200,12 +201,12 @@
         <!-- GLASS BOOKING MODAL -->
         <div class="glass-modal-overlay" id="roomBookingModal">
             <div class="glass-modal-box" style="max-width: 540px;">
-                <button class="glass-modal-close" onclick="closeBookingModal()">✕</button>
+                <button class="glass-modal-close" onclick="closeBookingModal()">&times;</button>
 
                 <div style="text-align:center; margin-bottom: 20px;">
-                    <div style="color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">Room Reservation</div>
-                    <h3 style="color:#fff; font-size:1.6rem;" id="modalRoomTitle">Book Room</h3>
-                    <p style="color:var(--text-muted); font-size:0.85rem;" id="modalRoomCapacity">2 Guests Capacity</p>
+                    <div style="color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Room Reservation</div>
+                    <h3 style="color:var(--text-primary); font-size:1.6rem;" id="modalRoomTitle">Book Room</h3>
+                    <p style="color:var(--text-secondary); font-size:0.85rem;" id="modalRoomCapacity">2 Guests Capacity</p>
                 </div>
 
                 <form id="bookingForm" onsubmit="processBooking(event)">
@@ -256,57 +257,57 @@
                             </select>
                         </div>
                         <div class="glass-form-group">
-                            <label class="glass-label">Payment Option / ચૂકવણીનો વિકલ્પ *</label>
+                            <label class="glass-label">Payment Option *</label>
                             <select id="bookPaymentMethod" class="glass-select" onchange="togglePaymentUi()">
-                                <option value="online_upi" selected>⚡ Online Payment (UPI / Google Pay / PhonePe / Paytm)</option>
-                                <option value="cash_hotel">💵 Cash Payment (હોટેલ પર રોકડા આપો - Pay Cash at Check-in)</option>
+                                <option value="online_upi" selected>Online UPI (GPay / PhonePe / Paytm)</option>
+                                <option value="cash_hotel">Pay Cash at Check-in</option>
                             </select>
                         </div>
                     </div>
 
                     <!-- DYNAMIC UPI QR PAYMENT BOX (Shown for Online Payment) -->
-                    <div id="upiPaymentBox" style="background: rgba(22, 31, 55, 0.85); border: 1px solid rgba(255, 122, 0, 0.35); border-radius: var(--radius-md); padding: 18px; text-align: center; margin: 15px 0;">
-                        <div style="font-size: 0.85rem; color: #ff9d3b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+                    <div id="upiPaymentBox" style="background: rgba(255, 255, 255, 0.9); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 18px; text-align: center; margin: 15px 0;">
+                        <div style="font-size: 0.85rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
                             Scan & Pay with Any UPI App
                         </div>
-                        <div style="background: #ffffff; padding: 12px; border-radius: 12px; display: inline-block; box-shadow: 0 8px 25px rgba(0,0,0,0.5); margin-bottom: 12px;">
+                        <div style="background: #ffffff; padding: 12px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 20px rgba(62, 39, 35, 0.12); margin-bottom: 12px; border: 1px solid var(--border-glass);">
                             <img id="upiQrCodeImg" src="" alt="Hotel Dwarkesh UPI QR" style="width: 170px; height: 170px; display: block;">
                         </div>
-                        <div style="color: #cbd5e1; font-size: 0.88rem; margin-bottom: 4px;">
-                            Payable Amount: <span id="upiAmountBadge" style="color: #34d399; font-weight: 800; font-size: 1.15rem;">₹0</span>
+                        <div style="color: var(--text-primary); font-size: 0.9rem; margin-bottom: 4px;">
+                            Payable Amount: <span id="upiAmountBadge" style="color: var(--accent); font-weight: 800; font-size: 1.2rem;">₹0</span>
                         </div>
-                        <div style="color: #94a3b8; font-size: 0.82rem; margin-bottom: 12px;">
-                            Hotel UPI ID: <strong id="displayHotelUpiId" style="color: #fff;">sohamprajapati08@okicici</strong>
+                        <div style="color: var(--text-secondary); font-size: 0.82rem; margin-bottom: 12px;">
+                            Hotel UPI ID: <strong id="displayHotelUpiId" style="color: var(--text-primary);">sohamprajapati08@okicici</strong>
                         </div>
                         <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-                            <span style="background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.75rem; color: #cbd5e1;">Google Pay</span>
-                            <span style="background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.75rem; color: #cbd5e1;">PhonePe</span>
-                            <span style="background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.75rem; color: #cbd5e1;">Paytm</span>
-                            <span style="background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.75rem; color: #cbd5e1;">BHIM</span>
+                            <span style="background: rgba(46,71,61,0.08); padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.75rem; color: var(--text-primary);">Google Pay</span>
+                            <span style="background: rgba(46,71,61,0.08); padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.75rem; color: var(--text-primary);">PhonePe</span>
+                            <span style="background: rgba(46,71,61,0.08); padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.75rem; color: var(--text-primary);">Paytm</span>
+                            <span style="background: rgba(46,71,61,0.08); padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.75rem; color: var(--text-primary);">BHIM</span>
                         </div>
-                        <a id="mobileUpiIntentBtn" href="#" class="btn-glass-secondary" style="display: none; width: 100%; margin-bottom: 14px; font-size: 0.88rem; justify-content: center; border-color: rgba(16,185,129,0.4); color: #34d399;">
-                            📱 Open GPay / PhonePe / Paytm Directly
+                        <a id="mobileUpiIntentBtn" href="#" class="btn-glass-secondary" style="display: none; width: 100%; margin-bottom: 14px; font-size: 0.88rem; justify-content: center;">
+                            Open UPI App (GPay / PhonePe / Paytm)
                         </a>
                         <div class="glass-form-group" style="text-align: left; margin-top: 10px; margin-bottom: 0;">
-                            <label class="glass-label" style="font-size: 0.85rem; color: #ff9d3b; font-weight: 700;">
-                                ૧૨ આંકડાનો UPI UTR / Transaction No. (ફરજિયાત) *
+                            <label class="glass-label" style="font-size: 0.85rem; color: var(--primary); font-weight: 700;">
+                                12-Digit UPI UTR / Transaction ID *
                             </label>
-                            <input type="text" id="custUtrNumber" class="glass-input" placeholder="Enter 12-digit UTR from UPI app" maxlength="16" style="border-color: rgba(255, 122, 0, 0.6); font-weight: 700; letter-spacing: 2px;">
-                            <div style="font-size: 0.76rem; color: #94a3b8; margin-top: 4px;">
-                                ⚠️ પેમેન્ટ કર્યા વગર બુકિંગ કન્ફર્મ નહીં થાય. પેમેન્ટ પત્યા પછી UTR નંબર નાખવો ફરજિયાત છે.
+                            <input type="text" id="custUtrNumber" class="glass-input" placeholder="Enter 12-digit UTR from UPI app" maxlength="16" style="border-color: var(--border-glass); font-weight: 700; letter-spacing: 1.5px;">
+                            <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;">
+                                Please complete payment via your UPI app and enter the 12-digit UTR reference number.
                             </div>
                         </div>
                     </div>
 
                     <!-- TOTAL DISPLAY -->
-                    <div style="background:rgba(255,122,0,0.1); border:1px solid rgba(255,122,0,0.3); border-radius:var(--radius-md); padding:16px; text-align:center; margin:15px 0 20px;">
-                        <div style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase;">Estimated Total Amount</div>
+                    <div style="background: rgba(46, 71, 61, 0.06); border: 1px solid rgba(46, 71, 61, 0.15); border-radius: var(--radius-md); padding: 16px; text-align: center; margin: 15px 0 20px;">
+                        <div style="font-size:0.82rem; color:var(--text-muted); text-transform:uppercase; letter-spacing: 0.5px;">Estimated Total Amount</div>
                         <div style="font-size:2rem; font-weight:800; color:var(--primary); margin-top:2px;" id="modalTotalDisplay">₹0</div>
-                        <div style="font-size:0.75rem; color:#cbd5e1; margin-top:4px;">* All taxes and Wi-Fi service included</div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">* All taxes and services included</div>
                     </div>
 
                     <button type="submit" class="btn-glass-primary" id="btnConfirmBooking" style="width:100%; padding:14px; font-size:1.05rem;">
-                        I Have Paid & Confirm Reservation
+                        Verify Payment & Confirm Reservation
                     </button>
                 </form>
             </div>
@@ -315,18 +316,18 @@
         <!-- GLASS BOOKING CONFIRMATION POPUP -->
         <div class="glass-modal-overlay" id="successModal">
             <div class="glass-modal-box" style="text-align:center;">
-                <div style="font-size:3.5rem; margin-bottom:10px;">🎉</div>
-                <h3 style="color:#34d399; font-size:1.8rem; margin-bottom:8px;">Booking Confirmed!</h3>
+                <div style="font-size:1.2rem; font-weight:800; color:var(--primary); letter-spacing:1px; margin-bottom:12px;">HOTEL DWARKESH</div>
+                <h3 style="color:var(--primary); font-size:1.8rem; margin-bottom:8px;">Booking Confirmed</h3>
                 <p style="color:var(--text-secondary); font-size:0.95rem; margin-bottom:20px;">
                     Thank you for choosing Hotel Dwarkesh. Your reservation has been secured.
                 </p>
 
-                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border-glass); border-radius:var(--radius-md); padding:18px; text-align:left; margin-bottom:20px; font-size:0.9rem;" id="successSummary">
+                <div style="background:rgba(255,255,255,0.85); border:1px solid var(--border-glass); border-radius:var(--radius-md); padding:18px; text-align:left; margin-bottom:20px; font-size:0.9rem;" id="successSummary">
                 </div>
 
                 <div style="display:flex; gap:10px; justify-content:center;">
                     <button class="btn-glass-primary" onclick="downloadPdfInvoice()">
-                        📄 Download PDF Bill
+                        Download PDF Invoice
                     </button>
                     <button class="btn-glass-secondary" onclick="closeSuccessModal()">
                         Close
@@ -339,13 +340,13 @@
         <footer class="glass-footer">
             <div class="glass-footer-grid">
                 <div>
-                    <h3 style="color:#fff; font-size:1.5rem; margin-bottom:15px;">HOTEL <span style="color:var(--primary);">DWARKESH</span></h3>
-                    <p style="color:var(--text-muted); line-height:1.7; font-size:0.95rem; margin-bottom:15px;">
+                    <h3 style="color:#fff; font-size:1.5rem; margin-bottom:15px;">HOTEL <span style="color:var(--accent);">DWARKESH</span></h3>
+                    <p style="color:rgba(245, 240, 230, 0.8); line-height:1.7; font-size:0.95rem; margin-bottom:15px;">
                         The finest rooms in Kheralu on Ambaji Highway with 24/7 check-in, pure dining, and modern hospitality.
                     </p>
-                    <div style="color:#cbd5e1; font-size:0.9rem;">
-                        📞 +91 6353848203<br>
-                        ✉️ hoteldwarkesh08@gmail.com
+                    <div style="color:rgba(245, 240, 230, 0.85); font-size:0.9rem; line-height: 1.8;">
+                        +91 6353848203<br>
+                        hoteldwarkesh08@gmail.com
                     </div>
                 </div>
 
@@ -368,16 +369,16 @@
                 </div>
 
                 <div>
-                    <h4>Owner & Management</h4>
-                    <div style="color:#fff; font-weight:600; margin-bottom:15px;">Soham Prajapati</div>
-                    <div style="color:var(--text-muted); font-size:0.85rem;">
+                    <h4>Management</h4>
+                    <div style="color:#fff; font-weight:600; margin-bottom:8px;">Soham Prajapati</div>
+                    <div style="color:rgba(245, 240, 230, 0.75); font-size:0.85rem; line-height: 1.6;">
                         Vrundavan Circle, Ambaji Highway, Kheralu - 384325
                     </div>
                 </div>
             </div>
 
             <div class="glass-copyright">
-                © 2026 Hotel Dwarkesh. All Rights Reserved. Designed with Luxury Glassmorphism.
+                © 2026 Hotel Dwarkesh. All Rights Reserved. Luxury Boutique Experience.
             </div>
         </footer>
     </div>
@@ -432,8 +433,8 @@
                         <div class="room-img-box">
                             <img src="${r.img || 'room.jpeg'}" alt="${r.name}" onerror="this.src='room.jpeg'">
                             <span class="room-category-pill">${r.category || 'Luxury'}</span>
-                            <span style="position: absolute; top: 15px; right: 15px; background: rgba(10, 14, 26, 0.88); backdrop-filter: blur(8px); border: 1px solid ${isAvailable ? 'rgba(16,185,129,0.5)' : 'rgba(239,68,68,0.5)'}; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 0.78rem; font-weight: 700; color: ${isAvailable ? '#34d399' : '#f87171'};">
-                                ${isAvailable ? '🟢 Available' : '🔴 Currently Booked'}
+                            <span style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(8px); border: 1px solid ${isAvailable ? 'rgba(46,71,61,0.3)' : 'rgba(200,112,91,0.3)'}; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; color: ${isAvailable ? '#2E473D' : '#C8705B'};">
+                                ${isAvailable ? 'Available' : 'Booked'}
                             </span>
                         </div>
                         <div class="room-content">
@@ -465,7 +466,7 @@
                                     </button>
                                 ` : `
                                     <button class="btn-glass-secondary" style="width:100%; opacity:0.6; cursor:not-allowed;" disabled title="This room is currently occupied">
-                                        🚫 Room Currently Booked
+                                        Currently Booked
                                     </button>
                                 `}
                             </div>
@@ -475,7 +476,7 @@
                 }).join('');
             } catch (err) {
                 console.error("Room fetch error:", err);
-                container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#ef4444;">Failed to load rooms. Please check connection.</div>';
+                container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--accent);">Failed to load rooms. Please check connection.</div>';
             }
         }
         fetchRooms();
@@ -510,11 +511,11 @@
 
             if (method === 'online_upi') {
                 if (upiBox) upiBox.style.display = 'block';
-                if (btn) btn.innerHTML = '🔒 Verify Payment & Confirm Reservation';
+                if (btn) btn.innerHTML = 'Verify Payment & Confirm Reservation';
                 updateUpiQr();
             } else {
                 if (upiBox) upiBox.style.display = 'none';
-                if (btn) btn.innerHTML = '🏨 Confirm Reservation (Pay Cash at Hotel)';
+                if (btn) btn.innerHTML = 'Confirm Reservation (Pay Cash at Hotel)';
             }
         }
 
@@ -551,7 +552,7 @@
 
             // Strict login check: User MUST login before booking modal opens
             if (!HotelAuth.isLoggedIn()) {
-                HotelAuth.showToast('બુકિંગ માટે કૃપા કરીને પહેલા લૉગિન કરો.', 'info');
+                HotelAuth.showToast('Please log in to make a room reservation.', 'info');
                 HotelAuth.showModal((user) => {
                     openBookingModal(room, user);
                 });
@@ -564,7 +565,7 @@
         function openBookingModal(room, user) {
             // Strict login check
             if (!HotelAuth.isLoggedIn()) {
-                HotelAuth.showToast('કૃપા કરીને પહેલા મોબાઈલ નંબરથી લૉગિન કરો.', 'info');
+                HotelAuth.showToast('Please log in with your mobile number to continue.', 'info');
                 HotelAuth.showModal((loggedInUser) => {
                     openBookingModal(room, loggedInUser);
                 });
@@ -589,7 +590,7 @@
             const utrInput = document.getElementById('custUtrNumber');
             if (utrInput) {
                 utrInput.value = '';
-                utrInput.style.borderColor = 'rgba(255, 122, 0, 0.6)';
+                utrInput.style.borderColor = 'rgba(200, 112, 91, 0.4)';
                 utrInput.style.boxShadow = 'none';
             }
 
@@ -626,7 +627,7 @@
 
             // Strict login guard
             if (!HotelAuth.isLoggedIn() || !HotelAuth.getToken()) {
-                HotelAuth.showToast('બુકિંગ કન્ફર્મ કરવા પહેલા લૉગિન કરો.', 'error');
+                HotelAuth.showToast('Please log in to confirm your reservation.', 'error');
                 closeBookingModal();
                 HotelAuth.showModal();
                 return;
@@ -646,17 +647,17 @@
             // STRICT VALIDATION FOR ONLINE PAYMENT: MUST HAVE 12-DIGIT UTR
             if (paymentMethod === 'online_upi') {
                 if (!utr || utr.length < 12) {
-                    HotelAuth.showToast('⚠️ ઓનલાઇન પેમેન્ટ માટે UPI એપ (GPay/PhonePe/Paytm) થી પેમેન્ટ કરી ૧૨ આંકડાનો UTR નંબર નાખવો ફરજિયાત છે! પેમેન્ટ વગર બુકિંગ નહીં થાય.', 'error');
+                    HotelAuth.showToast('Please complete payment via UPI and enter the 12-digit UTR transaction number.', 'error');
                     if (utrInput) {
                         utrInput.focus();
-                        utrInput.style.borderColor = '#ef4444';
-                        utrInput.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.7)';
+                        utrInput.style.borderColor = '#C8705B';
+                        utrInput.style.boxShadow = '0 0 12px rgba(200, 112, 91, 0.4)';
                     }
                     return; // STRICTLY STOP EXECUTION! DO NOT CONFIRM!
                 }
             }
 
-            btn.textContent = 'બુકિંગ પ્રોસેસ થઈ રહ્યું છે...';
+            btn.textContent = 'Processing Reservation...';
             btn.disabled = true;
 
             const token = HotelAuth.getToken();
@@ -692,9 +693,9 @@
                         HotelAuth.showToast(data.message || 'Booking failed', 'error');
                     }
                 } catch (err) {
-                    HotelAuth.showToast('સર્વર એરર: બુકિંગ સેવ થઈ શક્યું નથી.', 'error');
+                    HotelAuth.showToast('Server error: Unable to process booking.', 'error');
                 } finally {
-                    btn.textContent = '🔒 Verify Payment & Confirm Reservation';
+                    btn.textContent = 'Verify Payment & Confirm Reservation';
                     btn.disabled = false;
                 }
                 return;
@@ -731,9 +732,9 @@
                         HotelAuth.showToast(data.message || 'Booking failed', 'error');
                     }
                 } catch (err) {
-                    HotelAuth.showToast('સર્વર એરર: બુકિંગ સેવ થઈ શક્યું નથી.', 'error');
+                    HotelAuth.showToast('Server error: Unable to process booking.', 'error');
                 } finally {
-                    btn.textContent = '🏨 Confirm Reservation (Pay Cash at Hotel)';
+                    btn.textContent = 'Confirm Reservation (Pay Cash at Hotel)';
                     btn.disabled = false;
                 }
                 return;
@@ -750,7 +751,7 @@
                 <div style="margin-bottom:8px;"><strong>Check-in Date:</strong> ${booking.checkIn} (${booking.shift})</div>
                 <div style="margin-bottom:8px;"><strong>Total Amount:</strong> ₹${booking.totalAmount}</div>
                 <div style="margin-bottom:8px;"><strong>Payment Method:</strong> ${booking.paymentMethod}</div>
-                <div style="margin-bottom:8px;"><strong>Payment Status:</strong> ${isCash ? '<span style="color:#fbbf24; font-weight:700;">⏳ પેન્ડિંગ (હોટેલ પર રોકડા આપવાના રહેશે)</span>' : '<span style="color:#34d399; font-weight:700;">✅ સફળ (ઓનલાઇન UPI ચૂકવાઈ ગયેલ)</span>'}</div>
+                <div style="margin-bottom:8px;"><strong>Payment Status:</strong> ${isCash ? '<span style="color:var(--accent); font-weight:700;">Pending (Pay at check-in)</span>' : '<span style="color:var(--primary); font-weight:700;">Confirmed (Paid via UPI)</span>'}</div>
                 <div><strong>Transaction ID:</strong> <code>${booking.paymentId}</code></div>
             `;
             document.getElementById('successModal').classList.add('active');
@@ -767,9 +768,9 @@
             const doc = new jsPDF();
 
             // Header
-            doc.setFillColor(26, 32, 53);
+            doc.setFillColor(46, 71, 61); // Emerald Green
             doc.rect(0, 0, 210, 40, "F");
-            doc.setTextColor(255, 122, 0);
+            doc.setTextColor(245, 240, 230); // Warm Sand
             doc.setFontSize(22);
             doc.setFont("helvetica", "bold");
             doc.text("HOTEL DWARKESH", 105, 18, { align: "center" });
@@ -781,7 +782,7 @@
             doc.text("Phone: +91 6353848203 | Email: hoteldwarkesh08@gmail.com", 105, 32, { align: "center" });
 
             // Title
-            doc.setTextColor(30, 30, 30);
+            doc.setTextColor(62, 39, 35);
             doc.setFontSize(16);
             doc.setFont("helvetica", "bold");
             doc.text("OFFICIAL ROOM BOOKING INVOICE", 14, 52);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="gu">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,8 +13,7 @@
 
         .admin-sidebar {
             width: 280px;
-            background: rgba(14, 20, 36, 0.95);
-            backdrop-filter: var(--glass-blur);
+            background: #2E473D;
             border-right: 1px solid var(--border-glass);
             padding: 30px 20px;
             display: flex;
@@ -22,6 +21,7 @@
             position: sticky;
             top: 0;
             height: 100vh;
+            color: #F5F0E6;
         }
 
         .admin-main {
@@ -35,7 +35,7 @@
             align-items: center;
             gap: 12px;
             padding: 13px 18px;
-            color: var(--text-secondary);
+            color: rgba(245, 240, 230, 0.85);
             text-decoration: none;
             border-radius: var(--radius-md);
             margin-bottom: 8px;
@@ -45,16 +45,16 @@
             transition: all 0.25s ease;
         }
 
-        .admin-nav-item:hover, .admin-nav-item.active {
+        .admin-nav-item:hover {
             color: #fff;
-            background: rgba(255, 122, 0, 0.14);
-            border: 1px solid rgba(255, 122, 0, 0.3);
+            background: rgba(200, 112, 91, 0.25);
+            border: 1px solid rgba(200, 112, 91, 0.4);
         }
 
         .admin-nav-item.active {
-            background: var(--primary-gradient);
+            background: var(--accent);
             color: #fff;
-            box-shadow: 0 4px 15px rgba(255, 122, 0, 0.35);
+            box-shadow: 0 4px 15px rgba(200, 112, 91, 0.35);
         }
 
         .metric-grid {
@@ -74,7 +74,7 @@
         .metric-val {
             font-size: 2rem;
             font-weight: 800;
-            color: #fff;
+            color: var(--text-primary);
             margin-top: 6px;
         }
 
@@ -87,8 +87,16 @@
         }
 
         .metric-icon {
-            font-size: 2.2rem;
-            opacity: 0.85;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--primary);
+            background: rgba(46, 71, 61, 0.08);
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .admin-table {
@@ -100,25 +108,26 @@
 
         .admin-table th {
             padding: 14px 16px;
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text-muted);
+            background: rgba(46, 71, 61, 0.06);
+            color: var(--text-primary);
             font-size: 0.82rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-weight: 700;
             border-bottom: 1px solid var(--border-glass);
         }
 
         .admin-table td {
             padding: 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid rgba(62, 39, 35, 0.08);
             color: var(--text-secondary);
             font-size: 0.92rem;
             vertical-align: middle;
         }
 
         .admin-table tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
-            color: #fff;
+            background: rgba(46, 71, 61, 0.04);
+            color: var(--text-primary);
         }
 
         .status-pill {
@@ -131,31 +140,32 @@
             align-items: center;
             gap: 5px;
         }
-        .status-pill.available { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
-        .status-pill.booked { background: rgba(239, 68, 68, 0.25); color: #f87171; border: 1px solid #ef4444; }
-        .status-pill.confirmed { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
-        .status-pill.completed { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; }
-        .status-pill.cancelled { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+        .status-pill.available { background: rgba(46, 71, 61, 0.12); color: var(--primary); border: 1px solid var(--primary); }
+        .status-pill.booked { background: rgba(200, 112, 91, 0.15); color: var(--accent); border: 1px solid var(--accent); }
+        .status-pill.confirmed { background: rgba(46, 71, 61, 0.12); color: var(--primary); border: 1px solid var(--primary); }
+        .status-pill.completed { background: rgba(46, 71, 61, 0.15); color: var(--primary); border: 1px solid var(--primary); }
+        .status-pill.cancelled { background: rgba(200, 112, 91, 0.15); color: var(--accent); border: 1px solid var(--accent); }
 
         .action-btn {
-            background: none;
+            background: rgba(255, 255, 255, 0.8);
             border: 1px solid var(--border-glass);
             color: var(--text-secondary);
             padding: 6px 12px;
             border-radius: var(--radius-sm);
             cursor: pointer;
             font-size: 0.82rem;
+            font-weight: 600;
             transition: all 0.2s ease;
             margin-right: 5px;
         }
-        .action-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .action-btn:hover { background: rgba(46, 71, 61, 0.1); color: var(--text-primary); }
         .action-btn.toggle-btn { font-weight: 600; }
-        .action-btn.toggle-btn.avail { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5; }
-        .action-btn.toggle-btn.avail:hover { background: rgba(239, 68, 68, 0.8); color: #fff; }
-        .action-btn.toggle-btn.book { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #86efac; }
-        .action-btn.toggle-btn.book:hover { background: rgba(16, 185, 129, 0.8); color: #fff; }
-        .action-btn.delete:hover { background: rgba(239, 68, 68, 0.8); border-color: #ef4444; color: #fff; }
-        .action-btn.edit:hover { background: rgba(255, 122, 0, 0.8); border-color: var(--primary); color: #fff; }
+        .action-btn.toggle-btn.avail { background: rgba(200, 112, 91, 0.15); border-color: var(--accent); color: var(--accent); }
+        .action-btn.toggle-btn.avail:hover { background: var(--accent); color: #fff; }
+        .action-btn.toggle-btn.book { background: rgba(46, 71, 61, 0.12); border-color: var(--primary); color: var(--primary); }
+        .action-btn.toggle-btn.book:hover { background: var(--primary); color: #fff; }
+        .action-btn.delete:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .action-btn.edit:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
 
         .login-wrapper {
             display: flex;
@@ -186,10 +196,10 @@
     <!-- 1. ADMIN LOGIN SCREEN -->
     <div id="adminLoginSection" class="login-wrapper">
         <div class="glass-card" style="width: 100%; max-width: 440px; padding: 40px; text-align: center;">
-            <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
-            <h2 style="font-size: 1.8rem; margin-bottom: 8px; color: #fff;">Hotel Dwarkesh</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px;">
-                Confidential Hotel Administration Portal
+            <div style="font-size: 0.88rem; font-weight: 800; color: var(--primary); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;">Administration</div>
+            <h2 style="font-size: 1.8rem; margin-bottom: 8px; color: var(--text-primary);">Hotel Dwarkesh</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 30px;">
+                Confidential Hotel Management Portal
             </p>
 
             <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
@@ -217,50 +227,45 @@
     <div id="adminDashboardSection" class="admin-layout" style="display: none;">
         <!-- SIDEBAR -->
         <aside class="admin-sidebar">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 35px; padding-left: 5px;">
-                <span style="font-size: 1.6rem;">🏨</span>
-                <div>
-                    <h3 style="font-size: 1.2rem; color: #fff; line-height: 1.2;">HOTEL <span>DWARKESH</span></h3>
-                    <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700; letter-spacing: 1px;">ADMIN PANEL</span>
-                </div>
+            <div style="margin-bottom: 35px; padding-left: 5px;">
+                <h3 style="font-size: 1.2rem; color: #F5F0E6; line-height: 1.2; letter-spacing: 0.5px;">HOTEL <span style="color: var(--accent);">DWARKESH</span></h3>
+                <span style="font-size: 0.75rem; color: var(--accent); font-weight: 700; letter-spacing: 1.5px;">MANAGEMENT PORTAL</span>
             </div>
 
             <nav style="flex: 1;">
                 <div class="admin-nav-item active" onclick="switchAdminTab('rooms')">
-                    <span>🛏️</span> Rooms & Availability
+                    Rooms & Availability
                 </div>
                 <div class="admin-nav-item" onclick="switchAdminTab('menu')">
-                    <span>🍽️</span> Menu & Restaurant
+                    Menu & Restaurant
                 </div>
                 <div class="admin-nav-item" onclick="switchAdminTab('gallery')">
-                    <span>📸</span> Gallery (Photos & Video)
+                    Gallery & Media
                 </div>
                 <div class="admin-nav-item" onclick="switchAdminTab('notices')">
-                    <span>📢</span> Notices & Offers
+                    Notices & Broadcasts
                 </div>
                 <div class="admin-nav-item" onclick="switchAdminTab('bookings')">
-                    <span>📋</span> Bookings & Orders
+                    Bookings & Orders
                 </div>
                 <div class="admin-nav-item" onclick="switchAdminTab('contacts')">
-                    <span>✉️</span> Inquiries / સંપર્ક મેસેજ
+                    Guest Inquiries
                 </div>
                 <div class="admin-nav-item" data-tab="users" onclick="switchAdminTab('users')">
-                    <span>👥</span> Users / ગ્રાહકો
+                    Registered Guests
                 </div>
                 <div class="admin-nav-item" data-tab="googledrive" onclick="switchAdminTab('googledrive')">
-                    <span>📁</span> Google Drive સિંક
+                    Google Drive Hub
                 </div>
             </nav>
 
-            <div style="border-top: 1px solid var(--border-glass); padding-top: 20px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                    <div>
-                        <div style="font-size: 0.85rem; color: #fff; font-weight: 600;">Admin: Dwarkesh008</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">Hotel Owner Access</div>
-                    </div>
+            <div style="border-top: 1px solid rgba(245, 240, 230, 0.2); padding-top: 20px;">
+                <div style="margin-bottom: 15px;">
+                    <div style="font-size: 0.85rem; color: #F5F0E6; font-weight: 600;">Admin: Dwarkesh008</div>
+                    <div style="font-size: 0.75rem; color: rgba(245, 240, 230, 0.7);">Hotel Owner Access</div>
                 </div>
-                <button class="btn-glass-secondary btn-glass-sm" onclick="adminLogout()" style="width: 100%;">
-                    🚪 Logout Securely
+                <button class="btn-glass-secondary btn-glass-sm" onclick="adminLogout()" style="width: 100%; border-color: rgba(245, 240, 230, 0.3); color: #F5F0E6;">
+                    Logout Securely
                 </button>
             </div>
         </aside>
@@ -274,49 +279,49 @@
                         <div class="metric-label">Total Revenue</div>
                         <div class="metric-val" id="statRevenue">₹0</div>
                     </div>
-                    <div class="metric-icon">💰</div>
+                    <div class="metric-icon">₹</div>
                 </div>
                 <div class="glass-card metric-card">
                     <div>
                         <div class="metric-label">Total Bookings</div>
                         <div class="metric-val" id="statBookings">0</div>
                     </div>
-                    <div class="metric-icon">📑</div>
+                    <div class="metric-icon">B</div>
                 </div>
                 <div class="glass-card metric-card">
                     <div>
                         <div class="metric-label">Active Rooms</div>
                         <div class="metric-val" id="statRooms">0</div>
                     </div>
-                    <div class="metric-icon">🛏️</div>
+                    <div class="metric-icon">R</div>
                 </div>
                 <div class="glass-card metric-card">
                     <div>
                         <div class="metric-label">Menu Items</div>
                         <div class="metric-val" id="statMenu">0</div>
                     </div>
-                    <div class="metric-icon">🍲</div>
+                    <div class="metric-icon">M</div>
                 </div>
                 <div class="glass-card metric-card">
                     <div>
                         <div class="metric-label">Gallery Media</div>
                         <div class="metric-val" id="statGallery">0</div>
                     </div>
-                    <div class="metric-icon">📸</div>
+                    <div class="metric-icon">G</div>
                 </div>
                 <div class="glass-card metric-card">
                     <div>
-                        <div class="metric-label">Inquiries</div>
+                        <div class="metric-label">Guest Inquiries</div>
                         <div class="metric-val" id="statInquiries">0</div>
                     </div>
-                    <div class="metric-icon">✉️</div>
+                    <div class="metric-icon">I</div>
                 </div>
                 <div class="glass-card metric-card">
                     <div>
-                        <div class="metric-label">Users / ગ્રાહકો</div>
+                        <div class="metric-label">Registered Guests</div>
                         <div class="metric-val" id="statUsers">0</div>
                     </div>
-                    <div class="metric-icon">👥</div>
+                    <div class="metric-icon">U</div>
                 </div>
             </div>
 
@@ -451,15 +456,15 @@
             <div id="tabBookings" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <h2 style="color: #fff; font-size: 1.8rem;">Customer Bookings & Orders</h2>
+                        <h2 style="color: var(--text-primary); font-size: 1.8rem;">Customer Bookings & Orders</h2>
                         <p style="color: var(--text-muted); font-size: 0.9rem;">Live view of all verified room bookings and dining reservations</p>
                     </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn-glass-primary btn-glass-sm" onclick="exportBookingsToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
-                            <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
+                            Download Excel (.CSV)
                         </button>
-                        <button class="btn-glass-secondary btn-glass-sm" onclick="openGoogleDriveModal('bookings')" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill); background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); color: #4ade80;">
-                            <span style="font-size: 1.15rem;">📁</span> Google Drive / Sheets માં કન્વર્ટ કરો
+                        <button class="btn-glass-secondary btn-glass-sm" onclick="openGoogleDriveModal('bookings')" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill); border-color: var(--primary); color: var(--primary);">
+                            Convert to Google Sheets
                         </button>
                     </div>
                 </div>
@@ -490,15 +495,15 @@
             <div id="tabContacts" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <h2 style="color: #fff; font-size: 1.8rem;">Customer Inquiries & Contact Messages</h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">Live messages and questions submitted through the Contact Us page</p>
+                        <h2 style="color: var(--text-primary); font-size: 1.8rem;">Customer Inquiries & Contact Messages</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Live messages and inquiries submitted through the Contact Us page</p>
                     </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn-glass-primary btn-glass-sm" onclick="exportContactsToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
-                            <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
+                            Download Excel (.CSV)
                         </button>
-                        <button class="btn-glass-secondary btn-glass-sm" onclick="openGoogleDriveModal('contacts')" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill); background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); color: #4ade80;">
-                            <span style="font-size: 1.15rem;">📁</span> Google Drive / Sheets માં કન્વર્ટ કરો
+                        <button class="btn-glass-secondary btn-glass-sm" onclick="openGoogleDriveModal('contacts')" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill); border-color: var(--primary); color: var(--primary);">
+                            Convert to Google Sheets
                         </button>
                     </div>
                 </div>
@@ -527,15 +532,15 @@
             <div id="tabUsers" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <h2 style="color: #fff; font-size: 1.8rem;">Registered Website Users / ગ્રાહકો</h2>
+                        <h2 style="color: var(--text-primary); font-size: 1.8rem;">Registered Website Guests</h2>
                         <p style="color: var(--text-muted); font-size: 0.9rem;">Live database of all customer accounts registered via mobile number or OTP on Hotel Dwarkesh</p>
                     </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn-glass-primary btn-glass-sm" onclick="exportUsersToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
-                            <span style="font-size: 1.15rem;">📊</span> Download Excel (.CSV)
+                            Download Excel (.CSV)
                         </button>
-                        <button class="btn-glass-secondary btn-glass-sm" onclick="openGoogleDriveModal('users')" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill); background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); color: #4ade80;">
-                            <span style="font-size: 1.15rem;">📁</span> Google Drive / Sheets માં કન્વર્ટ કરો
+                        <button class="btn-glass-secondary btn-glass-sm" onclick="openGoogleDriveModal('users')" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill); border-color: var(--primary); color: var(--primary);">
+                            Convert to Google Sheets
                         </button>
                     </div>
                 </div>
@@ -566,63 +571,63 @@
             <div id="tabGoogleDrive" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <h2 style="color: #fff; font-size: 1.8rem; display: flex; align-items: center; gap: 10px;">
-                            <span style="font-size: 2rem;">📁</span> Google Drive & Sheets Integration Hub
+                        <h2 style="color: var(--text-primary); font-size: 1.8rem;">
+                            Google Drive & Sheets Integration Hub
                         </h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">હોટેલ દ્વારકેશના બુકિંગ, સંપર્ક ઇન્ક્વાયરી અને ગ્રાહક ડેટાને સીધા Google Drive / Sheets માં કન્વર્ટ અને સિંક કરો</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Export, convert, and synchronize hotel bookings, inquiries, and customer data directly with Google Drive and Google Sheets</p>
                     </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <a href="https://sheets.new" target="_blank" class="btn-glass-secondary btn-glass-sm" style="display: flex; align-items: center; gap: 8px; text-decoration: none; border-color: rgba(34, 197, 94, 0.4); color: #4ade80;">
-                            <span>📗</span> New Google Sheet
+                        <a href="https://sheets.new" target="_blank" class="btn-glass-secondary btn-glass-sm" style="display: flex; align-items: center; gap: 8px; text-decoration: none; border-color: var(--primary); color: var(--primary);">
+                            New Google Sheet
                         </a>
-                        <a href="https://drive.google.com" target="_blank" class="btn-glass-secondary btn-glass-sm" style="display: flex; align-items: center; gap: 8px; text-decoration: none; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
-                            <span>📁</span> Open Google Drive
+                        <a href="https://drive.google.com" target="_blank" class="btn-glass-secondary btn-glass-sm" style="display: flex; align-items: center; gap: 8px; text-decoration: none; border-color: var(--accent); color: var(--accent);">
+                            Open Google Drive
                         </a>
                     </div>
                 </div>
 
                 <!-- Integration Status & Quick Sync Cards -->
                 <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-bottom: 25px;">
-                    <div class="glass-card metric-card" style="border-left: 4px solid #10b981;">
+                    <div class="glass-card metric-card" style="border-left: 4px solid var(--primary);">
                         <div>
                             <div class="metric-label">Google Drive Status</div>
-                            <div class="metric-val" id="gdriveStatusBadge" style="font-size: 1.3rem; display: flex; align-items: center; gap: 8px; margin-top: 10px; color: #34d399;">
-                                <span>🟢</span> Ready for Sync
+                            <div class="metric-val" id="gdriveStatusBadge" style="font-size: 1.15rem; display: flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--primary);">
+                                Ready for Sync
                             </div>
                         </div>
-                        <div class="metric-icon">☁️</div>
+                        <div class="metric-icon">S</div>
+                    </div>
+
+                    <div class="glass-card metric-card" style="border-left: 4px solid var(--accent);">
+                        <div>
+                            <div class="metric-label">Quick Actions</div>
+                            <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+                                <button class="action-btn" onclick="openGoogleDriveModal('bookings')" style="color: var(--text-primary); background: rgba(46,71,61,0.08); border-color: var(--primary); padding: 7px 12px;">Bookings</button>
+                                <button class="action-btn" onclick="openGoogleDriveModal('contacts')" style="color: var(--text-primary); background: rgba(200,112,91,0.08); border-color: var(--accent); padding: 7px 12px;">Inquiries</button>
+                                <button class="action-btn" onclick="openGoogleDriveModal('users')" style="color: var(--text-primary); background: rgba(46,71,61,0.08); border-color: var(--primary); padding: 7px 12px;">Guests</button>
+                            </div>
+                        </div>
+                        <div class="metric-icon">Q</div>
                     </div>
 
                     <div class="glass-card metric-card" style="border-left: 4px solid var(--primary);">
                         <div>
-                            <div class="metric-label">1-Click Quick Actions</div>
-                            <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
-                                <button class="action-btn" onclick="openGoogleDriveModal('bookings')" style="color: #fff; background: rgba(255,122,0,0.2); border-color: var(--primary); padding: 7px 12px;">📋 Bookings</button>
-                                <button class="action-btn" onclick="openGoogleDriveModal('contacts')" style="color: #fff; background: rgba(56,189,248,0.2); border-color: #38bdf8; padding: 7px 12px;">✉️ Inquiries</button>
-                                <button class="action-btn" onclick="openGoogleDriveModal('users')" style="color: #fff; background: rgba(168,85,247,0.2); border-color: #a855f7; padding: 7px 12px;">👥 Users</button>
-                            </div>
-                        </div>
-                        <div class="metric-icon">⚡</div>
-                    </div>
-
-                    <div class="glass-card metric-card" style="border-left: 4px solid #38bdf8;">
-                        <div>
                             <div class="metric-label">Full Cloud Sync</div>
                             <button class="btn-glass-primary btn-glass-sm" onclick="syncGoogleSheets('all')" style="margin-top: 10px; font-weight: 700; width: 100%; justify-content: center;">
-                                🔄 Sync All Data Now
+                                Sync All Data Now
                             </button>
                         </div>
-                        <div class="metric-icon">📊</div>
+                        <div class="metric-icon">C</div>
                     </div>
                 </div>
 
                 <!-- Google Drive Webhook Config Card -->
                 <div class="glass-card" style="padding: 28px; margin-bottom: 30px;">
-                    <h3 style="color: #fff; font-size: 1.25rem; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-                        <span>⚙️</span> Google Sheets Webhook Configuration (ગૂગલ શીટ લાઈવ કનેક્શન)
+                    <h3 style="color: var(--text-primary); font-size: 1.25rem; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                        Google Sheets Webhook Configuration
                     </h3>
                     <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 22px;">
-                        તમારી Google Sheet સાથે ઓટોમેટિક જોડાણ કરવા માટે નીચે Google Apps Script Web App URL દાખલ કરો.
+                        Enter your Google Apps Script Web App URL below to automatically connect with your live Google Sheet.
                     </p>
 
                     <form id="gdriveSettingsForm" onsubmit="saveGoogleDriveSettings(event)">
@@ -630,29 +635,29 @@
                             <label class="glass-label" style="font-weight: 600;">Google Apps Script Web App URL *</label>
                             <input type="url" id="gdriveWebhookInput" class="glass-input" placeholder="https://script.google.com/macros/s/AKfycbx.../exec" style="font-family: monospace; font-size: 0.9rem;">
                             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">
-                                આ URL પર તમામ બુકિંગ અને સંપર્ક ડેટા સીધો Google Drive શીટમાં જમા થશે.
+                                All booking and inquiry data will sync directly into this Google Drive spreadsheet.
                             </div>
                         </div>
 
-                        <div style="display: flex; align-items: center; gap: 12px; margin: 18px 0; background: rgba(255,255,255,0.03); padding: 14px 18px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+                        <div style="display: flex; align-items: center; gap: 12px; margin: 18px 0; background: rgba(46,71,61,0.04); padding: 14px 18px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
                             <input type="checkbox" id="gdriveAutoSyncToggle" style="width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer;">
-                            <label for="gdriveAutoSyncToggle" style="color: #fff; font-size: 0.92rem; font-weight: 600; cursor: pointer;">
-                                ⚡ Real-Time Auto-Sync: દરેક નવું બુકિંગ કે ઇન્ક્વાયરી આવે ત્યારે આપોઆપ Google Drive શીટમાં સેવ કરો
+                            <label for="gdriveAutoSyncToggle" style="color: var(--text-primary); font-size: 0.92rem; font-weight: 600; cursor: pointer;">
+                                Real-Time Auto-Sync: Automatically sync new bookings and inquiries to your Google Drive sheet
                             </label>
                         </div>
 
                         <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;">
                             <button type="submit" class="btn-glass-primary" style="padding: 12px 24px;">
-                                💾 Save Google Drive Settings
+                                Save Configuration
                             </button>
                             <button type="button" class="btn-glass-secondary" onclick="syncGoogleSheets('bookings')" style="padding: 12px 20px;">
-                                📋 Push Bookings
+                                Push Bookings
                             </button>
                             <button type="button" class="btn-glass-secondary" onclick="syncGoogleSheets('contacts')" style="padding: 12px 20px;">
-                                ✉️ Push Inquiries
+                                Push Inquiries
                             </button>
                             <button type="button" class="btn-glass-secondary" onclick="syncGoogleSheets('users')" style="padding: 12px 20px;">
-                                👥 Push Users
+                                Push Guests
                             </button>
                         </div>
                     </form>
@@ -662,46 +667,46 @@
                 <div class="glass-card" style="padding: 28px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
                         <div>
-                            <h3 style="color: #fff; font-size: 1.25rem; display: flex; align-items: center; gap: 10px;">
-                                <span>📖</span> ૧ મિનિટમાં Google Drive / Google Sheets સાથે કેવી રીતે જોડવું? (Setup Guide)
+                            <h3 style="color: var(--text-primary); font-size: 1.25rem; display: flex; align-items: center; gap: 10px;">
+                                4-Step Google Drive & Sheets Setup Guide
                             </h3>
-                            <p style="color: var(--text-muted); font-size: 0.88rem;">સરળ ૪ સ્ટેપ્સ અનુસરીને Google Drive માં લાઈવ ડેટા સેવ કરો</p>
+                            <p style="color: var(--text-muted); font-size: 0.88rem;">Follow these 4 simple steps to save your live hotel data directly to Google Drive</p>
                         </div>
                         <button class="btn-glass-secondary btn-glass-sm" onclick="copyGoogleAppsScript()" style="border-color: var(--primary); color: var(--primary); font-weight: 700;">
-                            📋 Copy Apps Script Code
+                            Copy Apps Script Code
                         </button>
                     </div>
 
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 22px;">
-                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid #ff7a00;">
-                            <strong style="color: #ff7a00; font-size: 0.95rem;">સ્ટેપ ૧: નવી Google Sheet બનાવો</strong>
+                        <div style="background: rgba(46,71,61,0.04); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid var(--accent);">
+                            <strong style="color: var(--accent); font-size: 0.95rem;">Step 1: Create a New Google Sheet</strong>
                             <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; line-height: 1.5;">
-                                તમારા Google Drive માં જાઓ અથવા <a href="https://sheets.new" target="_blank" style="color: #38bdf8; text-decoration: underline;">sheets.new</a> ખોલી નવી Sheet બનાવો અને નામ આપો <em>"Hotel Dwarkesh Live Database"</em>.
+                                Open Google Drive or visit <a href="https://sheets.new" target="_blank" style="color: var(--accent); text-decoration: underline;">sheets.new</a> to create a new sheet titled <em>"Hotel Dwarkesh Live Database"</em>.
                             </p>
                         </div>
-                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid #38bdf8;">
-                            <strong style="color: #38bdf8; font-size: 0.95rem;">સ્ટેપ ૨: Extensions -> Apps Script</strong>
+                        <div style="background: rgba(46,71,61,0.04); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid var(--primary);">
+                            <strong style="color: var(--primary); font-size: 0.95rem;">Step 2: Extensions > Apps Script</strong>
                             <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; line-height: 1.5;">
-                                Google Sheet ના મેનૂમાં ઉપર <strong>Extensions</strong> પર ક્લિક કરો અને પછી <strong>Apps Script</strong> પસંદ કરો.
+                                In your Google Sheet top menu, select <strong>Extensions</strong> and then click <strong>Apps Script</strong>.
                             </p>
                         </div>
-                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid #34d399;">
-                            <strong style="color: #34d399; font-size: 0.95rem;">સ્ટેપ ૩: કોડ પેસ્ટ કરો</strong>
+                        <div style="background: rgba(46,71,61,0.04); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid var(--primary);">
+                            <strong style="color: var(--primary); font-size: 0.95rem;">Step 3: Paste Webhook Script</strong>
                             <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; line-height: 1.5;">
-                                ત્યાં જૂનો કોડ હટાવી નીચે આપેલ તૈયાર સ્ક્રિપ્ટ કોડ પેસ્ટ કરો અને Save (Ctrl+S) કરો.
+                                Replace existing code with the ready-made script below and press Save (Ctrl+S).
                             </p>
                         </div>
-                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid #a855f7;">
-                            <strong style="color: #a855f7; font-size: 0.95rem;">સ્ટેપ ૪: Deploy -> Web app</strong>
+                        <div style="background: rgba(46,71,61,0.04); padding: 16px; border-radius: var(--radius-md); border-left: 3px solid var(--accent);">
+                            <strong style="color: var(--accent); font-size: 0.95rem;">Step 4: Deploy as Web App</strong>
                             <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; line-height: 1.5;">
-                                ઉપર વાદળી બટન <strong>Deploy</strong> -> <strong>New deployment</strong> -> Type માં <strong>Web app</strong> -> Who has access: <strong>Anyone</strong> પસંદ કરી Deploy કરો અને મળેલ URL ઉપર પેસ્ટ કરો!
+                                Click <strong>Deploy</strong> > <strong>New deployment</strong> > Select type <strong>Web app</strong> > Set Who has access: <strong>Anyone</strong> > Deploy and paste the resulting URL above.
                             </p>
                         </div>
                     </div>
 
                     <!-- Code Box Preview -->
                     <div style="position: relative;">
-                        <pre id="appsScriptCodeBlock" style="background: #0d1322; border: 1px solid var(--border-glass); border-radius: 8px; padding: 18px; color: #a5b4fc; font-family: 'Consolas', monospace; font-size: 0.82rem; overflow-x: auto; max-height: 250px; line-height: 1.5;"></pre>
+                        <pre id="appsScriptCodeBlock" style="background: rgba(46,71,61,0.06); border: 1px solid var(--border-glass); border-radius: 8px; padding: 18px; color: var(--text-primary); font-family: 'Consolas', monospace; font-size: 0.82rem; overflow-x: auto; max-height: 250px; line-height: 1.5;"></pre>
                     </div>
                 </div>
             </div>
@@ -710,83 +715,79 @@
 
     <!-- MODAL: GOOGLE DRIVE & GOOGLE SHEETS DIRECT CONVERTER -->
     <div class="glass-modal-overlay" id="googleDriveModal">
-        <div class="glass-modal-box" style="max-width: 580px; text-align: left; border: 1px solid rgba(34, 197, 94, 0.4); box-shadow: 0 0 35px rgba(34, 197, 94, 0.2);">
-            <button class="glass-modal-close" onclick="closeModal('googleDriveModal')">✕</button>
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                <span style="font-size: 2.2rem;">📁</span>
-                <div>
-                    <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;" id="gdModalTitle">Google Drive / Sheets માં કન્વર્ટ કરો</h3>
-                    <p style="color: #4ade80; font-size: 0.85rem; font-weight: 600;" id="gdModalSubtitle">Hotel Dwarkesh Live Exporter</p>
-                </div>
+        <div class="glass-modal-box" style="max-width: 580px; text-align: left; border: 1px solid var(--border-glass);">
+            <button class="glass-modal-close" onclick="closeModal('googleDriveModal')">&times;</button>
+            <div style="margin-bottom: 12px;">
+                <h3 style="font-size: 1.4rem; color: var(--text-primary); margin-bottom: 2px;" id="gdModalTitle">Export & Convert to Google Sheets</h3>
+                <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600;" id="gdModalSubtitle">Hotel Dwarkesh Live Exporter</p>
             </div>
 
-            <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">
-                તમે આ ડેટાને સીધો Google Drive / Sheets માં ૩ સરળ રીતે કન્વર્ટ કરી શકો છો:
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 20px;">
+                Choose between 3 convenient methods to export data to Google Drive & Sheets:
             </p>
 
             <!-- Success Prompt when Google Sheet is opened -->
-            <div id="gdSuccessPrompt" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 18px;">
-                <div style="font-size: 2.2rem; margin-bottom: 6px;">✅</div>
-                <h4 style="color: #34d399; margin-bottom: 6px; font-size: 1.15rem; font-weight: 700;">ડેટા કોપી થઈ ગયો છે અને નવી Google Sheet ખૂલી ગઈ છે!</h4>
-                <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin-bottom: 12px;">
-                    નવી <strong>Google Sheet</strong> નવી ટેબમાં ખૂલી ગઈ છે.<br>
-                    હવે ફક્ત Google Sheet માં પ્રથમ ખાના (A1) પર ક્લિક કરીને કીબોર્ડ પર <strong style="color: #fff; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 4px; border: 1px solid #34d399; font-size: 0.95rem;">Ctrl + V</strong> (Paste) દબાવો! તમામ કોલમ્સ આપોઆપ ગોઠવાઈ જશે.
+            <div id="gdSuccessPrompt" style="display: none; background: rgba(46, 71, 61, 0.1); border: 1px solid var(--primary); border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 18px;">
+                <h4 style="color: var(--primary); margin-bottom: 6px; font-size: 1.15rem; font-weight: 700;">Data Copied & Google Sheet Opened!</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin-bottom: 12px;">
+                    A new <strong>Google Sheet</strong> has opened in a new tab.<br>
+                    Click on cell <strong>A1</strong> and press <strong style="color: var(--primary); background: rgba(255,255,255,0.8); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--primary); font-size: 0.95rem;">Ctrl + V</strong> (Paste) on your keyboard to instantly populate all columns.
                 </p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <a href="https://sheets.new" target="_blank" class="btn-glass-primary btn-glass-sm" style="text-decoration: none; padding: 7px 15px; font-weight: 700; background: #10b981;">
-                        🔗 Google Sheet ખોલો
+                    <a href="https://sheets.new" target="_blank" class="btn-glass-primary btn-glass-sm" style="text-decoration: none; padding: 7px 15px; font-weight: 700;">
+                        Open Google Sheet
                     </a>
-                    <button type="button" class="action-btn" onclick="instantGoogleSheetsPaste(true)" style="background: rgba(255,255,255,0.1); border-color: #34d399; color: #34d399; padding: 6px 14px;">
-                        📋 ફરીથી ડેટા કોપી કરો
+                    <button type="button" class="action-btn" onclick="instantGoogleSheetsPaste(true)" style="background: rgba(255,255,255,0.8); border-color: var(--primary); color: var(--primary); padding: 6px 14px;">
+                        Copy Data Again
                     </button>
                     <button type="button" class="btn-glass-secondary btn-glass-sm" onclick="closeModal('googleDriveModal')">
-                        સમજાઈ ગયું (Close)
+                        Close
                     </button>
                 </div>
             </div>
 
             <!-- Option 1: 1-Click Instant Open & Auto-Paste -->
-            <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
+            <div style="background: rgba(46, 71, 61, 0.06); border: 1px solid var(--border-glass); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
                 <div style="margin-bottom: 10px;">
-                    <strong style="color: #fff; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
-                        ⚡ ૧-ક્લિક: નવી Google Sheet માં ડેટા ખોલો (Instant Convert)
+                    <strong style="color: var(--text-primary); font-size: 1rem;">
+                        1-Click: Instant Google Sheet Conversion
                     </strong>
                     <div style="color: var(--text-secondary); font-size: 0.84rem; margin-top: 4px; line-height: 1.4;">
-                        ડેટા આપોઆપ ક્લિપબોર્ડમાં કોપી થશે અને નવી Google Sheet ખુલી જશે. ફક્ત <strong>Ctrl + V</strong> દબાવતા જ તમામ કોલમ્સ ગોઠવાઈ જશે.
+                        Data is copied automatically to your clipboard and a new Google Sheet opens. Just press <strong>Ctrl + V</strong> to populate.
                     </div>
                 </div>
-                <button class="btn-glass-primary" onclick="instantGoogleSheetsPaste()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; width: 100%; padding: 12px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>🚀</span> નવી Google Sheet માં ખોલો & ડેટા પેસ્ટ કરો
+                <button class="btn-glass-primary" onclick="instantGoogleSheetsPaste()" style="width: 100%; padding: 12px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;">
+                    Open Google Sheet & Copy Data
                 </button>
             </div>
 
             <!-- Option 2: Live Cloud Webhook Sync -->
-            <div style="background: rgba(255, 122, 0, 0.08); border: 1px solid rgba(255, 122, 0, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
+            <div style="background: rgba(200, 112, 91, 0.06); border: 1px solid var(--border-glass); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
                 <div style="margin-bottom: 10px;">
-                    <strong style="color: #fff; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
-                        ☁️ Live Cloud Sync: સીધું Google Drive Sheet માં સેવ કરો
+                    <strong style="color: var(--text-primary); font-size: 1rem;">
+                        Live Cloud Sync: Save Directly to Google Drive
                     </strong>
                     <div style="color: var(--text-secondary); font-size: 0.84rem; margin-top: 4px; line-height: 1.4;">
-                        સેટિંગ્સમાં Google Webhook URL આપેલ હોય તો એક ક્લિકમાં સીધો ડેટા તમારી Google Drive શીટમાં સેવ થઈ જશે.
+                        If a Google Webhook URL is configured in settings, your data saves directly into your Google Drive spreadsheet with one click.
                     </div>
                 </div>
-                <button class="btn-glass-primary" onclick="syncCurrentCategoryToGoogleDrive()" style="font-weight: 700; width: 100%; padding: 12px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;" id="gdModalSyncBtn">
-                    <span>🔄</span> Google Drive Sheet માં સેવ કરો
+                <button class="btn-glass-primary" onclick="syncCurrentCategoryToGoogleDrive()" style="width: 100%; padding: 12px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;" id="gdModalSyncBtn">
+                    Save to Google Drive Sheet
                 </button>
             </div>
 
             <!-- Option 3: Download CSV & Open Google Drive -->
-            <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 18px;">
+            <div style="background: rgba(46, 71, 61, 0.06); border: 1px solid var(--border-glass); border-radius: 12px; padding: 18px;">
                 <div style="margin-bottom: 10px;">
-                    <strong style="color: #fff; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
-                        📥 ડાઉનલોડ CSV & Open Google Drive
+                    <strong style="color: var(--text-primary); font-size: 1rem;">
+                        Download CSV & Open Google Drive
                     </strong>
                     <div style="color: var(--text-secondary); font-size: 0.84rem; margin-top: 4px; line-height: 1.4;">
-                        ફાઈલ ડાઉનલોડ થશે અને સીધું Google Drive ખુલશે જેથી તમે ફાઈલ ડ્રેગ કરીને ડ્રાઈવમાં મૂકી શકો.
+                        Downloads a clean spreadsheet file and opens Google Drive for direct upload.
                     </div>
                 </div>
-                <button class="btn-glass-secondary" onclick="downloadAndOpenDrive()" style="font-weight: 700; width: 100%; padding: 12px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-color: #38bdf8; color: #38bdf8;">
-                    <span>📁</span> Download CSV & Open Drive
+                <button class="btn-glass-secondary" onclick="downloadAndOpenDrive()" style="width: 100%; padding: 12px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;">
+                    Download CSV & Open Drive
                 </button>
             </div>
         </div>
@@ -794,18 +795,17 @@
 
     <!-- MODAL: WHATSAPP NOTIFICATION POPUP -->
     <div class="glass-modal-overlay" id="whatsappModal">
-        <div class="glass-modal-box" style="max-width: 500px; text-align: center; border: 1px solid #25D366; box-shadow: 0 0 35px rgba(37, 211, 102, 0.25);">
-            <button class="glass-modal-close" onclick="closeModal('whatsappModal')">✕</button>
-            <div style="font-size: 3rem; margin-bottom: 10px;">📲</div>
-            <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 6px;">WhatsApp Message</h3>
-            <p style="color: #34d399; font-size: 0.88rem; font-weight: 600; margin-bottom: 15px;" id="waModalSubtitle">
+        <div class="glass-modal-box" style="max-width: 500px; text-align: center; border: 1px solid var(--border-glass);">
+            <button class="glass-modal-close" onclick="closeModal('whatsappModal')">&times;</button>
+            <h3 style="font-size: 1.5rem; color: var(--text-primary); margin-bottom: 6px;">WhatsApp Notification</h3>
+            <p style="color: var(--primary); font-size: 0.88rem; font-weight: 600; margin-bottom: 15px;" id="waModalSubtitle">
                 Customer Notification Ready
             </p>
             
-            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px; text-align: left; font-size: 0.86rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 20px; white-space: pre-wrap; max-height: 220px; overflow-y: auto;" id="waMessagePreview"></div>
+            <div style="background: rgba(255,255,255,0.85); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px; text-align: left; font-size: 0.86rem; line-height: 1.6; color: var(--text-primary); margin-bottom: 20px; white-space: pre-wrap; max-height: 220px; overflow-y: auto;" id="waMessagePreview"></div>
 
-            <a id="waDirectBtn" href="#" target="_blank" class="btn-glass-primary" style="background: #25D366; border: none; color: #fff; font-weight: 700; width: 100%; padding: 13px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: var(--radius-sm); text-decoration: none; box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);">
-                <span style="font-size: 1.25rem;">🟢</span> Send WhatsApp Message
+            <a id="waDirectBtn" href="#" target="_blank" class="btn-glass-primary" style="background: #25D366; border: none; color: #fff; font-weight: 700; width: 100%; padding: 13px; font-size: 1rem; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); text-decoration: none;">
+                Send WhatsApp Message
             </a>
         </div>
     </div>
@@ -813,7 +813,7 @@
     <!-- MODAL: ADD/EDIT ROOM -->
     <div class="glass-modal-overlay" id="roomModal">
         <div class="glass-modal-box">
-            <button class="glass-modal-close" onclick="closeModal('roomModal')">✕</button>
+            <button class="glass-modal-close" onclick="closeModal('roomModal')">&times;</button>
             <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 20px;" id="roomModalTitle">Add New Room</h3>
             
             <form id="roomForm" onsubmit="saveRoom(event)">
@@ -867,7 +867,7 @@
     <!-- MODAL: ADD/EDIT GALLERY MEDIA -->
     <div class="glass-modal-overlay" id="galleryModal">
         <div class="glass-modal-box">
-            <button class="glass-modal-close" onclick="closeModal('galleryModal')">✕</button>
+            <button class="glass-modal-close" onclick="closeModal('galleryModal')">&times;</button>
             <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 20px;" id="galleryModalTitle">Add Gallery Media</h3>
             
             <form id="galleryForm" onsubmit="saveGallery(event)">
@@ -916,7 +916,7 @@
     <!-- MODAL: ADD/EDIT MENU ITEM -->
     <div class="glass-modal-overlay" id="menuModal">
         <div class="glass-modal-box">
-            <button class="glass-modal-close" onclick="closeModal('menuModal')">✕</button>
+            <button class="glass-modal-close" onclick="closeModal('menuModal')">&times;</button>
             <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 20px;" id="menuModalTitle">Add Menu Dish</h3>
             
             <form id="menuForm" onsubmit="saveMenu(event)">
@@ -964,7 +964,7 @@
     <!-- MODAL: ADD/EDIT NOTICE -->
     <div class="glass-modal-overlay" id="noticeModal">
         <div class="glass-modal-box">
-            <button class="glass-modal-close" onclick="closeModal('noticeModal')">✕</button>
+            <button class="glass-modal-close" onclick="closeModal('noticeModal')">&times;</button>
             <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 20px;">Add Announcement / Offer</h3>
             
             <form id="noticeForm" onsubmit="saveNotice(event)">
@@ -1009,7 +1009,7 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `glass-toast ${type}`;
-            const icon = type === 'success' ? '✓' : (type === 'error' ? '✕' : 'ℹ');
+            const icon = type === 'success' ? '&check;' : (type === 'error' ? '&times;' : '&bull;');
             toast.innerHTML = `<span style="font-weight:bold; font-size:1.1rem;">${icon}</span> <span>${msg}</span>`;
             container.appendChild(toast);
             setTimeout(() => {
@@ -1147,7 +1147,7 @@
                         <td><strong>${r.name}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${r.category}</span></td>
                         <td>
                             <span class="status-pill ${isAvailable ? 'available' : 'booked'}">
-                                ${isAvailable ? '🟢 Available' : '🔴 Booked'}
+                                ${isAvailable ? 'Available' : 'Booked'}
                             </span>
                         </td>
                         <td>₹${r.day}</td>
@@ -1290,7 +1290,7 @@
                             }
                         </td>
                         <td><strong>${g.title}</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">${g.desc || ''}</span></td>
-                        <td><span class="glass-badge" style="background:${isVid ? 'rgba(239,68,68,0.2)' : 'rgba(56,189,248,0.2)'}; padding:4px 10px; border-radius:99px; color:${isVid ? '#f87171' : '#38bdf8'}; font-weight:700;">${isVid ? '🎬 VIDEO' : '🖼️ PHOTO'}</span></td>
+                        <td><span class="glass-badge" style="background:${isVid ? 'rgba(239,68,68,0.2)' : 'rgba(56,189,248,0.2)'}; padding:4px 10px; border-radius:99px; color:${isVid ? '#f87171' : '#38bdf8'}; font-weight:700;">${isVid ? 'Video' : 'Photo'}</span></td>
                         <td>${g.category}</td>
                         <td><a href="${g.url}" target="_blank" style="color:var(--primary); font-size:0.8rem; text-decoration:none;">View Media ↗</a></td>
                         <td>
@@ -1422,7 +1422,7 @@
                         <td><strong>${d.name}</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">${d.desc || ''}</span></td>
                         <td><span class="glass-badge" style="background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 99px;">${d.category}</span></td>
                         <td><strong style="color:var(--primary);">₹${d.price}</strong></td>
-                        <td><span style="color:#34d399;">🟢 Pure Veg</span></td>
+                        <td><span style="color:#34d399; font-weight:600;">Pure Veg</span></td>
                         <td>
                             <button class="action-btn edit" onclick='editDish(${JSON.stringify(d).replace(/'/g, "&apos;")})'>Edit</button>
                             <button class="action-btn delete" onclick="deleteDish('${d.id}')">Delete</button>
@@ -1606,33 +1606,33 @@
                     const waMob = cleanMob.length === 12 && cleanMob.startsWith('91') ? cleanMob.slice(2) : cleanMob;
                     const itemDesc = b.itemDetails?.roomName || b.itemDetails?.dishName || b.itemDetails?.name || b.type || 'Room / Dining';
                     const waStatusText = b.status === 'Completed' ? 'COMPLETED' : (b.status === 'Cancelled' ? 'CANCELLED' : 'CONFIRMED');
-                    const defaultMsg = encodeURIComponent(`🏨 Hotel Dwarkesh Kheralu: Dear ${b.customerName || 'Valued Guest'}, your booking #${b.id} (${itemDesc}) is ${waStatusText}. Helpline: +91 6353848203`);
+                    const defaultMsg = encodeURIComponent(`Hotel Dwarkesh Kheralu: Dear ${b.customerName || 'Valued Guest'}, your booking #${b.id} (${itemDesc}) is ${waStatusText}. Helpline: +91 6353848203`);
                     const waLink = waMob.length === 10 ? `https://api.whatsapp.com/send?phone=91${waMob}&text=${defaultMsg}` : '';
                     const bookingDateTime = b.createdAt ? new Date(b.createdAt).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }) : '-';
 
                     let statusClass = 'confirmed';
-                    let statusLabel = '✅ Confirmed';
+                    let statusLabel = 'Confirmed';
                     if (b.status === 'Completed') {
                         statusClass = 'completed';
-                        statusLabel = '🎉 Completed';
+                        statusLabel = 'Completed';
                     } else if (b.status === 'Cancelled') {
                         statusClass = 'cancelled';
-                        statusLabel = '❌ Cancelled';
+                        statusLabel = 'Cancelled';
                     } else if (isCash) {
                         statusClass = 'pending';
-                        statusLabel = '⏳ Cash on Arrival';
+                        statusLabel = 'Cash on Arrival';
                     }
 
                     return `
                     <tr>
                         <td>
                             <code>${b.id}</code>
-                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">🕒 ${bookingDateTime}</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${bookingDateTime}</div>
                         </td>
                         <td><strong>${b.customerName || 'Guest'}</strong></td>
                         <td>
                             <a href="tel:${b.customerMobile}" style="color:var(--primary); text-decoration:none; font-weight:700;">
-                                📞 ${b.customerMobile || '-'}
+                                ${b.customerMobile || '-'}
                             </a>
                             ${b.customerEmail ? `<div style="font-size:0.75rem; color:#94a3b8;">${b.customerEmail}</div>` : ''}
                         </td>
@@ -1641,7 +1641,7 @@
                         <td><strong style="color:var(--primary);">₹${b.totalAmount}</strong></td>
                         <td>
                             <div style="font-size:0.8rem; font-weight:600; color:${isCash ? '#fbbf24' : '#34d399'};">
-                                ${isCash ? '💵 Cash' : '⚡ Online UPI'}
+                                ${isCash ? 'Cash' : 'Online UPI'}
                             </div>
                             <code style="font-size:0.75rem; color:#cbd5e1;">${b.paymentId || 'N/A'}</code>
                         </td>
@@ -1652,9 +1652,9 @@
                         </td>
                         <td>
                             <div style="display:flex; gap:5px; flex-wrap:wrap;">
-                                <button class="action-btn edit" onclick="updateBookingStatus('${b.id}', 'Completed')" title="Complete & Notify">✓ Complete</button>
-                                <button class="action-btn delete" onclick="updateBookingStatus('${b.id}', 'Cancelled')" title="Cancel & Notify">✕ Cancel</button>
-                                <button class="action-btn" style="background:#25D366; color:#fff; border-color:#25D366; font-weight:700; display:inline-flex; align-items:center; gap:3px;" onclick="openWhatsAppForBooking('${b.id}')" title="Send WhatsApp Message">🟢 WhatsApp</button>
+                                <button class="action-btn edit" onclick="updateBookingStatus('${b.id}', 'Completed')" title="Complete & Notify">Complete</button>
+                                <button class="action-btn delete" onclick="updateBookingStatus('${b.id}', 'Cancelled')" title="Cancel & Notify">Cancel</button>
+                                <button class="action-btn" style="background:#25D366; color:#fff; border-color:#25D366; font-weight:700; display:inline-flex; align-items:center; gap:3px;" onclick="openWhatsAppForBooking('${b.id}')" title="Send WhatsApp Message">WhatsApp</button>
                             </div>
                         </td>
                     </tr>
@@ -1670,11 +1670,11 @@
             const amount = booking.totalAmount || '0';
 
             if (status === 'Completed') {
-                return `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${custName}*,\n\nYour order / booking has been successfully *COMPLETED*! ✅\n\n📋 *Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemDesc}\n• Total Amount: ₹${amount}\n\n📍 *Hotel Address:*\nChandra Pushpa Shopping Centre, Near Vrundavan Circle, Ambaji Highway, Kheralu, Gujarat - 384325.\n\n📞 *24/7 Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh! We look forward to serving you again. Have a wonderful day! 🙏✨`;
+                return `*Hotel Dwarkesh (Kheralu)*\n\nDear *${custName}*,\n\nYour order / booking has been successfully *COMPLETED*.\n\n*Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemDesc}\n• Total Amount: ₹${amount}\n\n*Hotel Address:*\nChandra Pushpa Shopping Centre, Near Vrundavan Circle, Ambaji Highway, Kheralu, Gujarat - 384325.\n\n*Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh. We look forward to serving you again.`;
             } else if (status === 'Cancelled') {
-                return `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${custName}*,\n\nYour order / booking has been *CANCELLED*. ❌\n\n📋 *Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemDesc}\n\nIf you have any questions or require assistance, please contact our front desk:\n📞 *24/7 Helpline:* +91 6353848203\n\nHotel Dwarkesh, Kheralu.`;
+                return `*Hotel Dwarkesh (Kheralu)*\n\nDear *${custName}*,\n\nYour order / booking has been *CANCELLED*.\n\n*Booking Details:*\n• Booking ID: #${booking.id}\n• Item: ${itemDesc}\n\nIf you have any questions or require assistance, please contact our front desk:\n*Helpline:* +91 6353848203\n\nHotel Dwarkesh, Kheralu.`;
             } else {
-                return `🏨 *Hotel Dwarkesh (Kheralu)*\n\nDear *${custName}*,\n\nYour booking (#${booking.id}) is *CONFIRMED*! ✅\n• Item: ${itemDesc}\n• Total Amount: ₹${amount}\n\n📍 *Location:* Near Vrundavan Circle, Ambaji Highway, Kheralu.\n📞 *24/7 Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh! 🙏`;
+                return `*Hotel Dwarkesh (Kheralu)*\n\nDear *${custName}*,\n\nYour booking (#${booking.id}) is *CONFIRMED*.\n• Item: ${itemDesc}\n• Total Amount: ₹${amount}\n\n*Location:* Near Vrundavan Circle, Ambaji Highway, Kheralu.\n*Helpline:* +91 6353848203\n\nThank you for choosing Hotel Dwarkesh.`;
             }
         }
 
@@ -1682,7 +1682,7 @@
             const modal = document.getElementById('whatsappModal');
             if (!modal) return;
             const msgText = generateWhatsAppMessage(booking, status);
-            document.getElementById('waModalSubtitle').textContent = `Customer: ${booking.customerName || 'Guest'} (📞 ${booking.customerMobile || ''})`;
+            document.getElementById('waModalSubtitle').textContent = `Customer: ${booking.customerName || 'Guest'} (${booking.customerMobile || ''})`;
             document.getElementById('waMessagePreview').textContent = msgText;
             const directBtn = document.getElementById('waDirectBtn');
             directBtn.href = waUrl;
@@ -1700,7 +1700,7 @@
                 window.open(waUrl, '_blank');
                 showWhatsAppModal(booking, booking.status || 'Confirmed', waUrl);
             } else {
-                showToast('ગ્રાહકનો માન્ય મોબાઈલ નંબર ઉપલબ્ધ નથી.', 'error');
+                showToast('Valid mobile number not available for this guest.', 'error');
             }
         }
 
@@ -1713,7 +1713,7 @@
             const msgText = generateWhatsAppMessage(booking, status);
             const waUrl = waMob.length === 10 ? `https://wa.me/91${waMob}?text=${encodeURIComponent(msgText)}` : '';
 
-            if (!confirm(`શું તમે આ ઓર્ડર / બુકિંગને '${status}' કરવા માંગો છો?\nગ્રાહકના WhatsApp પર આપોઆપ મેસેજ ખૂલશે.`)) return;
+            if (!confirm(`Are you sure you want to mark this booking as '${status}'?\nA WhatsApp notification draft will open.`)) return;
 
             // Open WhatsApp immediately upon click
             if (waUrl) {
@@ -1731,7 +1731,7 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showToast(`ઓર્ડર #${id} ${status} થઈ ગયો છે અને ગ્રાહકનું WhatsApp ખૂલી ગયું છે!`, 'success');
+                    showToast(`Booking #${id} updated to ${status}. Notification opened.`, 'success');
                     loadBookings();
                     loadStats();
 
@@ -1777,12 +1777,12 @@
                         <td><strong>${u.name || 'Guest User'}</strong></td>
                         <td>
                             <a href="tel:${u.mobile || u.identifier}" style="color:var(--primary); text-decoration:none; font-weight:700;">
-                                📞 ${u.mobile || u.identifier || '-'}
+                                ${u.mobile || u.identifier || '-'}
                             </a>
                         </td>
                         <td>${u.email ? `<a href="mailto:${u.email}" style="color:#cbd5e1; text-decoration:none;">${u.email}</a>` : '-'}</td>
-                        <td><span style="font-size:0.85rem; color:#cbd5e1;">📅 ${regDateTime}</span></td>
-                        <td><span style="font-size:0.85rem; color:var(--text-muted);">🕒 ${lastActiveDateTime}</span></td>
+                        <td><span style="font-size:0.85rem; color:#cbd5e1;">${regDateTime}</span></td>
+                        <td><span style="font-size:0.85rem; color:var(--text-muted);">${lastActiveDateTime}</span></td>
                         <td>
                             <span style="background:rgba(255,122,0,0.18); color:var(--primary); padding:3px 10px; border-radius:12px; font-weight:700;">
                                 ${u.totalBookings || 0}
@@ -1791,7 +1791,7 @@
                         <td><strong style="color:#34d399;">₹${(u.totalSpent || 0).toLocaleString()}</strong></td>
                         <td>
                             <div style="display:flex; gap:5px;">
-                                ${waLink ? `<a href="${waLink}" target="_blank" class="action-btn" style="border-color:#10b981; color:#34d399; text-decoration:none;" title="WhatsApp">📱 WA</a>` : ''}
+                                ${waLink ? `<a href="${waLink}" target="_blank" class="action-btn" style="border-color:#10b981; color:#34d399; text-decoration:none;" title="WhatsApp">WA</a>` : ''}
                                 <button class="action-btn delete" onclick="deleteUser('${u.id}')" title="Delete User">Delete</button>
                             </div>
                         </td>
@@ -1803,7 +1803,7 @@
         }
 
         async function deleteUser(id) {
-            if (!confirm('શું તમે આ ગ્રાહક એકાઉન્ટને ડિલીટ કરવા માંગો છો?')) return;
+            if (!confirm('Are you sure you want to delete this customer account?')) return;
             try {
                 const res = await fetch(`/api/admin/users/${id}`, {
                     method: 'DELETE',
@@ -1811,7 +1811,7 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showToast('ગ્રાહક એકાઉન્ટ ડિલીટ થઈ ગયું છે', 'info');
+                    showToast('Customer account deleted successfully', 'info');
                     loadUsers();
                     loadStats();
                 } else {
@@ -1824,7 +1824,7 @@
 
         function exportUsersToExcel() {
             if (!loadedUsersData || !loadedUsersData.length) {
-                showToast('કોઈ યુઝર્સ ડેટા ઉપલબ્ધ નથી.', 'info');
+                showToast('No user data available to export.', 'info');
                 return;
             }
 
@@ -1867,15 +1867,15 @@
 
                     return `
                     <tr>
-                        <td><span style="font-size:0.8rem; color:var(--text-muted);">🕒 ${contactDateTime}</span></td>
+                        <td><span style="font-size:0.8rem; color:var(--text-muted);">${contactDateTime}</span></td>
                         <td><strong>${c.name}</strong></td>
-                        <td><a href="tel:${c.mobile}" style="color:var(--primary); text-decoration:none; font-weight:700;">📞 ${c.mobile}</a></td>
+                        <td><a href="tel:${c.mobile}" style="color:var(--primary); text-decoration:none; font-weight:700;">${c.mobile}</a></td>
                         <td>${c.email ? `<a href="mailto:${c.email}" style="color:#cbd5e1; text-decoration:none;">${c.email}</a>` : '-'}</td>
                         <td><span style="background:rgba(255,122,0,0.15); color:var(--primary); padding:3px 8px; border-radius:6px; font-size:0.8rem; font-weight:600;">${c.subject || 'General'}</span></td>
                         <td style="max-width:320px; font-size:0.88rem; line-height:1.5;">${c.message}</td>
                         <td>
                             <div style="display:flex; gap:4px;">
-                                ${waLink ? `<a href="${waLink}" target="_blank" class="action-btn" style="border-color:#10b981; color:#34d399; text-decoration:none;" title="Reply on WhatsApp">📱 WA</a>` : ''}
+                                ${waLink ? `<a href="${waLink}" target="_blank" class="action-btn" style="border-color:#10b981; color:#34d399; text-decoration:none;" title="Reply on WhatsApp">WA</a>` : ''}
                                 <button class="action-btn delete" onclick="deleteContact('${c.id}')">Delete</button>
                             </div>
                         </td>
@@ -1905,7 +1905,7 @@
         // ================= UNIVERSAL EXCEL (.CSV) EXPORTER =================
         function exportToExcelFile(data, filename) {
             if (!data || !data.length) {
-                showToast('Excel માં કન્વર્ટ કરવા માટે કોઈ ડેટા નથી.', 'info');
+                showToast('No data available to export.', 'info');
                 return;
             }
 
@@ -1923,7 +1923,7 @@
                 csvRows.push(values.join(','));
             }
 
-            // UTF-8 BOM (\uFEFF) ensures Excel displays Gujarati & English Unicode perfectly
+            // UTF-8 BOM (\uFEFF) ensures Excel displays Unicode perfectly
             const csvContent = '\uFEFF' + csvRows.join('\r\n');
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
@@ -1934,12 +1934,12 @@
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            showToast('Excel (.CSV) ફાઈલ ડાઉનલોડ થઈ ગઈ છે!', 'success');
+            showToast('Excel (.CSV) file downloaded successfully!', 'success');
         }
 
         function exportBookingsToExcel() {
             if (!loadedBookingsData || !loadedBookingsData.length) {
-                showToast('બુકિંગ ડેટા ઉપલબ્ધ નથી.', 'info');
+                showToast('No booking data available to export.', 'info');
                 return;
             }
 
@@ -1947,7 +1947,7 @@
                 const isCash = String(b.paymentId).includes('CASH') || (b.paymentMethod && b.paymentMethod.includes('Cash'));
                 return {
                     'Booking ID': b.id,
-                    'Date & Time of Booking (તારીખ અને સમય)': b.createdAt ? new Date(b.createdAt).toLocaleString('en-IN') : '',
+                    'Date & Time of Booking': b.createdAt ? new Date(b.createdAt).toLocaleString('en-IN') : '',
                     'Customer Name': b.customerName || 'Guest',
                     'Mobile Number': b.customerMobile || '',
                     'Email Address': b.customerEmail || '',
@@ -1968,13 +1968,13 @@
 
         function exportContactsToExcel() {
             if (!loadedContactsData || !loadedContactsData.length) {
-                showToast('કોઈ પૂછપરછ મેસેજ ઉપલબ્ધ નથી.', 'info');
+                showToast('No inquiries available to export.', 'info');
                 return;
             }
 
             const formatted = loadedContactsData.map(c => ({
                 'Inquiry ID': c.id,
-                'Date & Time Received (તારીખ અને સમય)': c.createdAt ? new Date(c.createdAt).toLocaleString('en-IN') : '',
+                'Date & Time Received': c.createdAt ? new Date(c.createdAt).toLocaleString('en-IN') : '',
                 'Customer Name': c.name,
                 'Mobile Number': c.mobile,
                 'Email Address': c.email || '',
@@ -2186,7 +2186,7 @@ function appendSingleRow(sheet, itemObj) {
         async function instantGoogleSheetsPaste(copyOnly = false) {
             const data = getCategoryExportData(activeGdriveCategory);
             if (!data || !data.length) {
-                showToast('કન્વર્ટ કરવા માટે કોઈ ડેટા ઉપલબ્ધ નથી.', 'info');
+                showToast('No data available to convert.', 'info');
                 return;
             }
 
@@ -2248,7 +2248,7 @@ function appendSingleRow(sheet, itemObj) {
                 prompt.style.display = 'block';
                 prompt.scrollIntoView({ behavior: 'smooth' });
             }
-            showToast('📋 ડેટા કોપી થઈ ગયો છે! Google Sheet માં Ctrl + V દબાવો.', 'success');
+            showToast('Data copied to clipboard! Paste into Google Sheets (Ctrl + V).', 'success');
         }
 
         async function syncCurrentCategoryToGoogleDrive() {
@@ -2285,10 +2285,10 @@ function appendSingleRow(sheet, itemObj) {
                     if (toggle) toggle.checked = Boolean(data.settings.autoSyncDrive);
                     if (badge) {
                         if (data.settings.googleSheetWebhookUrl) {
-                            badge.innerHTML = '<span>🟢</span> Live Connected';
+                            badge.innerHTML = '<span style="color:#34d399; font-weight:700;">●</span> Connected';
                             badge.style.color = '#34d399';
                         } else {
-                            badge.innerHTML = '<span>⚪</span> Not Configured';
+                            badge.innerHTML = '<span style="color:var(--text-muted);">○</span> Not Configured';
                             badge.style.color = 'var(--text-muted)';
                         }
                     }
@@ -2303,7 +2303,7 @@ function appendSingleRow(sheet, itemObj) {
             const webhookUrl = document.getElementById('gdriveWebhookInput').value.trim();
             const autoSync = document.getElementById('gdriveAutoSyncToggle').checked;
 
-            showToast('સેટિંગ્સ સેવ થઈ રહ્યા છે...', 'info');
+            showToast('Saving settings...', 'info');
             try {
                 const res = await fetch('/api/admin/settings', {
                     method: 'POST',
@@ -2318,7 +2318,7 @@ function appendSingleRow(sheet, itemObj) {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showToast(data.message || 'Google Drive સેટિંગ્સ સફળતાપૂર્વક સેવ થયા!', 'success');
+                    showToast(data.message || 'Google Drive settings saved successfully!', 'success');
                     loadGoogleDriveSettings();
                 } else {
                     showToast(data.message || 'Error saving settings', 'error');
@@ -2329,7 +2329,7 @@ function appendSingleRow(sheet, itemObj) {
         }
 
         async function syncGoogleSheets(type) {
-            showToast('Google Drive / Sheets માં ડેટા મોકલાઈ રહ્યો છે...', 'info');
+            showToast('Sending data to Google Sheets...', 'info');
             try {
                 const res = await fetch('/api/admin/sync-google-sheets', {
                     method: 'POST',
@@ -2341,7 +2341,7 @@ function appendSingleRow(sheet, itemObj) {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showToast(data.message || 'ડેટા સફળતાપૂર્વક Google Sheets માં સિંક થયો!', 'success');
+                    showToast(data.message || 'Data synced to Google Sheets successfully!', 'success');
                 } else {
                     showToast(data.message || 'Sync failed', 'error');
                     if (data.message && data.message.includes('Webhook URL')) {
@@ -2355,7 +2355,7 @@ function appendSingleRow(sheet, itemObj) {
 
         function copyGoogleAppsScript() {
             navigator.clipboard.writeText(GOOGLE_APPS_SCRIPT_TEMPLATE).then(() => {
-                showToast('📋 Google Apps Script કોડ કોપી થઈ ગયો છે! Google Sheet માં પેસ્ટ કરો.', 'success');
+                showToast('Google Apps Script code copied to clipboard! Paste into your Sheet script editor.', 'success');
             }).catch(() => {
                 showToast('Failed to copy code', 'error');
             });
