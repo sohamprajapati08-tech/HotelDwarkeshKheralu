@@ -254,6 +254,9 @@
                 <div class="admin-nav-item" data-tab="users" onclick="switchAdminTab('users')">
                     Registered Guests
                 </div>
+                <div class="admin-nav-item" data-tab="mobileapp" onclick="switchAdminTab('mobileapp')">
+                    📱 Mobile App Hub
+                </div>
                 <div class="admin-nav-item" data-tab="googledrive" onclick="switchAdminTab('googledrive')">
                     Google Drive Hub
                 </div>
@@ -565,6 +568,127 @@
                         </thead>
                         <tbody id="usersTableBody">
                             <tr><td colspan="9" style="text-align: center;">Loading registered users...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: MOBILE APP HUB (DEDICATED SECTION FOR APP USERS & PROMO MANAGEMENT) -->
+            <div id="tabMobileApp" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2 style="color: var(--text-primary); font-size: 1.8rem; display: flex; align-items: center; gap: 10px;">
+                            <span>📱</span> Mobile App Control Hub
+                        </h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Separate management dashboard for Android APK / PWA Mobile App users, promotional banners, and live discounts.</p>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-glass-primary btn-glass-sm" onclick="exportAppUsersToExcel()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: var(--radius-pill);">
+                            Download App Users (.CSV)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- APP METRICS -->
+                <div class="metric-grid" style="margin-bottom: 25px;">
+                    <div class="glass-card metric-card">
+                        <div>
+                            <div class="metric-label">Mobile App Users</div>
+                            <div class="metric-val" id="appHubUsersCount">0</div>
+                        </div>
+                        <div class="metric-icon" style="background: rgba(255,107,53,0.15); color: #FF6B35;">📱</div>
+                    </div>
+                    <div class="glass-card metric-card">
+                        <div>
+                            <div class="metric-label">Website Guests</div>
+                            <div class="metric-val" id="appHubWebUsersCount">0</div>
+                        </div>
+                        <div class="metric-icon" style="background: rgba(56,189,248,0.15); color: #0284C7;">🌐</div>
+                    </div>
+                    <div class="glass-card metric-card">
+                        <div>
+                            <div class="metric-label">App Discount Rate</div>
+                            <div class="metric-val" id="appHubDiscountVal">15%</div>
+                        </div>
+                        <div class="metric-icon" style="background: rgba(16,185,129,0.15); color: #10B981;">🏷️</div>
+                    </div>
+                    <div class="glass-card metric-card">
+                        <div>
+                            <div class="metric-label">App Status & Version</div>
+                            <div class="metric-val" style="font-size: 1.3rem; margin-top: 10px; color: #F59E0B;">v2.5.0 Live</div>
+                        </div>
+                        <div class="metric-icon" style="background: rgba(245,158,11,0.15); color: #F59E0B;">⚡</div>
+                    </div>
+                </div>
+
+                <!-- PROMO BANNER CONFIGURATION & ANNOUNCEMENT -->
+                <div class="glass-card" style="padding: 24px; margin-bottom: 30px;">
+                    <h3 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>🎨</span> Mobile App Promotional Banner & Offers
+                    </h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
+                        Update the top offer card displayed on every customer's mobile app in real-time.
+                    </p>
+
+                    <form id="appConfigForm" onsubmit="saveAppPromoConfig(event)">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                            <div class="glass-form-group">
+                                <label class="glass-label">Promo Badge Tag</label>
+                                <input type="text" id="adminAppPromoTag" class="glass-input" placeholder="e.g. SPECIAL OFFER" required>
+                            </div>
+                            <div class="glass-form-group">
+                                <label class="glass-label">Promo Title (Main Heading)</label>
+                                <input type="text" id="adminAppPromoTitle" class="glass-input" placeholder="e.g. Get Flat 15% Off" required>
+                            </div>
+                            <div class="glass-form-group">
+                                <label class="glass-label">Subtitle / Description</label>
+                                <input type="text" id="adminAppPromoSubtitle" class="glass-input" placeholder="e.g. On your online AC room reservation" required>
+                            </div>
+                            <div class="glass-form-group">
+                                <label class="glass-label">Discount Percentage</label>
+                                <input type="text" id="adminAppPromoDiscount" class="glass-input" placeholder="e.g. 15%" required>
+                            </div>
+                            <div class="glass-form-group">
+                                <label class="glass-label">Button Text</label>
+                                <input type="text" id="adminAppPromoBtnText" class="glass-input" placeholder="e.g. BOOK NOW" required>
+                            </div>
+                            <div class="glass-form-group">
+                                <label class="glass-label">Button Target Link</label>
+                                <input type="text" id="adminAppPromoBtnLink" class="glass-input" placeholder="e.g. /room-booking" required>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
+                            <button type="submit" class="btn-glass-primary" style="padding: 12px 28px; font-weight: 700; border-radius: var(--radius-pill);">
+                                Save & Push to Mobile App
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- DEDICATED APP USERS TABLE -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="font-size: 1.25rem; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+                        <span>👥</span> Mobile App Registered Customers
+                    </h3>
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Users registered via Mobile OTP / Direct App Login</span>
+                </div>
+
+                <div class="glass-card" style="padding: 10px; overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>App Customer</th>
+                                <th>Mobile Number</th>
+                                <th>Source</th>
+                                <th>Registered Date & Time</th>
+                                <th>Last Active</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appUsersTableBody">
+                            <tr><td colspan="7" style="text-align: center;">Loading Mobile App users...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -1176,6 +1300,7 @@
             document.getElementById('tabBookings').style.display = tab === 'bookings' ? 'block' : 'none';
             document.getElementById('tabContacts').style.display = tab === 'contacts' ? 'block' : 'none';
             document.getElementById('tabUsers').style.display = tab === 'users' ? 'block' : 'none';
+            if (document.getElementById('tabMobileApp')) document.getElementById('tabMobileApp').style.display = tab === 'mobileapp' ? 'block' : 'none';
             if (document.getElementById('tabGoogleDrive')) document.getElementById('tabGoogleDrive').style.display = tab === 'googledrive' ? 'block' : 'none';
             if (document.getElementById('tabFounder')) document.getElementById('tabFounder').style.display = tab === 'founder' ? 'block' : 'none';
 
@@ -1186,6 +1311,7 @@
             if (tab === 'bookings') loadBookings();
             if (tab === 'contacts') loadContacts();
             if (tab === 'users') loadUsers();
+            if (tab === 'mobileapp') loadAppHub();
             if (tab === 'googledrive') loadGoogleDriveSettings();
             if (tab === 'founder') loadFounder();
         }
@@ -1928,6 +2054,154 @@
 
             const dateStr = new Date().toISOString().split('T')[0];
             exportToExcelFile(formatted, `Hotel_Dwarkesh_Registered_Users_${dateStr}.csv`);
+        }
+
+        // ================= MOBILE APP HUB & MANAGEMENT =================
+        let loadedAppUsersData = [];
+
+        async function loadAppHub() {
+            const tbody = document.getElementById('appUsersTableBody');
+            try {
+                const res = await fetch('/api/admin/app-hub', {
+                    headers: { 'Authorization': `Bearer ${getAdminToken()}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    // Update stats
+                    if (document.getElementById('appHubUsersCount')) {
+                        document.getElementById('appHubUsersCount').textContent = data.stats.totalAppUsers || 0;
+                    }
+                    if (document.getElementById('appHubWebUsersCount')) {
+                        document.getElementById('appHubWebUsersCount').textContent = data.stats.totalWebUsers || 0;
+                    }
+
+                    // Populate promo banner editor
+                    if (data.appConfig) {
+                        const cfg = data.appConfig;
+                        if (document.getElementById('adminAppPromoTag')) document.getElementById('adminAppPromoTag').value = cfg.promoTag || 'SPECIAL OFFER';
+                        if (document.getElementById('adminAppPromoTitle')) document.getElementById('adminAppPromoTitle').value = cfg.promoTitle || 'Get Flat 15% Off';
+                        if (document.getElementById('adminAppPromoSubtitle')) document.getElementById('adminAppPromoSubtitle').value = cfg.promoSubtitle || 'On your online AC room reservation';
+                        if (document.getElementById('adminAppPromoDiscount')) {
+                            document.getElementById('adminAppPromoDiscount').value = cfg.promoDiscount || '15%';
+                            if (document.getElementById('appHubDiscountVal')) document.getElementById('appHubDiscountVal').textContent = cfg.promoDiscount || '15%';
+                        }
+                        if (document.getElementById('adminAppPromoBtnText')) document.getElementById('adminAppPromoBtnText').value = cfg.promoButtonText || 'BOOK NOW';
+                        if (document.getElementById('adminAppPromoBtnLink')) document.getElementById('adminAppPromoBtnLink').value = cfg.promoButtonLink || '/room-booking';
+                    }
+
+                    // Populate app users table
+                    loadedAppUsersData = data.appUsers || [];
+                    if (!loadedAppUsersData.length) {
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No mobile app users found yet.</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = loadedAppUsersData.map(u => {
+                        const cleanMob = String(u.mobile || u.identifier || '').replace(/\D/g, '');
+                        const waMob = cleanMob.length === 12 && cleanMob.startsWith('91') ? cleanMob.slice(2) : cleanMob;
+                        const waLink = waMob.length === 10 ? `https://api.whatsapp.com/send?phone=91${waMob}&text=${encodeURIComponent(`Hello ${u.name || 'Valued Guest'}, Greetings from Hotel Dwarkesh Kheralu!`)}` : '';
+                        const regDateTime = u.createdAt ? new Date(u.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
+                        const lastActive = u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : regDateTime;
+
+                        return `
+                        <tr>
+                            <td><code>${u.id || '-'}</code></td>
+                            <td><strong style="color: var(--text-primary);">${u.name || 'App Guest'}</strong></td>
+                            <td>
+                                <a href="tel:${u.mobile || u.identifier}" style="color: var(--primary); text-decoration: none; font-weight: 700;">
+                                    +91 ${u.mobile || u.identifier || '-'}
+                                </a>
+                            </td>
+                            <td><span style="background: rgba(255,107,53,0.15); color: #EA580C; padding: 3px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 700;">📱 Mobile App</span></td>
+                            <td><span style="font-size: 0.85rem; color: var(--text-secondary);">${regDateTime}</span></td>
+                            <td><span style="font-size: 0.85rem; color: var(--text-muted);">${lastActive}</span></td>
+                            <td>
+                                <div style="display: flex; gap: 6px;">
+                                    ${waLink ? `<a href="${waLink}" target="_blank" class="action-btn" style="border-color: #10B981; color: #10B981; text-decoration: none;" title="WhatsApp Chat">WA</a>` : ''}
+                                    <button class="action-btn delete" onclick="deleteAppUser('${u.id}')" title="Delete App User">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                console.error('Error loading app hub:', err);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Failed to load Mobile App data.</td></tr>';
+            }
+        }
+
+        async function saveAppPromoConfig(e) {
+            if (e) e.preventDefault();
+            const config = {
+                promoTag: document.getElementById('adminAppPromoTag').value.trim(),
+                promoTitle: document.getElementById('adminAppPromoTitle').value.trim(),
+                promoSubtitle: document.getElementById('adminAppPromoSubtitle').value.trim(),
+                promoDiscount: document.getElementById('adminAppPromoDiscount').value.trim(),
+                promoButtonText: document.getElementById('adminAppPromoBtnText').value.trim(),
+                promoButtonLink: document.getElementById('adminAppPromoBtnLink').value.trim()
+            };
+
+            try {
+                const res = await fetch('/api/admin/app-config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAdminToken()}`
+                    },
+                    body: JSON.stringify(config)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Mobile App Promo Banner updated successfully!', 'success');
+                    if (document.getElementById('appHubDiscountVal')) {
+                        document.getElementById('appHubDiscountVal').textContent = config.promoDiscount || '15%';
+                    }
+                } else {
+                    showToast(data.message || 'Failed to update app configuration', 'error');
+                }
+            } catch (err) {
+                showToast('Server error updating app configuration', 'error');
+            }
+        }
+
+        async function deleteAppUser(id) {
+            if (!confirm('Are you sure you want to delete this Mobile App customer account?')) return;
+            try {
+                const res = await fetch(`/api/admin/app-users/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${getAdminToken()}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Mobile App customer account deleted successfully', 'info');
+                    loadAppHub();
+                    loadStats();
+                } else {
+                    showToast(data.message || 'Failed to delete app user', 'error');
+                }
+            } catch (err) {
+                showToast('Server error deleting app user', 'error');
+            }
+        }
+
+        function exportAppUsersToExcel() {
+            if (!loadedAppUsersData || !loadedAppUsersData.length) {
+                showToast('No mobile app user data available to export.', 'info');
+                return;
+            }
+
+            const formatted = loadedAppUsersData.map(u => ({
+                'User ID': u.id,
+                'App Customer Name': u.name || 'Guest User',
+                'Mobile Number': u.mobile || u.identifier || '',
+                'Registration Platform': u.source || 'Mobile App',
+                'Registration Date & Time': u.createdAt ? new Date(u.createdAt).toLocaleString('en-IN') : 'N/A',
+                'Last Active Date & Time': u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('en-IN') : (u.createdAt ? new Date(u.createdAt).toLocaleString('en-IN') : 'N/A')
+            }));
+
+            const dateStr = new Date().toISOString().split('T')[0];
+            exportToExcelFile(formatted, `Hotel_Dwarkesh_App_Users_${dateStr}.csv`);
         }
 
         // ================= CONTACT INQUIRIES & EXCEL EXPORT =================

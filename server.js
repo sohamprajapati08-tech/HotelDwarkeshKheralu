@@ -360,9 +360,9 @@ app.post('/api/auth/verify-otp', (req, res) => {
     });
 });
 
-// 3. Quick Mobile Login (100% Free, Instant Verification without SMS gateway cost)
+// 3. Quick Mobile Login (100% Free, Instant Verification for Mobile App & Web)
 app.post('/api/auth/quick-mobile-login', (req, res) => {
-    const { mobile, name } = req.body;
+    const { mobile, name, source } = req.body;
     if (!mobile) {
         return res.status(400).json({ success: false, message: 'Mobile number is required.' });
     }
@@ -375,6 +375,7 @@ app.post('/api/auth/quick-mobile-login', (req, res) => {
     }
 
     const cleanName = (name && String(name).trim()) || 'Guest User';
+    const userSource = source || 'Mobile App';
     const users = readJson('users.json');
     let user = users.find(u => u.identifier === cleanId || u.mobile === cleanId);
     const nowIso = new Date().toISOString();
@@ -386,6 +387,7 @@ app.post('/api/auth/quick-mobile-login', (req, res) => {
             identifier: cleanId,
             mobile: cleanId,
             email: '',
+            source: userSource,
             createdAt: nowIso,
             lastLoginAt: nowIso
         };
@@ -395,15 +397,16 @@ app.post('/api/auth/quick-mobile-login', (req, res) => {
         if (cleanName && cleanName !== 'Guest User') {
             user.name = cleanName;
         }
+        if (!user.source) user.source = userSource;
         user.lastLoginAt = nowIso;
         if (!user.createdAt) user.createdAt = nowIso;
         writeJson('users.json', users);
     }
 
     const token = jwt.sign(
-        { id: user.id, name: user.name, identifier: cleanId, mobile: user.mobile, email: '' },
+        { id: user.id, name: user.name, identifier: cleanId, mobile: user.mobile, email: '', source: user.source },
         JWT_SECRET,
-        { expiresIn: '30d' }
+        { expiresIn: '60d' }
     );
 
     res.json({
@@ -414,7 +417,77 @@ app.post('/api/auth/quick-mobile-login', (req, res) => {
     });
 });
 
-// 3. Get Current User Profile
+// 4. Get App Configuration (Promo Banner, Discount %)
+app.get('/api/app/config', (req, res) => {
+    const defaultAppConfig = {
+        promoTag: "SPECIAL OFFER",
+        promoTitle: "Get Flat 15% Off",
+        promoSubtitle: "On your online AC room reservation",
+        promoDiscount: "15%",
+        promoButtonText: "BOOK NOW",
+        promoButtonLink: "/room-booking",
+        recommendedRooms: [
+            { id: "rec-1", name: "Executive AC Room", price: 999, unit: "/night", rating: "★ 4.8", tag: "Deluxe AC", image: "room.jpeg", link: "/room-booking", btnText: "Book" },
+            { id: "rec-2", name: "Royal Family Suite", price: 1499, unit: "/night", rating: "★ 4.9", tag: "Family Suite", image: "spp.webp", link: "/room-booking", btnText: "Book" },
+            { id: "rec-3", name: "Kathiyawadi Special", price: 180, unit: "/plate", rating: "★ 5.0", tag: "Pure Veg", image: "food.jpg", link: "/menu.html", btnText: "Order" },
+            { id: "rec-4", name: "Unlimited Gujarati Thali", price: 150, unit: "/plate", rating: "★ 4.9", tag: "Unlimited", image: "WhatsApp Image 2026-01-31 at 3.39.29 PM.jpeg", link: "/menu.html", btnText: "Order" }
+        ]
+    };
+    const appConfig = readJson('app_config.json', defaultAppConfig);
+    res.json({ success: true, config: appConfig });
+});
+
+// 5. Admin Mobile App Hub (Analytics & Management)
+app.get('/api/admin/app-hub', authenticateAdmin, (req, res) => {
+    const users = readJson('users.json');
+    const bookings = readJson('bookings.json', []);
+    const defaultAppConfig = {
+        promoTag: "SPECIAL OFFER",
+        promoTitle: "Get Flat 15% Off",
+        promoSubtitle: "On your online AC room reservation",
+        promoDiscount: "15%",
+        promoButtonText: "BOOK NOW",
+        promoButtonLink: "/room-booking"
+    };
+    const appConfig = readJson('app_config.json', defaultAppConfig);
+
+    const appUsers = users.filter(u => u.source === 'Mobile App' || !u.email);
+    const webUsers = users.filter(u => u.source !== 'Mobile App' && u.email);
+
+    res.json({
+        success: true,
+        stats: {
+            totalAppUsers: appUsers.length,
+            totalWebUsers: webUsers.length,
+            totalAllUsers: users.length,
+            totalBookings: bookings.length
+        },
+        appUsers,
+        appConfig
+    });
+});
+
+// 6. Admin Update App Configuration (Banners & Promos)
+app.post('/api/admin/app-config', authenticateAdmin, (req, res) => {
+    const newConfig = req.body;
+    writeJson('app_config.json', newConfig);
+    res.json({ success: true, message: 'App configuration updated successfully!', config: newConfig });
+});
+
+// 7. Admin Delete App User
+app.delete('/api/admin/app-users/:id', authenticateAdmin, (req, res) => {
+    const { id } = req.params;
+    let users = readJson('users.json');
+    const initialLen = users.length;
+    users = users.filter(u => u.id !== id);
+    if (users.length === initialLen) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    writeJson('users.json', users);
+    res.json({ success: true, message: 'App user deleted successfully' });
+});
+
+// 8. Get Current User Profile
 app.get('/api/auth/me', authenticateToken, (req, res) => {
     const users = readJson('users.json');
     const user = users.find(u => u.id === req.user.id);
@@ -427,7 +500,8 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
             name: user.name,
             identifier: user.identifier,
             mobile: user.mobile,
-            email: user.email
+            email: user.email,
+            source: user.source
         }
     });
 });
