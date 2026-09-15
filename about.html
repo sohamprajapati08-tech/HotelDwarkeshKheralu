@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="gu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Glassmorphism Theme -->
-    <link rel="stylesheet" href="glass.css?v=2.2">
+    <link rel="stylesheet" href="glass.css">
 
     <style>
         .about-hero {
@@ -175,36 +175,14 @@
                     Committed to delivering unforgettable experiences and exemplary service every single day.
                 </p>
 
-                <div class="owner-card-grid" style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; max-width: 920px; margin: 0 auto; align-items: stretch;">
-                    <!-- Founder Information Card -->
-                    <div class="glass-card owner-card" style="flex: 1 1 380px; max-width: 440px; width: 100%; display: flex; flex-direction: column; justify-content: center; text-align: left; padding: 32px 28px;">
-                        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
-                            <div class="owner-avatar" style="margin: 0; width: 54px; height: 54px; font-size: 1.5rem; flex-shrink: 0;">S</div>
-                            <div>
-                                <h3 id="founderName" style="color:var(--text-primary); font-size:1.45rem; margin-bottom:2px; font-weight: 800;">Soham Prajapati</h3>
-                                <div id="founderTitle" style="color:var(--accent); font-weight:700; font-size:0.92rem;">Managing Director & Founder</div>
-                            </div>
-                        </div>
-                        <p id="founderBio" style="color:var(--text-secondary); font-size:0.92rem; line-height:1.65; margin-bottom: 20px;">
+                <div class="owner-card-grid" style="display: flex; justify-content: center;">
+                    <div class="glass-card owner-card" style="max-width: 460px; width: 100%;">
+                        <div class="owner-avatar">S</div>
+                        <h3 style="color:var(--text-primary); font-size:1.4rem; margin-bottom:5px;">Soham Prajapati</h3>
+                        <div style="color:var(--accent); font-weight:600; font-size:0.9rem; margin-bottom:12px;">Managing Director & Founder</div>
+                        <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.6;">
                             Dedicated to customer satisfaction, modern hospitality tech, and maintaining pristine cleanliness standards across Hotel Dwarkesh.
                         </p>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-glass); padding-top: 16px; margin-top: auto;">
-                            <span style="background: rgba(46, 71, 61, 0.08); color: var(--primary); padding: 4px 12px; border-radius: var(--radius-pill); font-size: 0.78rem; font-weight: 700; border: 1px solid rgba(46, 71, 61, 0.2);">Founder & Leadership</span>
-                            <span style="background: rgba(200, 112, 91, 0.1); color: var(--accent); padding: 4px 12px; border-radius: var(--radius-pill); font-size: 0.78rem; font-weight: 700; border: 1px solid rgba(200, 112, 91, 0.3);">Ambaji Highway, Kheralu</span>
-                        </div>
-                    </div>
-
-                    <!-- Founder Photo Card (Admin Updatable / Deletable) -->
-                    <div class="glass-card" id="founderPhotoCard" style="flex: 1 1 380px; max-width: 440px; width: 100%; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 380px;">
-                        <img id="founderPhotoImg" src="sp.jpeg" alt="Soham Prajapati - Founder" style="width: 100%; height: 350px; object-fit: cover; border-radius: var(--radius-md); box-shadow: 0 8px 25px rgba(0,0,0,0.15); border: 1px solid var(--border-glass);">
-                        <div id="founderPhotoFallback" style="display: none; width: 100%; height: 350px; background: rgba(46, 71, 61, 0.06); border-radius: var(--radius-md); flex-direction: column; align-items: center; justify-content: center; gap: 12px; border: 1px dashed var(--border-glass);">
-                            <div class="owner-avatar" style="width: 80px; height: 80px; font-size: 2.2rem;">S</div>
-                            <div style="font-weight: 700; color: var(--text-primary); font-size: 1.1rem;">Soham Prajapati</div>
-                            <div style="color: var(--accent); font-size: 0.85rem; font-weight: 600;">Founder & Managing Director</div>
-                        </div>
-                        <div style="position: absolute; bottom: 26px; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); color: #fff; padding: 6px 18px; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.2);">
-                            Soham Prajapati
-                        </div>
                     </div>
                 </div>
             </div>
@@ -260,7 +238,7 @@
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="auth.js?v=2.2"></script>
+    <script src="auth.js"></script>
 
     <script>
         AOS.init({ duration: 800, once: true });
@@ -269,40 +247,6 @@
             const nav = document.getElementById('navLinks');
             if (nav) nav.classList.toggle('show');
         }
-
-        // Dynamically load founder photo & profile from backend
-        async function loadFounderProfile() {
-            try {
-                const res = await fetch('/api/founder');
-                const data = await res.json();
-                if (data.success && data.founder) {
-                    const f = data.founder;
-                    const nameEl = document.getElementById('founderName');
-                    const titleEl = document.getElementById('founderTitle');
-                    const bioEl = document.getElementById('founderBio');
-                    const photoImg = document.getElementById('founderPhotoImg');
-                    const photoFallback = document.getElementById('founderPhotoFallback');
-
-                    if (nameEl && f.name) nameEl.textContent = f.name;
-                    if (titleEl && f.title) titleEl.textContent = f.title;
-                    if (bioEl && f.bio) bioEl.textContent = f.bio;
-
-                    if (f.photoUrl && f.photoUrl.trim() !== '') {
-                        if (photoImg) {
-                            photoImg.src = f.photoUrl;
-                            photoImg.style.display = 'block';
-                        }
-                        if (photoFallback) photoFallback.style.display = 'none';
-                    } else {
-                        if (photoImg) photoImg.style.display = 'none';
-                        if (photoFallback) photoFallback.style.display = 'flex';
-                    }
-                }
-            } catch (err) {
-                console.warn('Could not load founder profile from API:', err);
-            }
-        }
-        document.addEventListener('DOMContentLoaded', loadFounderProfile);
     </script>
 </body>
 </html>

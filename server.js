@@ -417,77 +417,7 @@ app.post('/api/auth/quick-mobile-login', (req, res) => {
     });
 });
 
-// 4. Get App Configuration (Promo Banner, Discount %)
-app.get('/api/app/config', (req, res) => {
-    const defaultAppConfig = {
-        promoTag: "SPECIAL OFFER",
-        promoTitle: "Get Flat 15% Off",
-        promoSubtitle: "On your online AC room reservation",
-        promoDiscount: "15%",
-        promoButtonText: "BOOK NOW",
-        promoButtonLink: "/room-booking",
-        recommendedRooms: [
-            { id: "rec-1", name: "Executive AC Room", price: 999, unit: "/night", rating: "★ 4.8", tag: "Deluxe AC", image: "room.jpeg", link: "/room-booking", btnText: "Book" },
-            { id: "rec-2", name: "Royal Family Suite", price: 1499, unit: "/night", rating: "★ 4.9", tag: "Family Suite", image: "spp.webp", link: "/room-booking", btnText: "Book" },
-            { id: "rec-3", name: "Kathiyawadi Special", price: 180, unit: "/plate", rating: "★ 5.0", tag: "Pure Veg", image: "food.jpg", link: "/menu.html", btnText: "Order" },
-            { id: "rec-4", name: "Unlimited Gujarati Thali", price: 150, unit: "/plate", rating: "★ 4.9", tag: "Unlimited", image: "WhatsApp Image 2026-01-31 at 3.39.29 PM.jpeg", link: "/menu.html", btnText: "Order" }
-        ]
-    };
-    const appConfig = readJson('app_config.json', defaultAppConfig);
-    res.json({ success: true, config: appConfig });
-});
-
-// 5. Admin Mobile App Hub (Analytics & Management)
-app.get('/api/admin/app-hub', authenticateAdmin, (req, res) => {
-    const users = readJson('users.json');
-    const bookings = readJson('bookings.json', []);
-    const defaultAppConfig = {
-        promoTag: "SPECIAL OFFER",
-        promoTitle: "Get Flat 15% Off",
-        promoSubtitle: "On your online AC room reservation",
-        promoDiscount: "15%",
-        promoButtonText: "BOOK NOW",
-        promoButtonLink: "/room-booking"
-    };
-    const appConfig = readJson('app_config.json', defaultAppConfig);
-
-    const appUsers = users.filter(u => u.source === 'Mobile App' || !u.email);
-    const webUsers = users.filter(u => u.source !== 'Mobile App' && u.email);
-
-    res.json({
-        success: true,
-        stats: {
-            totalAppUsers: appUsers.length,
-            totalWebUsers: webUsers.length,
-            totalAllUsers: users.length,
-            totalBookings: bookings.length
-        },
-        appUsers,
-        appConfig
-    });
-});
-
-// 6. Admin Update App Configuration (Banners & Promos)
-app.post('/api/admin/app-config', authenticateAdmin, (req, res) => {
-    const newConfig = req.body;
-    writeJson('app_config.json', newConfig);
-    res.json({ success: true, message: 'App configuration updated successfully!', config: newConfig });
-});
-
-// 7. Admin Delete App User
-app.delete('/api/admin/app-users/:id', authenticateAdmin, (req, res) => {
-    const { id } = req.params;
-    let users = readJson('users.json');
-    const initialLen = users.length;
-    users = users.filter(u => u.id !== id);
-    if (users.length === initialLen) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-    }
-    writeJson('users.json', users);
-    res.json({ success: true, message: 'App user deleted successfully' });
-});
-
-// 8. Get Current User Profile
+// 4. Get Current User Profile
 app.get('/api/auth/me', authenticateToken, (req, res) => {
     const users = readJson('users.json');
     const user = users.find(u => u.id === req.user.id);
